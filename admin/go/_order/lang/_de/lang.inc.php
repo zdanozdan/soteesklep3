@@ -1,0 +1,26 @@
+<?php
+$lang->order_status="";
+$lang->order_title="";
+$lang->order_search=array(
+                );
+$lang->order_basket=array(
+                );
+$lang->order_errors=array(
+                );
+$lang->order_form_name=array(
+                );
+$lang->order_names=array(
+                );
+$lang->order_products=array(
+                );
+$lang->order_menu=array(
+                );
+$lang->order_buttons=array(
+                );
+$lang->order_main_keys_status=array(
+                );
+$lang->order_legend_desc=array(
+                );
+$lang->order_partner_confirm=array(
+                );
+?>

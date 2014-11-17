@@ -1,0 +1,14 @@
+<?php
+$lang->offline_menu=array(
+                'main'=>'',
+                'attributes'=>'',
+                'export'=>'',
+                );
+$lang->offline_title="";
+$lang->offline_icons=array(
+                'main'=>'',
+                );
+$lang->offline_info=array(
+                'main'=>'',
+                );
+?>

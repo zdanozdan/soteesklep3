@@ -1,0 +1,35 @@
+<?php
+$lang->configure_title="Configuration centre";
+$lang->button_help="Help";
+$lang->welcome_text="Below there are links to SOTESHOP program configuring.";
+$lang->conf_title_modules="Module configuration";
+$lang->conf_title_partners="Partner configuration";
+$lang->conf_title_pay="Payment system configuration";
+$lang->conf_title_pay_on="Payment on-line";
+$lang->conf_title_pay_off="Payment off-line";
+$lang->conf_title_aspect="Aspect editing configuration";
+$lang->configuration="General configuration";
+$lang->catalog_conf="<b>Directory mode</b> configuration";
+$lang->configuration_points="Points system configuraiton";
+$lang->configuration_language="Language version configuration";
+$lang->configuration_newsletter="Newsletter configuration";
+$lang->configuration_newsedit="Newsedit configuration";
+$lang->configuration_search="Search configuration";
+$lang->configuration_themes="Theme management";
+$lang->configuration_category="Category properties editing (menu)";
+$lang->configuration_domains="Domain management";
+$lang->configuration_country="Countries of delivery configuration";
+$lang->configuration_paypal="PayPal configuration";
+$lang->configuration_cardpay="Debit card payment configuration";
+$lang->configuration_onet="Onet Passage configuration";
+$lang->configuration_wp="WP Passage configuration";
+$lang->configuration_interia="Interia Passage configuration";
+$lang->configuration_polcard="Configuration - Polcard";
+$lang->configuration_przelewy24="Configuration ? Przelewy24.pl (Transfers24)";
+$lang->configuration_platnosciPL="Configuration - PlatnosciPL (PaymentsPL)";
+$lang->configuration_allpay="Configuration - Allpay";
+$lang->configuration_ecard="Configuration - eCard";
+$lang->configuration_ceneo="Configuration Ceneo";
+$lang->configuration_allegro="Configuration Allegro";
+$lang->configuration_payments_offline="Payment Off-line";
+?>

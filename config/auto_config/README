@@ -1,0 +1,7 @@
+config.inc.php to plik konfiguracyjny sklepu z warosciami generowanymi
+               autoamtycznie przez skrytp konfiguracyjny. Wartosci
+               zdefiniowane tu nadpisuja wartosci z config/config.inc.php
+	       Dzieki temu mozna tu wpisywac opcje konfiguracyjne, bez
+	       koniecznosci przechowywania ich w bazie danych.
+	       
+	    

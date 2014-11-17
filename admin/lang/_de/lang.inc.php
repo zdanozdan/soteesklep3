@@ -1,0 +1,264 @@
+<?php
+$lang->main_version="";
+$lang->main_welcome="";
+$lang->id="";
+$lang->add="";
+$lang->help="";
+$lang->new="";
+$lang->close="";
+$lang->add_info="";
+$lang->lang="";
+$lang->delete="";
+$lang->select_all="";
+$lang->go2trash="";
+$lang->export="";
+$lang->time_execute="";
+$lang->welcome="";
+$lang->cancel="";
+$lang->update="";
+$lang->login="";
+$lang->logout="";
+$lang->trash="";
+$lang->change_img="";
+$lang->html="";
+$lang->pdf="";
+$lang->first="";
+$lang->right_choose_layout="";
+$lang->hidden="";
+$lang->edit="";
+$lang->tips=array(
+                '0'=>"",
+                '1'=>"",
+                '2'=>"",
+                '3'=>"",
+                );
+$lang->user_log_on="";
+$lang->edit_update_ok="";
+$lang->order_by=array(
+                'name'=>"",
+                'price'=>"",
+                'producer'=>"",
+                'SCORE'=>"",
+                'partner'=>"",
+                'rake_off'=>"",
+                'amount'=>"",
+                );
+$lang->sort="";
+$lang->producers="";
+$lang->admin_top_menu=array(
+                'register'=>"",
+                'merchant'=>"",
+                'reports'=>"",
+                'stats'=>"",
+                'themes'=>"",
+                'admin'=>"",
+                'configure'=>"",
+                );
+$lang->super_admin="";
+$lang->admin_users=array(
+                'admin'=>"",
+                'normal'=>"",
+                );
+$lang->menu=array(
+                'add_product'=>"",
+                'all_products'=>"",
+                'edit_category'=>"",
+                );
+$lang->search_date="";
+$lang->search_submit="";
+$lang->wysiwyg_button="";
+$lang->title="";
+$lang->bar_title=array(
+                'order'=>"",
+                'order_edit'=>"",
+                'order_search'=>"",
+                'xml_options'=>"",
+                'users'=>"",
+                'users_edit'=>"",
+                'users_order'=>"",
+                'users_search'=>"",
+                'category_all'=>"",
+                'points'=>"",
+                'currency'=>"",
+                'newsletter'=>"",
+                'opt'=>"",
+                );
+$lang->check_version="";
+$lang->icons=array(
+                'text'=>"",
+                'opt'=>"",
+                'customers'=>"",
+                'orders'=>"",
+                'delivery'=>"",
+                'availability'=>"",
+                'currency'=>"",
+                'discounts'=>"",
+                'reviews'=>"",
+                'merchants'=>"",
+                'options'=>"",
+                'newsedit'=>"",
+                'vat'=>"",
+                'lang'=>"",
+                'stats_pro'=>"",
+                'stats'=>"",
+                'help'=>"",
+                'newsletter'=>"",
+                'main_keys'=>"",
+                'cd'=>"",
+                'promotions'=>"",
+                'offline'=>"",
+                'partners'=>"",
+                'docs'=>"",
+                'onet'=>"",
+                'wp'=>"",
+                'dictionary'=>"",
+                'language_versions'=>"",
+                'help_management'=>"",
+                'lang_update'=>"",
+                'configure'=>"",
+                'market'=>"",
+                );
+$lang->head_update="";
+$lang->order_list=array(
+                );
+$lang->delivery_list=array(
+                );
+$lang->cols=array(
+                );
+$lang->nccp_error="";
+$lang->delete_not_found="";
+$lang->deleted="";
+$lang->auth_www_error="";
+$lang->port_ftp="";
+$lang->ftp_auth_ok="";
+$lang->password_new="";
+$lang->password_change="";
+$lang->auth_www_form_errors=array(
+                'login'=>"",
+                'password_old'=>"",
+                'password_new'=>"",
+                'password_confirm'=>"",
+                );
+$lang->opt_ok="";
+$lang->search_empty_query="";
+$lang->delivery_bar="";
+$lang->delivery_menu=array(
+                );
+$lang->delivery_edit="";
+$lang->delivery_cols=array(
+                );
+$lang->delivery_edit_form_errors=array(
+                'name'=>"",
+                'price_brutto'=>"",
+                'vat'=>"",
+                'free_from'=>"",
+                );
+$lang->newsletter_update_bar="";
+$lang->newsletter_send="";
+$lang->newsletter_menu=array(
+                'add'=>"",
+                'edit'=>"",
+                'list'=>"",
+                'send'=>"",
+                'search'=>"",
+                );
+$lang->newsletter_cols=array(
+                'subject'=>"",
+                'content'=>"",
+                'id'=>"",
+                'email'=>"",
+                'status'=>"",
+                'active'=>"",
+                'string'=>"",
+                );
+$lang->newsletter_form_errors=array(
+                'email'=>"",
+                );
+$lang->offline_update="";
+$lang->offline_status="";
+$lang->offline_example="";
+$lang->offline_update_now="";
+$lang->partner_names=array(
+                'partner'=>"",
+                );
+$lang->onet_status=array(
+                'tak'=>"",
+                'nie'=>"",
+                'ok'=>"",
+                );
+$lang->points=array(
+                'title_edit'=>"",
+                );
+$lang->currency_menu=array(
+                'add'=>"",
+                'list'=>"",
+                'nbp'=>"",
+                );
+$lang->currency_cols=array(
+                'currency_name'=>"",
+                'currency_val'=>"",
+                'date_update'=>"",
+                );
+$lang->currency_nbp_bar="";
+$lang->currency_update_bar="";
+$lang->currency_form_errors=array(
+                'currency_name'=>"",
+                'currency_val'=>"",
+                );
+$lang->currency_nbp=array(
+                'welcome_text'=>"",
+                'country'=>"",
+                'currency_name'=>"",
+                'currency_code'=>"",
+                'exchange'=>"",
+                );
+$lang->opt_short_info="";
+$lang->pay_fraud=array(
+                '1'=>"",
+                '2'=>"",
+                '10'=>"",
+                '300'=>"",
+                '301'=>"",
+                '302'=>"",
+                '303'=>"",
+                );
+$lang->pay_status=array(
+                '000'=>"",
+                '001'=>"",
+                '002'=>"",
+                '010'=>"",
+                '050'=>"",
+                '053'=>"",
+                '054'=>"",
+                '301'=>"",
+                '321'=>"",
+                '324'=>"",
+                '325'=>"",
+                '326'=>"",
+                '327'=>"",
+                '328'=>"",
+                '329'=>"",
+                '330'=>"",
+                '350'=>"",
+                '351'=>"",
+                '352'=>"",
+                '394'=>"",
+                '395'=>"",
+                '396'=>"",
+                '397'=>"",
+                '398'=>"",
+                '399'=>"",
+                );
+$lang->ftp_go2newpass="";
+$lang->ftp_new_password="";
+$lang->edit_submit="";
+$lang->brutto="";
+$lang->password_old="";
+$lang->opt_short_buttons=array(
+                'category'=>"",
+                'producers'=>"",
+                'category_producers'=>"",
+                );
+$lang->foot_search_product="";
+$lang->foot_search_order="";
+?>

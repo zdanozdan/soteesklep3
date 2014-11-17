@@ -1,0 +1,56 @@
+select, textarea
+{
+    background-color: <?php echo $config->theme_config['colors']['input_background']; ?>;
+    border-color: <?php echo $config->theme_config['colors']['input_border']; ?>;
+    color: <?php echo $config->theme_config['colors']['base_font']; ?>;
+}
+
+button
+{
+    height: 18px;
+    border-width: 1px;
+    border-style: solid;
+    background-color: <?php echo $config->theme_config['colors']['button_background']; ?>;
+    border-color: <?php echo $config->theme_config['colors']['button_border']; ?>;
+    color: <?php echo $config->theme_config['colors']['button_border']; ?>;
+}
+
+.button
+{
+    background-color: <?php echo $config->theme_config['colors']['button_background']; ?>;
+    border-color: <?php echo $config->theme_config['colors']['button_border']; ?>;
+    color: <?php echo $config->theme_config['colors']['button_border']; ?>;
+}
+
+.input
+{
+    background-color: <?php echo $config->theme_config['colors']['input_background']; ?>;
+    border-color: <?php echo $config->theme_config['colors']['input_border']; ?>;
+    color: <?php echo $config->theme_config['colors']['base_font']; ?>;
+}
+
+body
+{
+    
+   color: <?php echo $config->theme_config['colors']['base_font']; ?>;
+}
+
+a:link
+{
+    color: <?php echo $config->theme_config['colors']['link_normal']; ?>;
+}
+
+a:visited
+{
+    color: <?php echo $config->theme_config['colors']['link_normal']; ?>;
+}
+
+a:active
+{
+    color: <?php echo $config->theme_config['colors']['link_normal']; ?>;
+}
+
+a:hover
+{
+    color: <?php echo $config->theme_config['colors']['link_over']; ?>;
+}

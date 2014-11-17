@@ -1,0 +1,38 @@
+<?php $theme->bar($lang->help_content_help);?><p />
+<?php $theme->desktop_open("100%");?>
+<p> 
+<div align="right">
+
+<a href="/plugins/_help_content/help_show.php?id=<?php print $help_id;?>&print=1"><?php print $lang->help_content_date_print?>>></a>
+<?php 
+
+?>
+</div> 
+<?php
+print "<h1><u>";
+if ($config->admin_lang=='pl'){
+    print $title;
+}else{
+    print $title_en;
+}
+print "</u></h1>";
+?>
+<table>	
+	<?php
+	if ($date_update!="0000-00-00") {
+	?>
+	</tr>
+		<td><?php print $lang->help_content_date_update;?>:</td><td><?php echo $date_update; ?></td>
+	</tr>
+	<?php
+	}
+	?>
+</table><br>
+<?php 
+if ($config->admin_lang=='pl'){
+    print $html;
+}else{
+    print $html_en;
+}
+?>
+<?php $theme->desktop_close();?>

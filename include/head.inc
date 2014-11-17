@@ -1,0 +1,258 @@
+<?php
+/**
+* Plik naglowkowy wywlywany przy kazdym wywolaniu strony
+* zawiera wywolanie glownych bibliotek, klas, obiektow
+*
+* \@global string $__secure_key  unikalny klucz bezpieczenstaw programu
+* \@global bool   $__secure_test zabezpieczenie przed wywolaniem plikow includowanych do skryptow
+*
+* @author m@sote.pl
+* @version $Id: head.inc,v 2.77 2006/01/23 13:53:32 maroslaw Exp $
+* @package    include
+* \@lang
+* \@encoding
+*/
+
+$DOCUMENT_ROOT = $_SERVER['DOCUMENT_ROOT'];
+// pomiar czasu wykonania skryptu
+$startTime=split(" ",microtime());
+$startTime=$startTime[1]+$startTime[0];
+
+// usun znak / na koncu DOCUMENT_ROOT
+$DOCUMENT_ROOT=preg_replace("/\/$/","",$DOCUMENT_ROOT);
+
+
+// start netart && disable 4 home.pl
+if ((! ereg("soteesklep",$DOCUMENT_ROOT)) && (! eregi("IdeaWebServer",$_SERVER['SERVER_SOFTWARE']))) {
+    $DOCUMENT_ROOT=substr(__FILE__,0,strlen(__FILE__)-17);
+    if (ereg("admin",$_SERVER['HTTP_HOST'])) $DOCUMENT_ROOT.="/admin"; else $DOCUMENT_ROOT.="/htdocs";
+}
+// end
+
+if(strpos($_SERVER["SCRIPT_NAME"], 'cgi') !== false) {
+    $_SERVER["SCRIPT_NAME"] = $_SERVER["PATH_INFO"];
+}
+// odczytaj unikalalny kod bezpieczenstwa programu
+$__secure_key=md5(ini_get("disable_functions"));
+
+// zezwalaj na includowanie skryptow, klas itp
+$global_secure_test=true; // stara konstrukcja, zachowana dla zgodnosci
+$__secure_test=true;      // nowa poprawna definicja zmeinenj globalnej
+
+// ustaw maksymalny poziom debugowania: (1) tryb DEVELOP, (1) tryb USER
+error_reporting(1);
+
+// sprawdz czy jest wylaczony tryb register_globals
+$register_globals=ini_get("register_globals");
+if ($register_globals==1) {
+    die ("<font color=red>Ustaw register_globals = Off <BR> Set register_globals = Off</font>");
+}
+
+// sprawdz czy PHP dziala w bezpiecznym trybie
+//$safe_mode=ini_get("safe_mode");
+//if ($safe_mode!=1) {
+//    if (! file_exists("$DOCUMENT_ROOT/../.safe_mode_off")) {
+//        die ("<font color=red>Wstaw w httpd.conf php_admin_value safe_mode 1 <BR>Insert into httpd.conf php_admin_value safe_mode 1<font>");
+//    }
+//}
+
+// wyzeruj cookie jest wywolanu zmiane producenta (treeview)
+if ((! empty($_REQUEST['producer_filter'])) || (@$_REQUEST['producer_filter']=="0")) {
+    setcookie("clickedFolder","",time(),"/");
+}
+
+// odczytaj glowna sciezke instalacji programu - wskazanie na htdocs
+if (empty($DOCUMENT_ROOT)) {
+    $DOCUMENT_ROOT=$HTTP_SERVER_VARS['DOCUMENT_ROOT'];
+}
+
+$HTTP_SERVER_VARS['DOCUMENT_ROOT']=&$DOCUMENT_ROOT;
+$_SERVER['DOCUMENT_ROOT']=&$DOCUMENT_ROOT;
+
+// ustaw sciezki przeszukwian require i include
+$_LIBS="$DOCUMENT_ROOT/htdocs/base:$DOCUMENT_ROOT/..:$DOCUMENT_ROOT:$DOCUMENT_ROOT/../lib:$DOCUMENT_ROOT/../lib/PEAR:$DOCUMENT_ROOT/base:$DOCUMENT_ROOT/base/lib::$DOCUMENT_ROOT/base/lib/PEAR:$DOCUMENT_ROOT/htdocs/base/lib:$DOCUMENT_ROOT/htdocs/base/lib/PEAR:";
+ini_set("include_path","$_LIBS:.");
+
+// inicjacja struktury obiektow SOTEeSKLEP (od wersji 2.5.10)
+require_once ("include/objects.inc");
+
+// obsluga pomiaru czasu wykoannia skryptow klasa Time
+@include_once ("include/time.inc");
+
+
+// odczytaj konfiguracje glowna
+require_once ("config/config.inc.php");
+
+// odczytaj konfiguracje punktów
+require_once ("config/auto_config/points_config.inc.php");
+
+// google
+require_once ("include/google_main.inc");
+$google =& new GoogleMain();
+$google->changeTheme();
+// end google
+
+// obsluga sesji
+if (@$__no_session==true) {
+    require_once ("include/no_session.inc");
+} else require_once ("include/session.inc");
+
+// zmien temat w konfiguracji, nadpisz domyslna nazwe tamatu z $config->theme
+if (! empty($_SESSION['global_theme'])) {
+    $config->theme=$_SESSION['global_theme'];
+    // uaktualnij sicezke do tematu w obiekcie $config - $config->theme_dir
+    $config->theme_dir();
+}
+
+// zmien jezyk w konfiguracji, nadpisz domyslna nazwe jezyka z $config->lang
+if ((! empty($_SESSION['global_lang'])) && (! $shop->admin)) {
+    $config->lang=$_SESSION['global_lang'];
+    $config->lang_id=@$_SESSION['global_lang_id'];
+    $config->theme_dir();        
+}
+// end
+
+// dodaj obsluge DBEdit
+require_once "lib/DBEdit-Metabase/DBEdit.inc";
+
+// dodaj obsluge bazy danych (lib: MetaBase)
+if ($global_database==true) {
+    // nie wszystkie wywolania stron posiadaja obsluge bazy
+    // polaczenie z baza jest wywolywane, tylko na tych stronach, ktore
+    // tego wymagaja. wymaganie to okresla sie poprzez ustawienie
+    // zmiennej $global_database=true przed wywolaniem head.inc
+    require_once "lib/Metabase/metabase_interface.php";
+    require_once "lib/Metabase/metabase_database.php";
+    require_once "config/database.php";
+}
+
+// dodaj obsluge my()
+require_once("include/my.inc");
+
+
+// dodaj obsluge generowania odpowiedniej ceny produktu
+require_once("include/price.inc");
+
+// odczytaj klase definicji jezykowych
+if (@empty($lang)) {
+    class Lang {}; $lang =& new Lang;
+    class Error{}; $error =& new Error;
+}
+
+if ($config->base_lang!=$config->lang) {
+    require_once ("lang/_$config->base_lang/lang.inc.php");
+}
+@include_once("lang/_$config->lang/lang.inc.php");   // obiekt $lang
+@include_once("lang/_$config->lang/error.inc.php");  // obiekt $error
+
+
+if (($config->base_lang!=$config->lang) && (empty($__start_page))) {
+    // odczytaj definicje lokalne glownego jezyka, na wypadek, gdyby w $config->lang brakowalo pewnych definicji
+    // z pominieciem wywolania dla glownej strony
+    @include_once ("./lang/_$config->base_lang/lang.inc.php"); // dodatkowe definicje obiektu $lang
+}
+// jesli istnieja loaklne definicje jezykowe to je odczytaj
+// @include_once ("./lang/_$config->base_lang/lang.inc.php"); // dodatkowe definicje obiektu $lang dla base lang
+if (@$_REQUEST['lang']!=$config->base_lang) {
+    @include_once ("./lang/_$config->lang/lang.inc.php");      // dodatkowe definicje obiektu $lang
+}
+
+// jesli istnieja lokalne definicje konffiguracji - lokalna konfiguracja modulow itp.
+@include_once ("./config/config.inc.php"); // dodatkowe definicje obiektu $config
+
+
+// obsluga bledow, debugowanie, komunikaty
+require_once("include/debug.inc");                  // obiekt $debug
+if (! class_exists("Status")) {
+    class Status{}; $status =& new Status;
+}
+
+// odczytaj temat wygl±du strony
+require_once("themes/theme.inc.php");
+// --- end funkcje tematu wygladu
+
+// odczytaj klase obslugujaca zarzadzanie tematem wygladu
+include_once("include/themes.inc");
+
+// sprawdz, czy nie wywolano RELOAD w koszyku
+// odczytaj sume kontrolna $_REQUEST
+require_once ("include/request_md5.inc");
+
+// sprawdz czy uzytkwonik wszedl ze strony partnera, jesli tak zapisz zmienna $global_partner_id w sesji
+
+if (in_array("partners",$config->plugins)) {
+    if ((! empty($_REQUEST['partner_id'])) && (! empty($_REQUEST['code']))) {
+        include_once ("plugins/_partners/include/partners.inc.php");
+    }
+}
+
+
+if (!$shop->admin) {
+	// szuflujemy obecnymi katalogiami zeby lokalne includy koszyka byly dostepne dla skryptow
+	$old_dir=getcwd();
+	$path_to_basket=$DOCUMENT_ROOT."/go/_basket/";
+	chdir($path_to_basket);
+	require_once("./include/my_ext_basket.inc.php");
+	$wishlist=&new My_Ext_Basket('wishlist');
+	$wishlist->init();
+	$wishlist->register();
+	chdir($old_dir);
+}
+
+
+// start "hapy hour"
+if (in_array("happy_hour",$config->plugins) && (! $shop->admin) && (empty($_SESSION['global_id_user']))) {
+    require_once ("include/happy_hour.inc");
+    $happy_hour = new HappyHour;
+}
+// end happy hour
+
+
+/**
+* Jesli wywolywany jest panel admina to wywolaj dodatkowe skrypty
+*/
+if ($shop->admin) {
+    @include_once ("include/head.inc.php");
+}
+//
+
+// odczytaj slownik, odczytaj klase LangFunctions
+if ($config->lang!=$config->base_lang) {
+    require_once ("include/lang_functions.inc");
+}
+
+// zmiana waluty
+if (in_array("currency",$config->plugins)) {
+    if (empty($_SESSION['__currency'])) {
+        $__currency=@$config->currency_lang_default[$config->lang];
+        $sess->register("__currency",$__currency);   
+    }
+}
+
+$shop->currency();
+
+// domy¶lne zerowanie blokady dodania do koszyka
+if ((! empty($_SESSION['basket_add_lock'])) && (@$__basket_add_lock!=true)) {
+   $sess->unregister("basket_add_lock");
+}
+
+$le = explode('|', $config->langs_encoding[$config->lang_id]);
+$config->encoding = $le[1];
+
+if($shop->admin) {
+//    $admin_lang_switch = substr($_SESSION['admin_lang_switch'], 0, 2);
+    if($config->admin_lang == "pl") {
+        header('Content-Type: text/html; charset=iso-8859-2');
+    }
+    else {
+        header('Content-Type: text/html; charset=iso-8859-1');
+    }
+}
+else {
+    header('Content-Type: text/html; charset=' . $config->encoding);
+}
+
+// google - zmiana adresu URL tj. usuniecie znakow ?
+// $google->changeREQUEST();
+
+// celowy brak domkniêcia sekcji php

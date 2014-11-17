@@ -1,0 +1,11 @@
+Komenda	Identyfikator	Cena brutto	Opis pelny	Opis skrócony	Fotografia	Fotografia Flash	Flash -opis html	Fotografia PDF	Dodatkowe opcje	Promocja	Nowsci	Bestseller	Strona g³ówna	Aktywny	Nazwa	Producent	Kategoria_1	Kategoria_2	Kategoria_3	Kategoria_4	Kategoria_5	id_currency	Vat	Stara_cena	Dostepnosc	Cena Hurtowa	Nie pokazuj ceny	Rabat	Akcesoria	Cena w walucie	Maksymalny Rabat	Onet - Kategoria	Onet - Export	Onet - Status	Onet - obrazek export	Onet - obrazek opis	Onet - obrazek tytu³	Onet - atrybuty	Google tytu³	Google - slowa	Google - opis	Produkt w 2 kategorii	Produkt w 3 kategorii	Zapytaj o cene	Objetosc produktu	Sprzedaz bez vat
+A	A001	51523	Opis pelny	Krotki opis	test1.jpg					1	1	1	1	1	Toshiba A100	Toshiba	Kategoria10	Kat21	Kat31	Kat41	Kat51	1	22	134	1	432		5	A002;A003		7											Kategoria11/Kat22	Kategoria12/Kat123	1	1	1
+A	A002	43	Opis pelny	Krotki opis	test2.jpg					1	1	1	1	1	Toshiba A100	Toshiba	Kategoria11	Kat22	Kat31	Kat41	Kat52	1	22	134	2	54		5			7											Komputery/Kat22		0	2	0
+A	A003	23	Opis pelny	Krotki opis	test1.jpg					1	1	1	1	1	Toshiba A100	Toshiba	Kategoria11	Kat21	Kat32	Kat42	Kat53	1	22	134	3	53		5														Kategoria12/Kat23		1	5	1
+A	A004	7777	Opis pelny	Krotki opis	test2.jpg					1	1	1	1	1	Toshiba A100	Toshiba	Kategoria10	Kat23	Kat32	Kat43	Kat51	1	22	134	3	2343		5																0	6	1
+A	A005	66	Opis pelny	Krotki opis	test1.jpg					1	1	1	1	1	Toshiba A100	Toshiba	Kategoria11	Kat22	Kat33			1	22	134	2	23		10																1	8	0
+A	A006	145	Opis pelny	Krotki opis	test2.jpg					1	1	1	1	1	Toshiba A100	Toshiba	Kategoria11	Kat23	Kat33			1	22	134	1	433		5																1	4	1
+A	A008	333	Opis pelny	Krotki opis	test2.jpg					1	1	1	1	1	Toshiba A100	Toshiba	Kategoria10	Kat22	Kat32			1	22	134	2	432		7																1	2	0
+A	A009	122	Opis pelny	Krotki opis	test1.jpg					1	1	1	1	1	Toshiba A100	Toshiba	Komputery	Kat123	Kat32			1	22	134	3	85		7																		
+A	A010	444	Opis pelny	Krotki opis	test2.jpg					1	1	1	1	1	Toshiba A100	Toshiba	Komputery	Kat23	Kat33			1	22	134	4	34		7																		
+A	A011	55	Opis pelny	Krotki opis	test1.jpg					1	1	1	1		Toshiba A100	Toshiba	Komputery	Kat23	Kat33			1	22	134	2	3		7																		

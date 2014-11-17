@@ -1,0 +1,12 @@
+<?php
+$lang->pin_form_errors=array(
+                );
+$lang->pin_names=array(
+                );
+$lang->admin_users_menu=array(
+                );
+$lang->admin_users_cols=array(
+                );
+$lang->admin_users_form_errors=array(
+                );
+?>

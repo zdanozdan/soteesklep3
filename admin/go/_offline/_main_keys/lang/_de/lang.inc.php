@@ -1,0 +1,25 @@
+<?php
+$lang->offline_record_deleted="";
+$lang->offline_record_updated="";
+$lang->offline_record_added="";
+$lang->offline_size="";
+$lang->offline_no_file="";
+$lang->offline_product_update_info="";
+$lang->offline_field="";
+$lang->offline_record_info="";
+$lang->offline_record="";
+$lang->offline_date="";
+$lang->offline_update_errors="";
+$lang->offline_menu=array(
+                );
+$lang->offline_legend=array(
+                );
+$lang->offline_money=array(
+                );
+$lang->offline_category_error=array(
+                );
+$lang->offline_load_errors=array(
+                );
+$lang->offline_file_errors=array(
+                );
+?>

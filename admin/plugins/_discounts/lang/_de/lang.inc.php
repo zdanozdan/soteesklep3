@@ -1,0 +1,10 @@
+<?php
+$lang->discounts_main_menu=array(
+                );
+$lang->discounts_options_form_errors=array(
+                );
+$lang->discounts_form_errors=array(
+                );
+$lang->discounts_menu=array(
+                );
+?>

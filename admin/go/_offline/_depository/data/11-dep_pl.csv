@@ -1,0 +1,11 @@
+	ID produktu	Liczba produktów w magazynie	Identyfikator dostawcy	Minimalna ilo¶æ
+U	A001	p5	1	5
+U	A002	m7	3	6
+U	A003	12	6	3
+U	A004	0	2	6
+U	A005	m7	2	8
+U	A006	p8	2	2
+U	A008	m2	6	1
+U	A009	p30	5	7
+U	A010	p77	5	5
+U	A011	p22	5	7

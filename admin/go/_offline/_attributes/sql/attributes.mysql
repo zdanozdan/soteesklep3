@@ -1,0 +1,32 @@
+CREATE TABLE attributes (
+  id mediumint(9) NOT NULL auto_increment,   
+  id_main TEXT,
+  price double,
+  attribute1 TEXT,
+  attribute2 TEXT,
+  attribute3 TEXT,
+  attribute4 TEXT,
+  attribute5 TEXT,
+  attribute6 TEXT,
+  attribute7 TEXT,
+  attribute8 TEXT,
+  attribute9 TEXT,
+  attribute10 TEXT,
+  PRIMARY KEY(id)
+);
+
+CREATE TABLE attributes_names (
+  id mediumint(9) NOT NULL auto_increment,   
+  name1 TEXT,
+  name2 TEXT,
+  name3 TEXT,
+  name4 TEXT,
+  name5 TEXT,
+  name6 TEXT,
+  name7 TEXT,
+  name8 TEXT,
+  name9 TEXT,
+  name10 TEXT,
+  PRIMARY KEY(id)
+);
+

@@ -1,0 +1,89 @@
+php_flag register_globals Off
+php_flag track_vars On
+php_flag magic_quotes_gpc Off
+php_flag session.use_cookies On
+php_flag session.use_trans_sid On
+php_flag file_uploads Off
+php_flag session.bug_compat_warn Off
+php_flag max_execution_time 30
+
+<FilesMatch "\.inc|\.html\.|~">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+Options +FollowSymLinks
+RewriteEngine on
+
+#RewriteCond %{HTTP_REFERER} !^$
+#RewriteCond %{HTTP_REFERER} !^http://(www\.)?sklep\.mikran.pl/.*$ [NC]
+#RewriteRule \.(gif|png)$ http://www.mikran.pl/angrymen.jpg [R,L]
+
+<FilesMatch "angrymen\.jpg$">
+ExpiresDefault A1
+Header unset cache-Control:
+Header append cache-Control: "no-cache, must-revalidate"
+</FilesMatch>
+
+RewriteRule ^inne/id([0-9]+)/([^/]+)/?$ /go/_info/?id=$1&item=1#menu [L] 
+RewriteRule ^recenzje/id([0-9]+)/([^/]+)/?$ /go/_info/reviews.php?id=$1&item=4#menu [L] 
+RewriteRule ^id([0-9]+)/([^/]+)/?$ /go/_info/?id=$1 [L] 
+#kategorie idc
+RewriteRule ^idc/(id_[0-9]+)/([^/]+)/page/([0-9]+)/?$ /go/_category/?idc=$1&page=$3 [L] 
+RewriteRule ^idc/(id_[0-9]+)/([^/]+)/?$ /go/_category/?idc=$1 [L] 
+RewriteRule ^idc/(([0-9]+_[0-9]+)+)/([^/]+)/page/([0-9]+)/?$ /go/_category/?idc=$1&page=$4 [L] 
+RewriteRule ^idc/(([0-9]+_[0-9]+)+)/([^/]+)/?$ /go/_category/?idc=$1 [L] 
+#cidc kategorie z rozwinietym menu
+RewriteRule ^cidc/(id_[0-9]+)/([^/]+)/page/([0-9]+)/?$ /go/_category/?cidc=$1&page=$3 [L] 
+RewriteRule ^cidc/(id_[0-9]+)/([^/]+)/?$ /go/_category/?cidc=$1 [L] 
+RewriteRule ^cidc/(([0-9]+_[0-9]+)+)/([^/]+)/page/([0-9]+)/?$ /go/_category/?cidc=$1&page=$4 [L]  
+RewriteRule ^cidc/(([0-9]+_[0-9]+)+)/([^/]+)/?$ /go/_category/?cidc=$1 [L] 
+
+#katalog PDF
+RewriteRule ^katalog-mikran-do-pobrania$ /go/_info/katalog.php [L]
+RewriteRule ^katalog-mikran-do-pobrania/page/([0-9]+)/?$ /go/_info/katalog.php?page=$1 [L]
+
+#mapa
+RewriteRule ^mapa-strony /go/_sitemap/ [L]
+
+#ksiazka adresowa
+#RewriteRule ^ksiazka-adresowa /go/_users/address_book.php [L]
+
+#nowy user
+RewriteRule ^dodaj-nowego$ /go/_users/new.php [L]
+RewriteRule ^przypomnij-haslo /go/_users/remind.php [L]
+
+#przechowalnia - wsparcie dla analytics
+RewriteRule ^przechowalnia$ /go/_basket/index3.php [L]
+
+#koszyk - wsparcie dla analytics
+RewriteRule ^(.*_basket/)$ /go/_basket/index.php?step=1 [R=301,L]
+#RewriteRule ^koszyk-start$ /go/_basket/index.php?step=1 [R=301,L]
+RewriteRule ^koszyk-start$ /go/_basket/index.php?step=1 [L]
+RewriteRule ^koszyk-dane$ /go/_basket/index.php?step=2 [L]
+RewriteRule ^koszyk-dane/?([^/]+)$ /go/_basket/index.php?$1 [L]
+RewriteRule ^koszyk-gotowe$ /go/_basket/register3.php [L]
+
+#
+# promocja dospereveo
+#
+RewriteRule ^dosperevo$ /id9292/Dosper-EVO-Uniwersalny-mieszalnik-do-silikonow-laboratoryjnych [L]
+
+
+RewriteRule ^(.*_info/)index\.php$ /$1 [R=301,L]
+RewriteRule ^(.*_category/)index\.php$ /$1 [R=301,L]
+#RewriteRule ^(.*_sitemap/)index\.php$ /$1 [R=301,L]
+RewriteRule ^index\.php$ /$1 [R=301,L]
+RewriteRule ^(.*)index\.htm$ /$1 [R=301,L]
+RewriteRule ^(.*)index\.html$ /$1 [R=301,L]
+RewriteRule ^(.*)index\.shtml$ /$1 [R=301,L]
+RewriteRule ^(.*)index\.asp /$1 [R=301,L]
+RewriteRule ^(.*)index\.aspx /$1 [R=301,L]
+RewriteRule ^(.*)default\.htm /$1 [R=301,L]
+RewriteRule ^(.*)default\.html /$1 [R=301,L]
+
+#ErrorDocument 400 /
+#ErrorDocument 401 /
+#ErrorDocument 403 /
+ErrorDocument 404 /go/_error/
+#ErrorDocument 500 /

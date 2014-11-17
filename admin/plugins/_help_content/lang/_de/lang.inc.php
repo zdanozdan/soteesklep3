@@ -1,0 +1,10 @@
+<?php
+$lang->help_content_menu=array(
+                );
+$lang->help_content_cols_list=array(
+                );
+$lang->help_content_cols=array(
+                );
+$lang->help_content_form_errors=array(
+                );
+?>

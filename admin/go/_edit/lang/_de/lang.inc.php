@@ -1,0 +1,80 @@
+<?php
+$lang->edit_menu=array(
+                'similar'=>"",
+                'similar_id'=>"",
+                'delete'=>"",
+                'preview'=>"",
+                'help'=>"",
+                'pasaz.onet.pl'=>"",
+                'robot'=>"",
+                'accessories'=>"",
+                'setup'=>"",
+                'add'=>"",
+                'edit'=>"",
+                'google'=>"",
+                'category'=>"",
+                'copy'=>"",
+                );
+$lang->edit_lang_versions="";
+$lang->edit_edit=array(
+                'options_adv'=>"",
+                'options_adv_edit'=>"",
+                'description'=>"",
+                );
+$lang->edit_add_description_info="";
+$lang->edit_edit_submit="";
+$lang->edit_edit_title="";
+$lang->edit_add_copy_user_id="";
+$lang->edit_photo_upload="";
+$lang->edit_m_photo_upload="";
+$lang->edit_photo_scale="";
+$lang->edit_submit="";
+$lang->edit_update_ok="";
+$lang->edit_link="";
+$lang->edit_xml_options="";
+$lang->edit_photo_delete="";
+$lang->edit_bar="";
+$lang->edit_accessories_title="";
+$lang->edit_setup_title="";
+$lang->edit_setup_form=array(
+                );
+$lang->edit_onet=array(
+                'onet_export'=>"",
+                'onet_status_delete'=>"",
+                'onet_status_update'=>"",
+                'onet_image_export'=>"",
+                'onet_image_title'=>"",
+                'onet_image_desc'=>"",
+                'onet_attrib'=>"",
+                'onet_not_file'=>"",
+                'onet_same_cat'=>"",
+                'onet_category'=>"",
+                );
+$lang->edit_onet_head="";
+$lang->edit_onet_select="";
+$lang->info_attrib_order="";
+$lang->edit_category_info="";
+$lang->edit_desc="";
+$lang->edit_noframes="";
+$lang->edit_google_title="";
+$lang->edit_google_cols=array(
+                'keywords'=>"",
+                'description'=>"",
+                'title'=>"",
+                );
+$lang->edit_category_title="";
+$lang->edit_category_cols=array(
+                'category_multi_1'=>"",
+                'category_multi_2'=>"",
+                );
+$lang->edit_errors=array(
+                'unknown_product'=>"",
+                'insert_error'=>"",
+                'file_to_big'=>"",
+                'file_max'=>"",
+                );
+$lang->edit_wp=array(
+                );
+$lang->edit_wp_dest=array(
+                );
+?>

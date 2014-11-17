@@ -1,0 +1,10 @@
+<?php
+$lang->color_names=array(
+                );
+$lang->themes_category_info=array(
+                );
+$lang->themes_menu=array(
+                );
+$lang->themes_titles=array(
+                );
+?>

@@ -1,0 +1,23 @@
+-- MySQL dump 8.21
+--
+-- Host: localhost    Database: soteesklep2devel2
+---------------------------------------------------------
+-- Server version	3.23.49-log
+
+--
+-- Table structure for table 'discounts'
+--
+
+CREATE TABLE discounts (
+  id mediumint(9) NOT NULL auto_increment,
+  idc varchar(255) default NULL,
+  idc_name text,
+  discount double default NULL,
+  id_producer int(11) default NULL,
+  producer_name text,
+  discount_cat double default NULL,
+  discount_producer double default NULL,
+  PRIMARY KEY  (id),
+  UNIQUE KEY idc_discounts_idx (idc)
+) TYPE=MyISAM;
+

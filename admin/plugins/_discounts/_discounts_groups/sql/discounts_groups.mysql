@@ -1,0 +1,19 @@
+CREATE TABLE discounts_groups (
+  id mediumint(9) NOT NULL auto_increment,
+  group_name varchar(255) default NULL,
+  user_id int(11) NOT NULL default '0',
+  default_discount float default NULL,
+  public int(11) default '0',
+  photo text,
+  group_amount float default '0',
+  calculate_period int(11) default '1',
+  start_date text,
+  end_date text,
+  PRIMARY KEY  (id)
+) TYPE=MyISAM;
+
+
+
+
+
+

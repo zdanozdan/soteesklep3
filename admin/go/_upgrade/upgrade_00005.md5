@@ -1,0 +1,19 @@
+
+a467deb6c0ea7e63d32d088fbd8135ee  ./.perm.php
+1c56a6dabe70fba2a5c8e384b8fab928  ./index.php
+5bd45bb56a8fa44be21a445ae7120057  ./upgrade.php
+812f83f0d8c97c97d43d7947eeabe521  ./upgrade25_30.php
+1c03197647de67e336f0efc9b23237ba  ./upgrade_25_order.php
+7915283d3ed225d2bdca502403540554  ./upgrade_25_themes.php
+88c839d2aa0e6a5d8ddbd77ca1b7c16a  ./upgrade_25_user.php
+70a14278046d33dc11f59930d44c9e57  ./html/upgrade.html.php
+798b9814a5a148010369b209c730af0c  ./include/menu.inc.php
+5d65605dd274f5f69854d61dec9a9377  ./include/upgrade.inc.php
+1bd70ac57ce4e78ba2041d3a517e3177  ./include/upgrade_menu_25.inc.php
+6ebb1ee1230e6c394a851e3d9e7e86a4  ./include/check_version.inc.php
+e88b419592928e685bb88e8218f59dc3  ./include/menu2.inc.php
+1d93425cd55c66261c77677fb02bf643  ./include/upgrade_00005.inc.php
+f29ebddb2e3450c308c895dc555118b5  ./include/upgrade_database.inc.php
+7a66c59b820773e5395c628acef641c1  ./lang/_pl/lang.inc.php
+fdab99ea02277857384ff50ac9186a21  ./download_md5.php
+7331aef7e77116f8a21713fc47e510e4  ./check_new_upgrade.php

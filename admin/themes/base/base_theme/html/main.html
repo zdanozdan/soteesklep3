@@ -1,0 +1,103 @@
+<?php
+global $config;
+global $lang;
+global $permf;
+?>
+
+<?php $this->desktop_open();?>
+
+  <table width=100%>
+  <tr>
+  <td>
+  <b><?php print $lang->main_version; include("VERSION");?> 
+    
+  <?php
+  if ($config->nccp=="0x01f4") {
+      print "light";
+  } else print "expert";
+  print "</b>";
+  ?>
+
+  <?php
+  // wy¶wietl informacje o trybie multi_shop  
+  global $config;
+  if (@$config->id_shop==1) {
+      print "[".@$lang->multi_shop['multi_shop'].": ".$lang->multi_shop['master']." $config->id_shop]";
+  } elseif (@$config->id_shop>1) {
+      print "[".@$lang->multi_shop['multi_shop'].": ".$lang->multi_shop['slave']." $config->id_shop]";
+   ?>
+  <?php
+  } else {
+      print @$lang->multi_shop['single'];
+  }
+  ?>
+
+  </td>
+  <td align=right>  
+  <?php
+  // dodanie definicji lang, do werji, ktore nie maja tego zdefiniowane (wymagane w perzypadku pathcowania starszych wersji)
+  if (empty($lang->check_version)) {
+      $lang->check_version="Sprawd¼ aktualizacje programu";
+  }
+  $permf->a("<u>".$lang->check_version."</u>","/go/_upgrade/check_new_upgrade.php");
+  ?>
+  </td>
+  </tr>
+  </table>
+
+<?php print $lang->main_welcome ;?>
+<?php $this->desktop_close();?>
+
+<p>
+
+<?php
+// wysietl dekstop z ikonkami do poszczegolnych funkcji
+$this->desktop_open();
+print "<center>\n";
+
+require_once ("include/set_icons.inc.php");
+$set_icons = new SetIcons;
+$icons_main=$set_icons->main();
+$icons_orders=$set_icons->orders();
+$this->table_list($icons_main,6,100);
+
+print "<p>";
+
+// wyswietl linki do systemow platnosci tylko dla lang=pl
+if ($config->lang=="pl") {
+?>
+<?php if ($config->nccp=="0x1388"){ ?>
+<table border="0" cellpadding="0" cellspacing="0" width="100%" align="left">
+<tr>
+<td style="padding-left:100px;" width="30%">
+  <?php $permf->a("<b>".$lang->admin_bottom_menu['payments']."</b><br />","/go/_main_configure/index.php");?>
+</td>
+<td width="100%" align="left" style="padding-left:35px;">
+  <?php $permf->a("<b>".$lang->admin_bottom_menu['ext_store']."</b><br />","/go/_main_configure/index.php");?>
+</td>
+</tr>
+
+<tr>
+<td style="padding-left:100px;">
+  <?php $permf->a("<li><u>".$lang->admin_bottom_menu['polcard']."</u></li>","/plugins/_pay/_polcard/index.php");?>
+  <?php $permf->a("<li><u>".$lang->admin_bottom_menu['p24']."</u></li>","/plugins/_pay/_przelewy24/index.php");?>
+  <?php $permf->a("<li><u>".$lang->more."</u></li>","/go/_main_configure/index.php");?>
+</td>
+<td style="padding-left:35px;">
+  <?php $permf->a("<li><u>".$lang->admin_bottom_menu['pasaz.onet.pl']."</u></li>","/plugins/_pasaz.onet.pl/index.php");?>
+  <?php $permf->a("<li><u>".$lang->admin_bottom_menu['pasaz.wp.pl']."</u></li>","/plugins/_pasaz.wp.pl/index.php");?>
+  <?php $permf->a("<li><u>".$lang->admin_bottom_menu['pasaz.interia.pl']."</u></li>","/plugins/_pasaz.interia.pl/index.php");?>
+</td>
+</tr>
+
+</table>
+<?php } ?>
+<?php
+} else {
+    $icons_orders=$set_icons->ordersEn();
+    $this->table_list($icons_orders,6,100);
+}
+
+print "</center>\n";
+$this->desktop_close();
+?>

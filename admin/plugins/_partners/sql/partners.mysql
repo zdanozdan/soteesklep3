@@ -1,0 +1,14 @@
+CREATE TABLE partners (
+  id mediumint(9) NOT NULL auto_increment,   
+  partner_id INT,
+  name TEXT,
+  www TEXT,
+  email TEXT,
+  rake_off double,
+  PRIMARY KEY(id)
+);
+
+alter table order_register add partner_id INT;
+alter table order_register add rake_off_amount double;
+alter table order_register add partner_name TEXT;
+

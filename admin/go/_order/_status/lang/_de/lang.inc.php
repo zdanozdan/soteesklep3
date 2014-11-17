@@ -1,0 +1,9 @@
+<?php
+$lang->order_status_bar="";
+$lang->order_status_cols=array(
+                );
+$lang->order_status_menu=array(
+                );
+$lang->order_status_list=array(
+                );
+?>

@@ -1,0 +1,77 @@
+<html>
+
+<head>
+<style>
+   BODY {background-color: white; font-size: 10pt; font-family: verdana,helvetica}
+</style>
+
+<script>
+// Some JavaScript for the "Programmatic manipulation of Treeview" functionality
+
+// In order to show a folder open all the folders that are higher in the hierarchy 
+// all the way to the root must also be opened.
+// (Does not affect selection highlight.)
+function openFolderInTree(linkID) 
+{
+	var folderObj;
+	folderObj = parent.treeframe.findObj(linkID);
+	folderObj.forceOpeningOfAncestorFolders();
+	if (!folderObj.isOpen)
+		parent.treeframe.clickOnNodeObj(folderObj);
+} 
+
+// Load a page as if a node on the tree was clicked (synchronize frames)
+// (Highlights selection if highlight is available.)
+function loadSynchPage(linkID) 
+{
+	var folderObj;
+	docObj = parent.treeframe.findObj(linkID);
+	docObj.forceOpeningOfAncestorFolders();
+	parent.treeframe.clickOnLink(linkID,docObj.link,'basefrm'); 
+} 
+function collapseTree()
+{
+	//hide all folders
+	parent.treeframe.clickOnNodeObj(parent.treeframe.foldersTree)
+	//restore first level
+	parent.treeframe.clickOnNodeObj(parent.treeframe.foldersTree)
+}
+</script>
+</head>
+
+
+<body bgcolor=white>
+
+<script>
+//This code is only needed for the demo, not for your site
+var d=""
+var queryStr = window.location.search.substr(1)
+queryStr=unescape(queryStr)
+queryStr=queryStr.replace("+"," ").replace("+"," ")
+if (queryStr.length != 0)
+	document.write("Date clicked: " + queryStr + "<br><br>");
+</script>
+
+<h4>1 - Thousands-of-nodes Example</h4>
+
+<B>See how fast it is to build a large tree</B><p>
+Transfering the files to the browser on a slow connection may still take some unavoidable seconds because the definition of this 1500 nodes tree still takes a 105KB definition file. However, after the internet transfer, creating the actual tree on the browser, setting it up, and displaying it doesn't take much longer than with the smallest of the trees.<p>
+
+Folders for years and folders for months do not load pages themselves and, thus, cannot be highlighted. All days can be highlighted with the exception of Feb 1, 2000. The exclusion of highlight for one node shows the flexibility of the highlight settings in Treeview.<p>
+
+A tree with years, months, and days is a rather ficticious example; there are better ways to pick a date. Real world examples of very large trees include presenting data from a database or with the structure of a file system.<p>
+
+<h4>2 - Programmatic manipulation of Treeview</h4>
+
+<B>Test tree synchronization across frames:</B><br>
+<ul>
+<li><A HREF="javascript:collapseTree()">Collapse tree</A>, restores initial layout;
+<li><A HREF="javascript:openFolderInTree('X-759')">Open a folder</A>, expands January 2002;
+<li><A HREF="javascript:loadSynchPage('Y-74')">Click a "doc"</A>, clicks and loads March 10, 2000 (see change of date at top of page.)
+</ul>
+
+To see the short, cross-browser JavaScript code used to carry out these three functions, download the Treeview and open the file demoLargeRightFrame.html. <p>
+
+A typical use case for "Colapse tree" is in a link or button put in the left frame as a convinience to the users. "Open folder" and "Click a doc" are important functions for websites that let the user open new pages not only from the tree in the left frame but also from pages loaded into the right frame. With these functions it is possible to keep the tree in synch with what is happening in the right frame, opening folders and selecting "docs" without any actual mouse click on them.
+</body>
+</html>

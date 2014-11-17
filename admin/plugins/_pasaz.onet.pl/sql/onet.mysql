@@ -1,0 +1,32 @@
+CREATE TABLE onet_category (
+  id mediumint(9) NOT NULL auto_increment,
+  id_user varchar(32) NOT NULL default '',
+  name text,
+  description text,
+  display_name text,
+  sub_category int(11) default NULL,
+  id_over_category int(11) default NULL,
+  PRIMARY KEY  (id),
+  UNIQUE KEY id_user_onet_category_idx (id_user)
+); 
+
+CREATE TABLE  onet_main_category (
+	id 		mediumint(9) NOT NULL auto_increment,   
+	name 		varchar(255),
+	PRIMARY KEY(id)
+);
+
+ALTER TABLE main ADD onet_category varchar(255);
+-- czy produkt kasujemy czy updaejtujemy lub dodajemy jesli 1 - update, dodanie 0- kasujemy
+ALTER TABLE main ADD onet_status int(11) default 1;
+-- czy produkt ma byc eksportowany czy nie 1 - exportujemy 0 - nieekssportujemy
+
+ALTER TABLE main ADD onet_export int(11) default 0;
+ALTER TABLE main ADD onet_image_export int(11) default 0;
+ALTER TABLE main ADD onet_image_desc varchar(255);
+ALTER TABLE main ADD onet_image_title varchar(255);
+ALTER TABLE main ADD onet_attrib varchar(255);
+
+
+
+

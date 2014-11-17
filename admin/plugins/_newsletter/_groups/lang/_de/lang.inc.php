@@ -1,0 +1,16 @@
+<?php
+$lang->newsletter_options=array(
+                );
+$lang->newsletter_menu=array(
+                );
+$lang->newsletter_cols=array(
+                );
+$lang->groups_menu=array(
+                );
+$lang->newsletter_groups=array(
+                );
+$lang->newsletter_form_errors=array(
+                );
+$lang->groups_list=array(
+                );
+?>

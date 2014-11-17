@@ -1,0 +1,58 @@
+<?php
+/**
+* Wyswietl kategroie z odpowiednimi opcjami, sprawdz jaki system kategorii wyswietlic
+*
+* @author  m@sote.pl
+* @version $Id: category_show.inc,v 2.11 2005/08/03 13:58:48 maroslaw Exp $
+* @package category
+*/
+
+global $config;
+global $_SESSION;
+global $_REQUEST;
+global $sess;
+global $__producer_filter;
+
+if (in_array("producers_category",$config->plugins)) {
+    $producer_filter=0;
+    if (! empty($_REQUEST['producer_filter'])) $producer_filter=$_REQUEST['producer_filter'];
+    if ((empty($producer_filter)) && (! empty($_SESSION['__producer_filter'])) && (@$_REQUEST['producer_filter']!="0")) {
+        $producer_filter=$_SESSION['__producer_filter'];
+    }
+    $__producer_filter=$producer_filter;
+    $this->producers_category();
+} // end plugin test
+
+// jesli mamy typ kategorii "hybrid" to glowne kategorie przedstaw jako standardowe - statyczne
+// a kategorie wg producentow jako dynamiczne
+if ($config->category['type']=="hybrid") {
+    if (@$producer_filter>0) {
+        $config->category['type']="treeview";
+    } else {
+        $config->category['type']="standard"; // wylacz standardowe statyczne menu
+        $config->category['openall']=0;       // domyslnie zamknij kategorie
+    }
+}
+
+if (@$config->google_active) {
+    global $_SESSION, $GLOBALS,$__category;
+    require_once ("config/tmp/category.php");
+    $this->categoriesRecursive($__category);
+} else {
+
+    // wstaw menu kategorii produktow
+    switch (@$config->category['type']) {
+        case "standard":
+        include_once ("include/category.inc");
+        break;
+        case "treeview":
+        $this->theme_file("treeview.html.php");
+        break;
+        default:
+        $this->theme_file("treeview.html.php");
+        break;
+    }
+
+    $sess->register("__producer_filter",$__producer_filter);
+}
+?>

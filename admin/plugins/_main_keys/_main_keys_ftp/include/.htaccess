@@ -1,0 +1,8 @@
+<?php
+/**
+* @version    $Id: .htaccess,v 1.2 2004/12/20 17:59:56 maroslaw Exp $
+* @package    main_keys
+* @subpackage main_keys_ftp
+*/
+?>
+deny from all

@@ -1,0 +1,23 @@
+<p>
+<?php
+print $lang->help_content_text1." <B>";
+if ($config->admin_lang=='pl'){
+    print $title;
+}else{
+    print $title_en;
+}
+print "</B> ".$lang->help_content_text2."<BR><BR>";
+print "";
+if ($date_update!="0000-00-00") {
+print $lang->help_content_date_update." : ".$date_update; 
+}
+print "<BR>";
+if ($config->admin_lang=='pl'){
+    print $html;
+}else{
+    print $html_en;
+}
+?>
+<script>
+window.print();
+</script>

@@ -1,0 +1,7 @@
+<?php
+/**
+* @version    $Id: .htaccess,v 1.2 2004/12/20 17:59:50 maroslaw Exp $
+* @package    help_content
+*/
+?>
+deny from all

@@ -1,0 +1,3367 @@
+diff -ruN ../soteesklep3/000-upgrade_config.php soteesklep3/000-upgrade_config.php
+--- ../soteesklep3/000-upgrade_config.php	1970-01-01 01:00:00.000000000 +0100
++++ soteesklep3/000-upgrade_config.php	2006-08-30 09:10:23.000000000 +0200
+@@ -0,0 +1,3 @@
++<?php
++define("PATCH_VERSION",16);
++?>
+diff -ruN ../soteesklep3/admin/plugins/_ceneo.pl/include/ceneo_load_offer.inc.php soteesklep3/admin/plugins/_ceneo.pl/include/ceneo_load_offer.inc.php
+--- ../soteesklep3/admin/plugins/_ceneo.pl/include/ceneo_load_offer.inc.php	1970-01-01 01:00:00.000000000 +0100
++++ soteesklep3/admin/plugins/_ceneo.pl/include/ceneo_load_offer.inc.php	2006-08-30 13:43:00.000000000 +0200
+@@ -0,0 +1,357 @@
++<?php
++/**
++ * Obsluga tworzenia pliku dla ceneo.pl
++ *
++ *
++ * @author krzys@sote.pl
++ * @version $Id: ceneo_load_offer.inc.php,v 1.10 2006/08/30 09:47:51 lukasz Exp $
++* @package    pasaz.ceneo.pl
++ */
++
++
++/**
++ * Includowanie potrzebnych klas 
++ */
++require_once("include/metabase.inc");
++require_once("include/ftp.inc.php");
++
++
++
++/**
++ * Klasa OnetLoadOffer
++ *
++ * @package onet
++ * @subpackage admin
++ */
++class CeneoLoadOffer{
++
++    var $ceneo_mode='';                  // tryb ladowania produktow do ceneo_pasaz full - pelny update - przyrostowy
++    var $ceneo_shop_id='';               // id sklepu przyznawany przez administratora z ceneo_pasaz
++    var $www='';                        // adres internetowy sklepu
++    var $count=0;
++    var $partner_name='ceneo';               // nazwa partnera
++    var $target='';
++    var $ftp_dir;
++    /**
++	* Konstruktor obiektu ceneoLoadOffer
++	*
++	* @access public
++	*
++	* @author rdiak@sote.pl
++	*
++	* @return boolean true/false
++	*/
++    function ceneoLoadOffer() {
++        global $ceneo_config;
++        global $config;
++
++        $this->ceneo_shop_id=$ceneo_config->ceneo_shop_id;
++        $this->ftp_dir=$config->ftp_dir;
++        $this->target=$this->ftp_dir."/htdocs/";
++        $this->www=$config->www;
++        return true;
++    } // end ceneoLoadOffer()
++
++    /**
++	* Funkcja zwaracajaca nalowek pliku xml
++	*
++	* @access public
++	*
++	* @author rdiak@sote.pl
++	*
++	* @return string naglowek pliku xml
++	*
++	*/
++    function ceneo_get_head() {
++        $str="<?xml version=\"1.0\" encoding=\"ISO-8859-2\"?>\n<!DOCTYPE pasaz:Envelope SYSTEM \"loadOffers.dtd\">\n<pasaz:Envelope xmlns:pasaz=\"http://schemas.xmlsoap.org/soap/envelope/\">\n<pasaz:Body>\n<loadOffers xmlns=\"urn:ExportB2B\">\n";
++        return $str;
++    } //end ceneo_get_head()
++
++    /**
++	* Funkcja zwraca stopke pliku xml .
++	*
++	* @access public
++	*
++	* @author rdiak@sote.pl
++	*
++	* @return string stopka pliku xml
++	*
++	*/
++    function ceneo_get_foot() {
++        $str="</loadOffers>\n</pasaz:Body>\n</pasaz:Envelope>";
++        return $str;
++    } //end ceneo_get_foot()
++
++    /**
++	 * Funkcja zwraca url produktu .
++	 *
++	 * @access public
++	 *
++	 * @return string url
++	 */
++    function ceneo_prepare_url() {
++        global $mdbd;
++        global $config;
++
++        $data=$mdbd->select("partner_id,name","partners","name=?",array($this->partner_name=>"string"));
++        $partner_id=$data['partner_id'];
++        $code=md5("partner_id.$partner_id.$config->salt");                 // wygenerowanie kodu kontrolnego
++        $link="&partner_id=".$partner_id."&code=".$code;    // budowanie linku
++        return $link;
++    }
++
++
++    /**
++	 * Funkcja formuje komunikat xml z oferta sklepu  .
++	 *
++	 * @access public
++	 *
++	 * @author rdiak@sote.pl
++	 *
++	 * @return string stopka pliku xml
++	 *
++	 */
++    function & prepare_offer() {
++        global $database;
++        global $lang;
++        $str='';
++        //$str.=$this->ceneo_get_head();
++        // jest to tablica tablic zawierajaca dane z oferty
++        $dane=$this->get_database();
++        if(empty($dane)) return false;
++
++        // kawalek url odpwiedzialny za prawid³ow± identyfikacjê partnera
++        $code=$this->ceneo_prepare_url();
++        foreach($dane as $data){
++            $price=$this->ceneo_currency($data);
++            $url="http://".$this->www."/go/_info/?id=".$data['id'].$code;
++            $str.="<offer>\n";
++            $str.="\t<id>".$data['user_id']."</id>\n";
++            $str.="\t<name>".$data['name']."</name>\n";
++            $str.="\t<price>".$price."</price>\n";
++            $str.="\t<url>".$url."</url>\n";
++            $str.="\t<categoryId>".$data['category'];
++            if (!empty($data['category2'])){
++            $str.="/".$data['category2'];
++            }
++            if (!empty($data['category3'])){
++            $str.="/".$data['category3'];
++            }
++            if (!empty($data['category4'])){
++            $str.="/".$data['category4'];
++            }
++            if (!empty($data['category5'])){
++            $str.="/".$data['category5'];
++            }
++            $str.="</categoryId>\n";
++            $xml_description=$this->_cut_html($data['xml_description']);
++            $str.="\t<description>".($xml_description)."</description>\n";
++          	if(isset($data['photo']) && !empty($data['photo']) && strlen($data['photo'])>0)
++            	$str.="\t".$this->ceneo_image($data)."\n";
++
++                $str.="\t<attributes>\n";
++                $str.="<attribute>\n";
++                $str.="<name>Producent</name>\n";
++                $str.="<value>".$data['producer']."</value>\n";
++                $str.="</attribute>\n";
++                $str.="\t</attributes>\n";
++            
++            $str.="</offer>\n\n";
++            $this->count++;
++        }
++        //$str.=$this->onet_get_foot();
++        $offer=&$str;
++        return $offer;
++    } //end prepare_offer()
++
++    /**
++	* Funkcja zapisuje oferte do pliku  .
++	*
++	* @access public
++	*
++	* @author rdiak@sote.pl
++	*
++	* @return string stopka pliku xml
++	*
++	*/
++    function load_offer() {
++        global $DOCUMENT_ROOT;
++        global $lang;
++        global $ceneo_config;
++
++
++        $offer1="<offers>\n".$this->prepare_offer()."</offers>\n";
++        $file_name="xml_offer_ceneo.xml";
++        $offer=$this->ceneo_get_head();
++        $offer.=$offer1;
++        $offer.=$this->ceneo_get_foot();
++        
++        if($offer) {
++            $file=$DOCUMENT_ROOT."/tmp/ceneo.xml";
++            if  ($fd=fopen($file,"w+")) {
++                fwrite($fd,$offer,strlen($offer));
++                fclose($fd);
++            }
++        }
++        $this->load_ftp($file);
++
++    } // end load_offer
++
++    /**
++	* Funkcja ceneo_currency przelicza cene jesli waluta jest inna niz PLN
++	*
++	* @access public
++	*
++	* @author rdiak@sote.pl
++	*
++	* @param  string $price_brutto nazwa zdjecia,
++	*
++	* @return string $price przelicznona cena
++	*
++	*/
++    function ceneo_currency($data) {
++        global $database;
++        $currency=$database->sql_select_data_array("id","currency_val","currency");
++        $id_currency=$data['id_currency'];
++
++        if ( $id_currency > 1 ) {
++            $price_brutto=($data['price_currency']*$currency[$id_currency])*(1+($data['vat']/100));
++            if ($data['discount'] >0 && $data['discount'] <100) {
++                $price_brutto=$price_brutto-(($price_brutto*$data['discount'])/100);
++            }
++        } else {
++            $price_brutto=$data['price_brutto']*1;
++            if ($data['discount'] >0 && $data['discount'] <100) {
++                $price_brutto=$price_brutto-(($price_brutto*$data['discount'])/100);
++            }
++        }
++
++        if(eregi("(^[0-9]{1,}$)",$price_brutto)) {
++            $price_brutto=$price_brutto.".00";
++        }elseif(eregi("(^[0-9]{1,}\.[0-9]{1}$)",$price_brutto)) {
++            $price_brutto=$price_brutto."0";
++        }elseif(eregi("(^[0-9]{1,}\.[0-9]{2}$)",$price_brutto)) {
++            $price_brutto=$price_brutto;
++        }elseif(eregi("^[0-9]{1,}\.[0-9]{0,17}$",$price_brutto)) {
++            preg_match("/^(\d{1,})\.(\d{2})/",$price_brutto,$data_match);
++            $price_brutto=$data_match[1].".".$data_match[2];
++        }
++        return $price_brutto;
++    } // end ceneo_currency
++
++    /**
++	* Funkcja formuje komunikat xml z oferta sklepu  .
++	*
++	* @access public
++	*
++	* @author rdiak@sote.pl
++	*
++	* @return string stopka pliku xml
++	*
++	*/
++    function & get_database() {
++        global $db;
++
++        global $database;
++        
++        //print "<pre>";
++        //print_r($main_param);
++        //print "</pre>";
++        $product=array();
++        $query="SELECT ";
++        $query.="ceneo_export,";
++        $query.="user_id,photo,name_L0,price_brutto,producer,price_currency,xml_description_L0,vat,id_currency,discount,hidden_price,category1,category2,category3,category4,category5,id";
++        $query.=" FROM main WHERE ceneo_export=1";
++
++        $prepared_query=$db->PrepareQuery($query);
++        if ($prepared_query) {
++            $result=$db->ExecuteQuery($prepared_query);
++            if ($result!=0) {
++                $num_rows=$db->NumberOfRows($result);
++                if ($num_rows>0) {
++                    for ($i=0;$i<$num_rows;$i++) {
++                        $data=array();                       
++                     
++                        $data['user_id']=$db->FetchResult($result,$i,"user_id");
++                        $data['photo']=$db->FetchResult($result,$i,"photo");
++                        $data['name']=$db->FetchResult($result,$i,"name_L0");
++                        $data['price_brutto']=$db->FetchResult($result,$i,"price_brutto");
++                        $data['producer']=$db->FetchResult($result,$i,"producer");
++                        $data['price_currency']=$db->FetchResult($result,$i,"price_currency");
++                        $data['xml_description']=$db->FetchResult($result,$i,"xml_description_L0");
++                        $data['vat']=$db->FetchResult($result,$i,"vat");
++                        $data['id_currency']=$db->FetchResult($result,$i,"id_currency");
++                        $data['discount']=$db->FetchResult($result,$i,"discount");
++                        $data['hidden_price']=$db->FetchResult($result,$i,"hidden_price");
++                        $data['category']=$db->FetchResult($result,$i,"category1");
++                        $data['category2']=$db->FetchResult($result,$i,"category2");
++                        $data['category3']=$db->FetchResult($result,$i,"category3");
++                        $data['category4']=$db->FetchResult($result,$i,"category4");
++                        $data['category5']=$db->FetchResult($result,$i,"category5");
++                        $data['id']=$db->FetchResult($result,$i,"id");
++                        
++                        
++                        foreach($main_param[$data['user_id']] as $key=>$value) {
++                            if(preg_match("/ceneo/",$key)) {
++                                $data[$key]=$main_param[$data['user_id']][$key];
++                            }
++                        }
++                        array_push ($product, $data);
++                    } // end for
++                }
++            } else die ($db->Error());
++        } else die ($db->Error());
++        $data=&$product;
++        return $data;
++    } // end get_database
++
++    /**
++	* Funkcja onet_check_image zwraca gotowy tag xml z parametrami zdj-Bêcia -A
++	*
++	* @access public
++	*
++	* @author rdiak@sote.pl
++	*
++	* @param  string $photo  nazwa zdjecia,
++	* @param  string $url    adres url do zdjecia
++	*
++	* @return string tag xml zawierajacy parametry zdjecia
++	*
++	*/
++    function ceneo_image($data) {
++    	$url="http://".$this->www."/photo/".$data['photo'];
++        $path = './../../photo/'.$data['photo'];
++    	$size = @getimagesize ($path);
++        $str="<image height=\"".@$size[1]."\" width=\"".@$size[0]."\" title=\"".$data['name']."\">".$url."</image>";
++        return $str;
++    } // end ceneo_image
++
++    /**
++	 * Funkcja ftpuje plik do okrelsonej lokalizacji.
++	 *
++	 * @param  string $file nazwa pliku
++	 *
++	 * @return boolean true/false
++	 */
++    function load_ftp($file) {
++        global $ftp;
++        global $DOCUMENT_ROOT;
++        $ftp->connect();
++        $ftp->put("$file","$this->target","ceneo.xml");
++        $ftp->close();
++        return true;
++    } // end load_ftp()
++
++    /**
++	 * Wytnij znaczniki html ze stringu
++ 	 *
++     * @return string ciag znakow bez znacznikow html
++     */
++    
++    function _cut_html($str) {
++        $str=preg_replace("'<[\/\!]*?[^<>]*?>'si","",$str);
++        return $str;
++    } // end _cut_html
++    
++} // end class ceneoLoadOffer
++?>
+diff -ruN ../soteesklep3/config/config.inc.php soteesklep3/config/config.inc.php
+--- ../soteesklep3/config/config.inc.php	1970-01-01 01:00:00.000000000 +0100
++++ soteesklep3/config/config.inc.php	2006-08-30 11:46:45.000000000 +0200
+@@ -0,0 +1,870 @@
++<?php
++/**
++* Konfiguracja systemowa sklepu.
++*
++* UWAGA! Plik tem mo¿e byæ edytowany tylko przez progamistów, którzy dok³adnie wiedz± co zmieniaj±. Nie jest to
++* plik konfiguracji sklepu dla uzytkowników sklepu.
++*
++* Wiele warto¶ci zdefiniowanych i opisach w klasie Config,
++* jest nadpisywana przez inne pliki konfiguracyjne np. plik tworzony z definicjami w wprowadzanymi w panelu
++* config/auto_config/user_config.inc.php, dlatego te¿ zmiana warto¶ci nie zawsze spodowuje to, czego oczekujemy.
++* Je¶li chcemy wprowadzaæ zmiany to nale¿y dok³adnie prze¶ledziæ ca³± drogê generowania danych dla obiektu
++* $config.
++*
++* @author  m@sote.pl lech@sote.pl
++* @version $Id: config.inc.php,v 2.131 2006-08-30 09:39:27 lukasz Exp $
++*
++* @package    default
++* \@lang
++* \@encoding
++*/
++
++/**
++* G³ówna klasa konfiguracji sklepu.
++* @package config
++* @subpackage base
++*/
++class Config {
++
++    /**
++    * Wersja SOTEeSKLEP. Seria.
++    */
++    var $version="3.5.x";
++
++    /**
++    * Numer pakietu aktualizcyjnego, który ma byæ instalowany dla tej wersji jako pierwszy.
++    * Uwaga! Warto¶c ta MUSI byæ zmieniana przy ka¿dym generowaniu nowego numeru wersji. 
++    * Wstawiamy tu numer kolejnego uaktualnienia, które zostanie wydane po wydaniu wersji.
++    */
++    var $pkg_first_number=17;
++
++    
++    /**
++    * devel=1, wersje debveloperska sklepu.
++    * @ignore
++    * @todo dodac obs³ugê trybu dla developerów
++    */
++    var $devel=1;
++
++    /**
++    * Rodzaj bazy danych; obecnie tylko mysql.
++    */
++    var $dbtype="mysql";
++
++    /**
++    * Nazwa bazy danych. Pod t± zmienn± zostan± podstawione odszyfrowane dane dot. bazy danych.
++    */
++    var $dbname;
++
++    /**
++    * Nazwa u¿ytkownika dostêpu do bazy danych.
++    */
++    var $dbuser;
++
++    /**
++    * Has³o dostêpu do bazy danych.
++    */
++    var $dbpass;
++
++    /**
++    * Serwer bazy danych.
++    */
++    var $dbhost;
++
++    /**
++    * Okre¶lenie czy dana wersja jest demonstracyjn?: yes - wersja demo, no - wersja produkcyjna
++    * Je¶li demo jest w³±czone to panel sklepu jest tylko w trybie do odczytu.
++    * @todo zmieni? "yes"=>1, "no"=>0
++    */
++    var $demo="no";
++
++    /**
++    * Okre¶lenie poziomu logowania. 1 - logowanie w³±czone, 0 - wy³aczone
++    */
++    var $logs=1;                         // poziom logowania
++
++    /**
++    * Okre?lenie trybu parcy sklepu.
++    * Je¶li cd=1 to wy³±czane s± niektóre funkcje, dziêki czemu sklep ³atwiej jest zgraæ na CD.
++    * Opcja ta jest prze³±czana z panelu.
++    */
++    var $cd=0;
++
++    /* @deprecated since 3.0 */
++    var $simple="no";
++
++    /**
++    * Prefix URL do htdocs dla SV
++    * @deprecated since 3.0
++    */
++    var $htdocs_dir="";
++
++    /**
++    * Prefix URL do admin dla SV
++    * @deprecated since 3.0
++    */
++    var $admin_dir="";
++
++    /**
++    * prefix URL = htdocs_dir lub admin_dir
++    * @deprecated since 3.0
++    */
++    var $url_prefix="";
++    // end sv:
++
++    /**
++    * Adres internetowy sklepu. Zmienna konfigurowana z panelu.
++    */
++    var $www;
++
++    /**
++    * @var int category_multi 1 - w³±cz opcjê: 1 produkt w kilku kategoriach, 0 - w p.w.
++    */
++    var $category_multi=1;
++
++    /**
++    * @var int Zmienna odpowiedzialna za wy¶wietlenie w sklepie listy walut do wyboru.
++    */
++
++    var $currency_show_form=1;
++    
++    // ************** LANG
++    var $langs_symbols = array(
++        0 => "pl",
++        1 => "en",
++        2 => "de",
++        3 => "cz",
++        4 => "ru",
++    );
++
++    var $langs_names = array(
++        0 => "Polski",
++        1 => "English",
++        2 => "Deutsch",
++        3 => "Cestina",
++        4 => "Russkij",
++    );
++
++    var $langs_encoding = array(
++        0 => "052|iso-8859-2",
++        1 => "018|iso-8859-1",
++        2 => "031|iso-8859-1",
++        3 => "015|iso-8859-2",
++        4 => "000|utf-8",
++    );
++
++    var $langs_active = array(
++        0 => 1,
++        1 => 1,
++        2 => 1,
++        3 => 1,
++        4 => 1,
++        );
++    
++    var $lang_id = 0;
++
++    // ************** LANG - END
++    
++    /**
++    * Jêzyk w którym bêdzie domy¶lnie pracowaæ sklep. Aktualna warto¶æ jezyka, w którym pracuje sklep.
++    * Po zmianie jêzyka jest modyfikaowana ta zmienna.
++    */
++    var $lang="en";
++
++    /**
++    * Domy¶lny jêzyk w sklepie (nie w panelu). Zmienna ta ma t± sam± warto¶æ co $config->lang.
++    * Jest ona wykorzystywana w panlu do sprawdzenia jêzyka zdefiniowanego dla sklepu, gdy¿
++    * w panelu zmienna $config->lang ma warto¶æ aktualnie wy¶wietlanego jêzyka dla panelu, co
++    * nie musi sie zgadzaæ z ustawieniami dla sklepu.
++    */
++    var $htdocs_lang="en";
++
++    /**
++    * Bazowy jêzyk sklepu. Wed³ug tego jezyka s± przypisywane g³ówne warto¶ci $lang, nastêpnie
++    * odczytywane s± warto¶ci dla jêzyka $config->lang, które nadpisuj± wcze¶niejsze definicje.
++    * Aktualnie zawsze warto¶æ "pl". 
++    */
++    var $base_lang="pl";
++
++    /**
++    * Jêzyk w którym bêdzie domy¶lnie pracowaæ panel administracyjny sklepu.
++    */
++    var $admin_lang="en";
++
++    /**
++    * Dostêpne jêzyki w sklepie. Oznaczenia.
++    */
++    var $languages=array("en","de","pl");
++    /**
++    * Nazwy jêzyków wg oznacze?.
++    */
++    var $languages_names=array
++    (
++    "en"=>"English",
++    "de"=>"Deutsch",
++    "pl"=>"Polski",
++    );
++
++    var $lang_active=array(
++    "pl"=>1,
++    "en"=>1,
++    "de"=>1,
++
++    );
++
++    /**
++    * @var array Zmienna odpowiedzialna za przypisanie odpowiedniej waluty odpowiediej wersji jêzykowej.
++    */
++
++    var $currency_lang_default=array("pl"=>1);
++
++    // start tematy wygl±du sklepu:
++    /**
++    * Nazwa tematu bazowego
++    */
++    var $base_theme="base_theme";
++
++    /**
++    * Nazwa tematu koñcowego(tematu  wygl±du).
++    * temat okre¶la katalog, w którym bêd± wyszukiwane odpowiednie pliki/szablony prezentacji itp.
++    */
++    var $theme="blue";
++
++    /**
++    * Lista dotêpnych tematow wygl±du sklepu
++    */
++    var $themes=array
++    (
++    "redball"=>"redball",
++    "blueball"=>"blueball",
++    "red"=>"red",
++    "blue"=>"blue",
++    "green"=>"green",
++    "brown"=>"brown",
++    "blueday"=>"blueday",
++    "grayday"=>"grayday",
++    "bluelight"=>"bluelight",
++    "pinklight"=>"pinklight",
++    );
++    // end tematy wygl?du sklepu:
++
++    // start tematy wygladu panelu administratora:
++    /**
++    * Nazwa bazowego tematu w panelu amdinistracyjnym.
++    */
++    var $admin_base_theme="base_theme";
++
++    /**
++    * Nazwa tematu koñcowego w panelu amdinistracyjnym.
++    */
++    var $admin_theme="base_theme";
++
++    /**
++    * Lista dotêpnych tematów wygladu panelu administracyjnego.
++    */
++    var $admin_themes=array
++    (
++    "base_theme"=>"standard",
++    "green"=>"jungle",
++    "box"=>"box",
++    );
++    // end tematy wygladu panelu administratora:
++
++    /**
++    * Okre¶lenie czy dla sklepu dostêpna jest obs³uga SSL.
++    */
++    var $ssl=0;
++
++    /**
++    * @var string Domy¶lna waluta, w której bêda prezentowane i zapisywane ceny.
++    *             Jest to waluta rozliczenia.
++    */
++    var $currency="PLN";
++
++    /**
++    * Konto, na które s± wysylane zamówienia.
++    */
++    var $order_email='';
++
++    /**
++    * Od kogo bêd± wysy³ane wiadomo¶ci z zamówieniem.
++    */
++    var $from_email='';
++
++    /**
++    * Dane sprzedawcy - edytowane z panelu.
++    */
++    var $merchant=array();
++
++    /**
++    * @var array lista edytowalnych tematow wygladu sklepu
++    */
++    var $editable_themes=array(
++    "blue"=>"blue",
++    "redball"=>"redball",
++    "blueday"=>"blueday",
++    "grayday"=>"grayday",
++    "bluelight"=>"bluelight",
++    "pinklight"=>"pinklight",
++    );
++
++    /**
++    * Maksymalna wielko?? uploadowanego pliku w bajtach: 1000000=1MB
++    */
++    var $max_file_size=1000000;
++
++
++    // start FTP:
++    // dane konta ftp, na ktorym jest zainstalowany program
++    var $ftp_dir='';
++    var $ftp_password=-1;                // UWAGA! nie wpisywac tu hasla!
++    var $ftp_port="21";
++    // end FTP:
++
++    /**
++    * Dodatkowy klucz wykorzystywany do kodowania.
++    * Po zainstalowaniu sklepu NIE WOLNO zmieniaæ tej warto¶ci.
++    */
++    var $salt='12345678901234567890123456789012';
++
++    /**
++    * Adres servleta eCard
++    * @deprecated since 3.0
++    */
++    var $ecard_servlet="http://adres_servleta_ecardu";
++    // Ujednolicenie kolorów elementach sklepu
++    var $colors=array("light"=>"#E9F0F8",
++    "dark"=>"#6699cc",
++    );
++
++    /**
++    * Opcja okre¶la, czy w sklepie mo¿na do³±czaæ zdêcia do zamówionych produktów np. zdjêcie na nadruki na koszulki.
++    * /go/_basket/_photo zalaczanie zdjec do produktow
++    */
++    var $basket_photo="no";
++
++    /**
++    * Czy zdjêcia robione sa aparatem cyfrowym? Jesli tak to nadawaj automatycznie nazwy zdjeciom wg. id
++    */
++    var $cyfra_photo=1;
++
++    /**
++    * Typ ceny jaki siê ma wyswietlaæ: netto, brutto, netto/brutto
++    */
++    var $price_type="netto/brutto";
++
++    /**
++    * Ilo¶c produktów na listach w zale¿no¶ci od typu listy.
++    * "short" - lista uproszczona bez zdjec i opisu, "long" - pelna lista ze zdjeciami i krotkim opisem
++    */
++    var $products_on_page=array
++    (
++    "short"=>20,
++    "long"=>10
++    );
++
++    /* Domy¶lny rodzaj listy proudktow "short", "long" jw. */
++    var $record_row_type_default="long";
++
++    var $vat_confirm=1;
++
++    /**
++    * Rozmiary du¿ych i ma³ych zdjêæ na listach i w informacjach szczeg³oowych produktów.
++    */
++    var $image=array
++    (
++    "max_size" =>"300",
++    "min_size" =>"115",
++    );
++	
++    /**
++    * Poka¿ numer id produktu w sklepie
++    */
++    
++    var $show_user_id=1;
++    
++    /**
++    * Od jakiego numeru numerowaæ transakcje, domy¶lne id startowe transakcji
++    */
++
++    var $id_start_orders_default=1;
++
++    /**
++    * Okre¶lenie czy wstawiamy okienko newsletter na stronie
++    */
++    var $newsletter=1;
++
++    /**
++    * Okre¶lenie czy wstawiamy newsedit na g³ównej stronie sklepu
++    */
++
++    var $newsedit=0;
++
++    /**
++    * Newsedit w kolumnach jednej czy dwoch
++    */
++
++    var $newsedit_columns_default=1;
++
++    /**
++    * Dpmy¶lna ilo¶æ produktów kolumnach promocje,nowosci itd
++    */
++    var $random_on_page=array("promotion"=>2,
++    "newcol"=>3,
++    "bestseller"=>2,
++    );
++
++    /**
++    * Domy¶lny rodzaj sortowania produktów na listach.
++    */
++    var $main_order_default="name_L0";
++
++    /**
++    * Pola, ktore musz byc zaselectowane do odczytania nazwy produktu, producenta i ceny
++    */
++    var $select_main_price_list="id,user_id,name_L0,name_L1,name_L2,name_L3,name_L4,producer,price_brutto,vat,price_brutto_detal,photo,price_brutto_2,hidden_price,ask4price,discount,price_currency,id_currency,id_category1,id_category2,id_category3,id_category4,id_category5,id_producer,max_discount,points,points_value";
++
++
++    /**
++    * Metody p³atno¶ci dostêpne w sklepie.
++    * UWAGA! Nie mo¿na zmieniaæ ID.
++    */
++    var $pay_method=array
++    (
++    "1"=>"Za zaliczeniem",
++    "2"=>"eCard",
++    "3"=>"PolCard",
++    // "4"=>"Inteligo",
++    // "5"=>"mBank",
++    // "6"=>"CitiConnect",
++    // "7"=>"PayU",
++    // "8"=>"WBK",
++    // "9"=>"SMS",
++    "11"=>"Przelew",
++    "12"=>"Przelewy24",
++    "20"=>"PlatnosciPL",
++    "21"=>"Allpay",
++    "101"=>"PayPal",
++    "110"=>"P³atno¶æ Kart±",
++    // "30"=>"AllPay",
++    "999"=>"DefaultPay",
++    );
++
++    /**
++    *Aktywacja wybranej metody platnosci
++    */
++    var $pay_method_active=array
++    (
++    "1"=>1,
++    "11"=>1,
++    "110"=>0,
++    );
++
++
++
++    /**
++    * Rodzaj prezentacji kategorii
++    * "treeview" - dynamiczne JS+DHTML, "standard" - statyczne z przeladowaniem strony
++    */
++    var $category=array
++    (
++    "type"=>"standard",
++    );
++
++    /**
++    * Przegladarki, ktore nie obs³uguj± javascript wymaganego dla Treeview.
++    *
++    * zachowana dla zgodno?ci
++    * @deprecated since 3.0
++    */
++    var $browsers_nojavascript=array();
++    // var $browsers_nojavascript=array("Mozilla/4","konqueror","safari");
++
++    /**
++    * Dostepno¶æ. Tablica ID->nazwa.
++    * Warto¶æ tablicy jest definiowana dynamicznie w ./auto_config/user_config.inc.php
++    */
++    var $availabale=array();
++
++    /**
++    * @var array tablica ze zmiennymi, ktore sa zpisywane przez uzytkwonika w ./auto_config/user_config.inc.php
++    */
++    var $user_vars=array("db","ftp","salt","md5_pin","license","auth_sign","config_setup",
++    "order_points","available","currency_data","currency_name",
++    "category","stats","merchant","order_email","from_email","newsletter_email",
++    "www","currency","cd_setup","theme","themes_active",
++    "record_row_type_default","producers_category_filter","google",
++    "price_type","currency","products_on_page","google","image",
++    "main_order_default","vat_confirm","id_start_orders_default","newsedit_columns_default",
++    "lang","lang_id","lang_active","currency_lang_default",
++    "category_multi","newsedit","newsletter","currency_show_form","cyfra_photo",
++    "basket_photo","htdocs_lang","pay_method_active","random_on_page","themes","theme","fields",
++    "editable_themes","admin_lang","home","in_category_down","catalog_mode","rss_link","happy_hour"	,"country_select",
++    "langs_symbols","langs_names","langs_active","langs_encoding","users_online","unit","id_shop","ssl","catalog_mode_options",
++    "ranking1_max_length","ranking2_max_length","ranking1_enabled","ranking2_enabled","depository",
++    "basket_ext","basket_wishlist","display_availability","show_user_id", "ssl"
++    );
++
++    // w³±czenie linków rss pod newsami
++    var $rss_link="1";
++	
++    // wy³±czenie poszerzonych informacji o produkcie w koszyku
++    var $basket_ext="0";
++
++    var $themes_active=array();
++    // w³±czenie trybu dla programistu
++    var $debug=0;
++    // w³±czenie trybu katalogowego - wy³±czenie koszyka
++    var $catalog_mode=0;
++    // opcje katalogu
++    var $catalog_mode_options=array(
++    "currency"=>"0",
++    "users"=>"0",
++    "newsletter"=>"0",
++    "newsedit"=>"0",
++    "price"=>"0",
++    );
++    // [1-5] ilosc porownywanych kategorii przy liscie produktow z tej samej kategorii
++    var $in_category_down=3;
++    // czy promocje, nowosci oraz wyszukiwanie maja zalezec od wybranego producenta?
++    var $producers_category_filter="yes";
++    // wprowadz id producenta i odpowiedni dla niego temat
++    var $themes_producers=array("12"=>"art_orange");
++    // wprowadz id kategorii i odpowieni temat dla danej kategorii np. 18, 18_1, 18_1_4 itp.
++    var $themes_category=array("18"=>"art_orange");
++    // end plugins
++
++
++    /**
++    * Ocena ryzyka transakcji  \@depend  $lang->pay_fraud
++    * true - nie wyswietlaj ostrzezenia, false - wyswietl ostrzezenie przy transakcji
++    * wartosc <0 oznacza inne zagrozenia, ktore nalezy zglosic pilnie do amdinistratora
++    */
++    var $pay_fraud=array
++    (
++    "1"=>-1,
++    "2"=>-1,
++    "10"=>-1,
++    "300"=>true,
++    "301"=>true,
++    "302"=>false,
++    "303"=>false
++    );
++
++    /**
++    * Ilosc dni przed koncem terminu rozliczenia transakcji, kiedy system ostrzega sprzedawce o koniecznosci potwierdzenia transakcji
++    */
++    var $order_alert_days=3;
++
++    /**
++    * Ilo¶æ dni, po ktorych transakcja nie bedzie przyjeta wg. id_pay_method
++    */
++    var $order_timeout=array("2"=>7,
++    "3"=>7,
++    "4"=>30
++    );
++
++    /**
++    * Okre¶lenie kolumn sortowania wg parametru $order - dla tablicy main
++    */
++    var $dbedit_order_names=array('main'=>array
++    (
++    "1"=>"name",
++    "-1"=>"name DESC",
++    "2"=>"price_brutto",
++    "-2"=>"price_brutto DESC",
++    "3"=>"producer",
++    "-3"=>"producer DESC",
++    "default"=>"price_brutto"
++    )
++    );
++
++    var $default_country = 'PL';
++
++    /**
++    * Domy¶lna konfiguracja nazwy, tytu³u strony itp.
++    */
++    var $google=array("title"=>"SOTEeSKLEP",
++    "keywords"=>"sklep internetowy",
++    "description"=>"sklep internetowy");
++
++    var $users_online = 1;
++    
++    var $unit = "kg";
++    
++    var $supported_encoding = array (
++    "utf-8" => "000|utf-8",
++    "ISO" => array(
++        "Afrikaans (iso-8859-1 Latin-1)"                              =>  "001|iso-8859-1" ,
++        "Albanian (iso-8859-1 Latin-1)"                               =>  "002|iso-8859-1" ,
++        "Albanian (iso-8859-16 Latin-10 South-Eastern European)"      =>  "003|iso-8859-16",
++        "Arabic (iso-8859-6 Arabic)"                                  =>  "004|iso-8859-6" ,
++        "Azerbaijani (iso-8859-9 Latin-5 Turkish)"                    =>  "005|iso-8859-9" ,
++        "Baltic Rim (iso-8859-13 Latin-7 Baltic Rim)"                 =>  "006|iso-8859-13",
++        "Basque (iso-8859-1 Latin-1)"                                 =>  "007|iso-8859-1" ,
++        "Belarusian (iso-8859-5 Cyrillic)"                            =>  "008|iso-8859-5" ,
++        "Brazilian portuguese (iso-8859-1 Latin-1)"                   =>  "009|iso-8859-1" ,
++        "Breton (iso-8859-14 Latin-8 Celtic)"                         =>  "010|iso-8859-14",
++        "Bulgarian (iso-8859-5 Cyrillic)"                             =>  "011|iso-8859-5" ,
++        "Catalan (iso-8859-1 Latin-1)"                                =>  "012|iso-8859-1" ,
++        "Croatian (iso-8859-2 Latin-2)"                               =>  "013|iso-8859-2" ,
++        "Croatian (iso-8859-16 Latin-10 South-Eastern European)"      =>  "014|iso-8859-16",
++        "Czech (iso-8859-2 Latin-2)"                                  =>  "015|iso-8859-2" ,
++        "Danish (iso-8859-1 Latin-1)"                                 =>  "016|iso-8859-1" ,
++        "Dutch (iso-8859-1 Latin-1)"                                  =>  "017|iso-8859-1" ,
++        "English (iso-8859-1 Latin-1)"                                =>  "018|iso-8859-1" ,
++        "English (iso-8859-15 Latin-9 Latin-0)"                       =>  "019|iso-8859-15",
++        "Esperanto (iso-8859-3 Latin-3 South European)"               =>  "020|iso-8859-3" ,
++        "Estonian (iso-8859-1 Latin-1)"                               =>  "021|iso-8859-1" ,
++        "Estonian (iso-8859-4 Latin-4 North European)"                =>  "022|iso-8859-4" ,
++        "Faroese (iso-8859-1 Latin-1)"                                =>  "023|iso-8859-1" ,
++        "Finnish (iso-8859-1 Latin-1)"                                =>  "024|iso-8859-1" ,
++        "Finnish (iso-8859-16 Latin-10 South-Eastern European)"       =>  "025|iso-8859-16",
++        "French (iso-8859-1 Latin-1)"                                 =>  "026|iso-8859-1" ,
++        "French (iso-8859-15 Latin-9 Latin-0)"                        =>  "027|iso-8859-15",
++        "French (iso-8859-16 Latin-10 South-Eastern European)"        =>  "028|iso-8859-16",
++        "Gaelic (iso-8859-14 Latin-8 Celtic)"                         =>  "029|iso-8859-14",
++        "Galician (iso-8859-1 Latin-1)"                               =>  "030|iso-8859-1" ,
++        "German (iso-8859-1 Latin-1)"                                 =>  "031|iso-8859-1" ,
++        "German (iso-8859-15 Latin-9 Latin-0)"                        =>  "032|iso-8859-15",
++        "German (iso-8859-16 Latin-10 South-Eastern European)"        =>  "033|iso-8859-16",
++        "Greek (iso-8859-7 Greek)"                                    =>  "034|iso-8859-7" ,
++        "Greenlandic (iso-8859-4 Latin-4 North European)"             =>  "035|iso-8859-4" ,
++        "Hebrew (iso-8859-8)"                                         =>  "036|iso-8859-8" ,
++        "Hungarian (iso-8859-2 Latin-2)"                              =>  "037|iso-8859-2" ,
++        "Hungarian (iso-8859-16 Latin-10 South-Eastern European)"     =>  "038|iso-8859-16",
++        "Indonesian (iso-8859-1 Latin-1)"                             =>  "039|iso-8859-1" ,
++        "Icelandic (iso-8859-1 Latin-1)"                              =>  "040|iso-8859-1" ,
++        "Irish (iso-8859-1 Latin-1)"                                  =>  "041|iso-8859-1" ,
++        "Irish Gaelic (iso-8859-16 Latin-10 South-Eastern European)"  =>  "042|iso-8859-16",
++        "Italian (iso-8859-1 Latin-1)"                                =>  "043|iso-8859-1" ,
++        "Italian (iso-8859-16 Latin-10 South-Eastern European)"       =>  "044|iso-8859-16",
++        "Latin (iso-8859-1 Latin-1)"                                  =>  "045|iso-8859-1" ,
++        "Latvian (iso-8859-4 Latin-4 North European)"                 =>  "046|iso-8859-4" ,
++        "Lithuanian (iso-8859-4 Latin-4 North European)"              =>  "047|iso-8859-4" ,
++        "Malay (iso-8859-1 Latin-1)"                                  =>  "048|iso-8859-1" ,
++        "Maltese (iso-8859-3 Latin-3 South European)"                 =>  "049|iso-8859-3" ,
++        "Nordic (iso-8859-10 Latin-6)"                                =>  "050|iso-8859-10",
++        "Norwegian (iso-8859-1 Latin-1)"                              =>  "051|iso-8859-1" ,
++        "Polish (iso-8859-2 Latin-2)"                                 =>  "052|iso-8859-2" ,
++        "Polish (iso-8859-16 Latin-10 South-Eastern European)"        =>  "053|iso-8859-16",
++        "Portuguese (iso-8859-1 Latin-1)"                             =>  "054|iso-8859-1" ,
++        "Portuguese (iso-8859-15 Latin-9 Latin-0)"                    =>  "055|iso-8859-15",
++        "Romanian (iso-8859-1 Latin-1)"                               =>  "056|iso-8859-1" ,
++        "Romanian (iso-8859-2 Latin-2)"                               =>  "057|iso-8859-2" ,
++        "Romanian (iso-8859-16 Latin-10 South-Eastern European)"      =>  "058|iso-8859-16",
++        "Russian (iso-8859-5 Cyrillic)"                               =>  "059|iso-8859-5" ,
++        "Sami (iso-8859-4 Latin-4 North European)"                    =>  "060|iso-8859-4" ,
++        "Scotish (iso-8859-1 Latin-1)"                                =>  "061|iso-8859-1" ,
++        "Serbian (in Latin transcription) (iso-8859-2 Latin-2)"       =>  "062|iso-8859-2" ,
++        "Serbocroatian (iso-8859-2 Latin-2)"                          =>  "063|iso-8859-2" ,
++        "Slovak (iso-8859-2 Latin-2)"                                 =>  "064|iso-8859-2" ,
++        "Slovenian (iso-8859-2 Latin-2)"                              =>  "065|iso-8859-2" ,
++        "Slovenian (iso-8859-16 Latin-10 South-Eastern European)"     =>  "066|iso-8859-16",
++        "Sorbian (Upper and Lower) (iso-8859-2 Latin-2)"              =>  "067|iso-8859-2" ,
++        "Spanish (iso-8859-1 Latin-1)"                                =>  "068|iso-8859-1" ,
++        "Spanish (iso-8859-15 Latin-9 Latin-0)"                       =>  "069|iso-8859-15",
++        "Swahili (iso-8859-1 Latin-1)"                                =>  "070|iso-8859-1" ,
++        "Swedish (iso-8859-1 Latin-1)"                                =>  "071|iso-8859-1" ,
++        "Thai (iso-8859-11)"                                          =>  "072|iso-8859-11",
++        "Turkish (iso-8859-3 Latin-3 South European)"                 =>  "073|iso-8859-3" ,
++        "Turkish (iso-8859-9 Latin-5 Turkish)"                        =>  "074|iso-8859-9" ,
++        "Ukrainian (iso-8859-5 Cyrillic)"                             =>  "075|iso-8859-5" ,
++        "Welsh (iso-8859-14 Latin-8 Celtic)"                          =>  "076|iso-8859-14",
++        "(iso-8859-12)"                                               =>  "077|iso-8859-12",
++        ),
++    "Windows" => array (
++        "Latin I (windows-1252)"                     =>  "078|windows-1252",
++        "Albanian (windows-1250 Central Europe)"     =>  "079|windows-1250",
++        "Arabic (windows-1256)"                      =>  "080|windows-1256",
++        "Bulgarian (windows-1251 Cyrillic)"          =>  "081|windows-1251",
++        "Croatian (windows-1250 Central Europe)"     =>  "082|windows-1250",
++        "Czech (windows-1250 Central Europe)"        =>  "083|windows-1250",
++        "Estonian (windows-1257 Baltic)"             =>  "084|windows-1257",
++        "Greek (windows-1253)"                       =>  "085|windows-1253",
++        "Hebrew (windows-1255)"                      =>  "086|windows-1255",
++        "Hungarian (windows-1250 Central Europe)"    =>  "087|windows-1250",
++        "Latvian (windows-1257 Baltic)"              =>  "088|windows-1257",
++        "Lithuanian (windows-1257 Baltic)"           =>  "089|windows-1257",
++        "Polish (windows-1250 Central Europe)"       =>  "090|windows-1250",
++        "Romanian (windows-1250 Central Europe)"     =>  "091|windows-1250",
++        "Russian (windows-1251 Cyrillic)"            =>  "092|windows-1251",
++        "Serbian (windows-1251 Cyrillic)"            =>  "093|windows-1251",
++        "Slovak (windows-1250 Central Europe)"       =>  "094|windows-1250",
++        "Slovene (windows-1250 Central Europe)"      =>  "095|windows-1250",
++        "Thai (cp874)"                               =>  "096|cp874"       ,
++        "Turkish (windows-1254)"                     =>  "097|windows-1254",
++        "Ukrainian (windows-1251 Cyrillic)"          =>  "098|windows-1251",
++        "Vietnamese (windows-1258)"                  =>  "099|windows-1258",
++        ),
++    "DOS" => array (
++        "Latin US (cp437)"     =>  "100|cp437",
++        "Greek (cp737)"        =>  "101|cp737",
++        "BaltRim (cp775)"      =>  "102|cp775",
++        "Latin1 (cp850)"       =>  "103|cp850",
++        "Latin2 (cp852)"       =>  "104|cp852",
++        "Cyryllic (cp855)"     =>  "105|cp855",
++        "Turkish (cp857)"      =>  "106|cp857",
++        "Portuguese (cp860)"   =>  "107|cp860",
++        "Iceland (cp861)"      =>  "108|cp861",
++        "Hebrew (cp862)"       =>  "109|cp862",
++        "Canada (cp863)"       =>  "110|cp863",
++        "Arabic (cp864)"       =>  "111|cp864",
++        "Nordic (cp865)"       =>  "112|cp865",
++        "Cyryllic (cp866)"     =>  "113|cp866",
++        "Greek2 (cp869)"       =>  "114|cp869",
++        ),
++    "MAC" => array(
++        "x-mac-cyrillic"  => "115|x-mac-cyrillic",
++        "x-mac-greek"     => "116|x-mac-greek",
++        "x-mac-icelandic" => "117|x-mac-icelandic",
++        "x-mac-ce"        => "118|x-mac-ce",
++        "x-mac-roman"     => "119|x-mac-roman",
++        ),
++    "..." => array(
++        "cp037"                       => "120|cp037",
++        "cp424"                       => "121|cp424",
++        "cp500 "                      => "122|cp500",
++        "cp856"                       => "123|cp856",
++        "cp875"                       => "124|cp875",
++        "cp1006"                      => "125|cp1006",
++        "cp1026"                      => "126|cp1026",
++        "koi8-r (Cyrillic)"           => "127|koi8-r",
++        "koi8-u (Cyrillic Ukrainian)" => "128|koi8-u",
++        ),
++    );
++        
++
++    /**
++    * Adres serwisowy dot. komunikatów systemowych.
++    */   
++    var $service_email="service_soteshop@sote.pl";
++    
++    /**
++    * Konfiguracja maksymalnych d³ugo¶ci list produktów polecanych
++    */
++    var $ranking1_max_length=5;
++    var $ranking2_max_length=5;
++    
++    var $ranking1_enabled='1';
++    var $ranking2_enabled='1';
++    
++    var $depository = array(
++        'show_unavailable' => "1",
++        'general_min_num' => "5",
++        'update_num_on_action' => 'on_paid',
++        'return_on_cancel' => "1",
++        'available_type_to_hide'=>"3",
++        'display_availability'=>"1",
++    );
++    
++    var $basket_wishlist = array(
++        'prod_ext_info' => "0",
++    );
++
++/*
++
++ "euc" => "Japanese (ja-euc)",
++ "sjis" => "Japanese (ja-sjis)",
++ "ks_c_5601-1987" => "Korean (ko-ks_c_5601-1987)",
++ "dos-866" => "Russian (ru-dos-866)",
++ "koi8-r" => "Russian (ru-koi8-r)",
++ "tis-620" => "Thai (th-tis-620)",
++    );
++*/  
++    /**
++    * Okresl katalog "tematu"
++    *
++    * @return string katalog np. /home/www/webapps/htdocs/themes/_pl/standard
++    */
++    function theme_dir(){
++        global $_SERVER;
++        $this->theme_dir=$_SERVER['DOCUMENT_ROOT']."/themes/_".$this->lang."/".$this->theme;
++        return $this->theme_dir;
++    } // end theme_dir()
++
++} // end class Config
++
++// ------------------------------ koniec konfiguracji----------------------------------------
++
++// odczytaj konfiguracje wygenerowana automatycznie i utworz obiekt $config
++require_once("config/auto_config/config.inc.php");
++
++
++// odczytaj konfiguracje uzytkownika (ustawiane przez panel on-line)
++require_once("config/auto_config/user_config.inc.php");
++
++
++// odczytaj dane licencji
++$lckey=substr($config->license['nr'],12,2);
++switch ($lckey) {
++    case "01": $__nccp="0x1388";  break;
++    case "11": $__nccp="0x1388";  break;
++    case "02": $__nccp="0x01f4";  break;
++    default: $__nccp="0x01f4"; break;
++}
++// end
++
++// odczytaj konfiguracje nccp
++require_once ("config/auto_config/nccp_config.inc.php");
++
++
++if (empty($config)) {
++    $config =& new Config;
++}
++
++if (!in_array("multi_lang",$config->plugins)) {
++    $config->lang="pl";
++    $config->languages=array("pl");
++    $config->languages_names=array("pl"=>"Polski");
++}
++
++$config->theme_dir();
++
++/**
++* Ustaw odpowiedni jezyk dla panelu
++*/
++if ($shop->admin) {    
++    $config->lang=$config->admin_lang;
++}
++
++
++// sprawdz czy jest zdefiniowany indywidualny klucz aplikacji
++$secure_key=ini_get("disable_function");
++if ((! empty($secure_key)) && (eregi("^[0-9a-z]${32}"))) {
++    $config->salt=$secure_key;
++}
++
++// wlacz demo tylko w panelu demo
++if (ereg("htdocs$",$DOCUMENT_ROOT)) {
++    $config->demo="no";
++}
++
++// sprawdz przegladarke i jesli przegladarka nie obsluguje javascript (tj. treeview) to wlacz statyczne menu
++foreach ($config->browsers_nojavascript as $browser) {
++    if (eregi($browser,$_SERVER['HTTP_USER_AGENT'])) {
++        $config->category['type']="standard";
++    }
++} // end foreach
++
++// start cd:
++if ((in_array("cd",$config->plugins)) && (@$config->cd_setup['cd']==1) && ($_SERVER['REMOTE_ADDR']==@$config->cd_setup['IP']) && ($shop->admin==0))  {
++    $config->cd=1;
++    $config->lang_active=array();         // dezaktywuj linki do roznych wersji jezykowych
++    $config->category['type']="standard"; // wlacz statyczne kategorie
++    // sprawdz jakie ceny maj± byæ wy¶wietlane
++    if ($config->cd_setup['price']=="netto") {
++        $config->price_type="netto";
++    }
++} else $config->cd=0;
++// end cd:
++
++if (!in_array("extbasket",$config->plugins)) {
++    $config->basket_photo=0;
++}
++
++// nowy obiektowy koszyk
++
++ $config->new_basket=true;
++
++// nie wstawiaæ zakoñczenia PHP
+diff -ruN ../soteesklep3/htdocs/go/_basket/include/my_ext_basket.inc.php soteesklep3/htdocs/go/_basket/include/my_ext_basket.inc.php
+--- ../soteesklep3/htdocs/go/_basket/include/my_ext_basket.inc.php	1970-01-01 01:00:00.000000000 +0100
++++ soteesklep3/htdocs/go/_basket/include/my_ext_basket.inc.php	2006-08-28 14:32:41.000000000 +0200
+@@ -0,0 +1,1394 @@
++<?php
++require_once("include/cookie.inc");
++
++require_once("./include/my_new_basket.inc.php");
++require_once("./include/points_buy.inc.php");
++/**
++ * Klasa koszyka oraz przechowalni produktów
++ * Zapis do bazy danych, odtwarzanie na podstawie ciastka oraz sesji
++ * Podmieniane podczas logowania uzytkownika
++ * Mo¿liwo¶æ przenoszenia produktów pomiêdzy jednym a drugim
++ * Weryfikacja obecno¶ci produktów w bazie i obecno¶ci poszczególnych opcji produktów
++ * Dodawanie, usuwanie i edycja seryjna
++ *
++ * @author lukasz@sote.pl
++ * @package basket
++ * @version $Id: my_ext_basket.inc.php,v 2.42 2006/08/16 10:22:26 lukasz Exp $
++ *
++ */
++class My_Ext_Basket extends My_New_Basket {
++
++    /**
++    * @var bool czy w tym obiekcie wolno trzymaæ nieaktywne obieky
++    * @access private
++    */
++	var $_allow_not_avail; 
++
++	var $_move_target; // obiekt do którego s± przenoszone produkty je¿eli nie wolno trzymaæ nieaktywnych w tym obiekcie
++
++	var $_id_basket; // id wpisu do bazy danych zaw obecny koszyk
++
++	var $_sess_name; // nazwa bie¿±cego obiektu w sesji i ciastku
++
++	var $_auto_add=false; // czy dodawane produkty sa wewnêtrznie (³adowanie z bazy danych)
++
++	var $_new_on_add=false; // czy stworzyæ nowe wpisy (cookie i baza) przy dodaniu pierwszego produktu
++
++	var $_display_above=true; // czy to jest pierwszy element wy¶wietlany ? (koszyk czy przechowalnia)
++
++	var $_key=''; // hash obiektów
++
++	var $mode=''; // tryb obiektu (punkty/normalny/brak)
++
++	var $point_check; // obiekt sprawdzaj±cy dostêpno¶æ produktu - zale¿nie od trybu ($mode) i innych parametrów.
++
++	var $_error=false; // flaga b³êdu
++
++	var $error_message=''; // je¿eli wyst±pi b³±d to tutaj bêdzie widoczny komunikat tekstowy.
++
++	var $_error_code=0; // kod komunikatu b³êdu
++
++	/**
++	 * Konstruktor
++	 *
++	 * @return My_Ext_Basket
++	 * @param string $type - typ obiektu (wishlist?)
++	 */
++	function My_Ext_Basket($type='') {
++		//okre¶lamy czy dzia³amy na koszyku czy przechowalnu
++		if ($type=='wishlist') {
++			$this->_allow_not_avail=true;
++			$this->mode='standard';
++			$this->_sess_name='global_wishlist_data';
++			$this->_display_above=false;
++		} else {
++			$this->_allow_not_avail=false;
++			$this->mode='unset';
++			$this->_sess_name='global_basket_data';
++		}
++		// obiekt sprawdzaj±cy dostêpno¶æ produktu
++		$this->point_check=& new Points_Buy();
++	}
++
++	/**
++	 * Podstawowe rzeczy które s± konieczne przy prze³adowaniu obiektu
++	 * nie znajduj± sie w konstruktorze poniewa¿ obiekt musi ju¿ istnieæ aby wywo³ywaæ jego metody
++	 * a dodawanie odczytanych z bazy produktów odbywa siê przez wewnêtrzn± metodê
++	 *
++	 */
++	function init() {
++		// sprawdzamy przypadek wywo³ania
++		if ($this->_sess_is_good()) {
++			// jest sesja
++			$this->_load_from_session();
++			if ($this->_display_above) return (0);
++		} else {
++			if ($this->_verify_cookie()) {
++				// jest ciastko
++				$this->_load_from_db();
++			} else {
++				// niema sesji ani ciastka - przy pierwszym dodanym producie dodajemy nowy koszyk/przechowalnie
++				$this->_flush_cookie();
++				$this->_new_on_add = true;
++			}
++		}
++		if ($this->isEmpty() ) {
++			$this->mode='unset';
++//			&& $this->_display_above
++		}
++	}
++
++
++	/**
++	 * Zapisujemy dane w sesji, obliczamy koszta
++	 *
++	 */
++	function register() {
++		global $sess;
++		global $global_wishlist_data;
++		global $global_wishlist_count;
++		global $global_basket_amount,$global_basket_count,$global_order_amount,$global_basket_data,$global_delivery;
++		$this->calc();
++		// niektore rzeczy takie jak liczba produktow w koszyku maja byc widoczne tylko dla koszyka a nie przechowalni
++		if ($this->_display_above) {
++			$global_basket_amount=$this->amount;
++			$global_basket_count=$this->num;
++			$sess->register("global_basket_amount",$global_basket_amount);
++			$sess->register("global_basket_count",$global_basket_count);
++			$global_order_amount=@$global_delivery['cost']+$global_basket_amount;
++			$sess->register("global_order_amount",$global_order_amount);
++		} else {
++			$global_wishlist_count=$this->num;
++			$sess->register("global_wishlist_count",$global_wishlist_count);
++		}
++		// zapamiêtaj stan koszyka w sesji
++		$global_basket_data=array("items"=>$this->items,"count"=>$this->_count,"hash"=>$this->_key,"id_basket"=>$this->_id_basket,"mode"=>$this->mode);
++		$global_wishlist_data=$global_basket_data;
++		if ($this->_sess_name=='global_basket_data') {
++			$sess->register('global_basket_data',$global_basket_data);
++		} else {
++			$sess->register('global_wishlist_data',$global_wishlist_data);
++		}
++		// kwota do zaplazy z kosztami dostawy
++		if (! empty($_SESSION['global_delivery'])) {
++			$global_delivery=$_SESSION['global_delivery'];
++		}
++	}
++
++	/**
++	 * £adujemy dane z sesji
++	 *
++	 * @return void
++	 */
++	function _load_from_session() {
++		global $_SESSION;
++		$basketdata=@$_SESSION[$this->_sess_name];
++		// lista produktów
++		$this->items=$basketdata['items'];
++		// liczba produktów
++		$this->_count=$basketdata['count'];
++		// id koszyka
++		$this->_id_basket=$basketdata['id_basket'];
++		// klucz koszyka
++		$this->_key=@$basketdata['hash'];
++		$this->mode=@$basketdata['mode'];
++
++		return;	
++	}
++
++	/**
++	 * Sprawdzamy czy jest sesja dla tego obiektu
++	 *
++	 * @return bool
++	 */
++	function _sess_is_good() {
++		global $_SESSION;
++		//        return true;
++		// czy istnieje sesja z danymi
++		// i czy zawiera identyfikator koszyka
++		if (isset($_SESSION[$this->_sess_name])) {
++			$basketdata=$_SESSION[$this->_sess_name];
++			if (! empty($basketdata['id_basket']) || $this->_display_above) {
++				return true;
++			}
++		} else {
++			return false;
++		}
++	}
++
++	/**
++	 * Czy¶cimy zawarto¶æ ciastka
++	 * wywo³ywane je¿eli id obiektu w ciastku jest nieprawid³owe
++	 *
++	 */
++	function _flush_cookie() {
++		global $cookie;
++		$cookie->write_array($this->_sess_name,array(""));
++		$this->_new_on_add=true;
++	}
++
++	/**
++	 * Sprawdzamy poprawno¶æ danych w ciastku
++	 * innymi s³owy sprawdzamy czy relacja id do id w bazie i hashe z ciastka siê zgadzaj±
++	 *
++	 * @return bool
++	 */
++	function _verify_cookie() {
++		global $db;
++		global $cookie;
++		// ³adujemy dane z ciastka
++		$id_basket=$cookie->read_array($this->_sess_name);
++		$hash=$cookie->read_array('hash');
++		// sprawdzamy czy podane warto¶ci istniej±
++		if (!empty($id_basket) && !empty($hash)) {
++			// sprawdzamy czy w bazie wszystko jest ok
++			$query="SELECT id FROM basket WHERE id=? AND `hash`=?";
++			$prepared_query=$db->PrepareQuery($query);
++			$db->QuerySetInteger($prepared_query,1,$id_basket);
++			$db->QuerySetText($prepared_query,2,$hash);
++			if ($prepared_query) {
++				$result=$db->ExecuteQuery($prepared_query);
++				if ($result!=0) {
++					$num_rows=$db->NumberOfRows($result);
++					// czy dostali¶my dok³adnie jeden wynik ?
++					if ($num_rows==1) {
++						// good - mo¿na ustawiæ zawarto¶æ ciastka jako aktywne
++						$this->_id_basket=$id_basket;
++						$this->_key=$hash;
++						return true;
++					} else return false;
++				} else return false;
++			} else return false;
++		} else return false;
++	}
++
++	/**
++	 * Zapis ciastka - utworzenie nowego wpisu do bazy danych.
++	 *
++	 * @return bool
++	 */
++	function _write_cookie() {
++		global $cookie;
++		// czytamy klucz z ciastka
++		// istotne bo nie wiemy czy najpierw zapisali¶my klucz do tego obiektu czy do jego brata
++		// (relacja koszyk <=> przechowalnia)
++		$key=$cookie->read_array('hash');
++		// je¿eli jest ju¿ klucz w ciastku to go wykorzystaj
++		// je¿eli nie - wygeneruj nowy
++		if (($key==null) || empty($key)) {
++			// generujemy klucz
++			$key=md5(time().$this->_sess_name);
++		}
++		// zapisujemy klucz obiektu
++		$this->_key=$key;
++		//tworzymy wpis do bazy danych
++		$this->_new_db_basket();
++		// je¿eli poprawnie nadano nowe id to je zapisz
++		if ($this->_id_basket!=0) {
++			// zapisujemy wygenerowane dane do ciastka
++			$cookie->write_array($this->_sess_name,array($this->_id_basket));
++			$cookie->write_array('hash',array($key));
++		} else return false;
++		return true;
++	}
++
++	/**
++	 * Stwórz nowy wpis do bazy danych zawieraj±cy koszyk
++	 * i ustaw $this->_id_basket na tej podstawie
++	 *
++	 */
++	function _new_db_basket() {
++		if ($this->_display_above) {
++			$this->_id_basket=0;
++			return 0;
++		}
++		global $db;
++		$query="INSERT INTO `basket` (`hash`,`date_update`) VALUES (?,NOW());";
++		$prepared_query=$db->PrepareQuery($query);
++		if ($prepared_query) {
++			$db->QuerySetText($prepared_query,1,$this->_key);
++			$db->QuerySetText($prepared_query,2,'NOW()');
++			$db->ExecuteQuery($prepared_query);
++			$query="SELECT max(id) FROM basket";
++			$result_id=$db->Query($query);
++			if ($result_id!=0) {
++				// szukamy ostatniego dodanego wiersza
++				$num_rows=$db->NumberOfRows($result_id);
++				if ($num_rows==1) {
++					$id=$db->FetchResult($result_id,0,'max(id)');
++					$this->_id_basket=$id;
++				} else return 4; // b³±d odczytu nowego pola (z³a liczba pól zwrócona)
++			} else return 5; // b³±d odczytu nowego pola (nie dodano pola ?)
++		} else return 6; //b³±d dodania nowego pola
++		// wszystko posz³o dobrze :)
++		return 1;
++	}
++
++	/**
++	 * £adowanie koszyka/przechowalni z bazy danych
++	 *
++	 */
++	function _load_from_db() {
++		if ($this->_display_above) {
++			//			print "Nic nie ³aduje!!!!";
++			return (0);
++		}
++		global $db;
++		$data='';
++		$query="SELECT data FROM basket WHERE id=?";
++		$prepared_query=$db->PrepareQuery($query);
++		if (!empty($this->_id_basket)) {
++			if ($prepared_query) {
++				// za³aduj dane dot _tego_ obiektu
++				$db->QuerySetInteger($prepared_query,1,$this->_id_basket);
++				$result=$db->ExecuteQuery($prepared_query);
++				if ($result!=0) {
++					$data=$db->FetchResult($result,0,'data');
++					$data=unserialize($data);
++				} else return 2; // brak rezultatów
++			} else return 3;// b³±d zapytania
++		} else return 4;// brak zdefiniowanego id
++		// czy jest co przetwarzaæ ?
++		if (!empty($data)) {
++			// blokada na sprawdzanie xml_options
++			$this->_auto_add=true;
++			foreach ($data as $value=>$key) {
++				if ($data[0]!="Blank") {
++					$user_id=$key['user_id'];
++					$num=$key['num'];
++					$xml_options=@$key['xml_options'];
++					$xml_options=unserialize($xml_options);
++					// w koszyku funkcjonuje id a nie user_id
++					$id=$this->_get_id($user_id);
++					$this->add_prod($id,$num,$xml_options,'','',true);
++				} else {
++					$this->items=array();
++					$this->_count=0;
++					$this->basket_amount=0;
++					$this->num=0;
++					$this->amount=0;
++				}
++			}
++			// zdjêcie blokady
++			$this->_auto_add=false;
++		}
++		return (0);
++	}
++
++	/**
++	 * Zapisujemy wszystko w bazie danych
++	 *
++	 */
++	function _save_to_db() {
++		if ($this->_display_above) {
++			return (0);
++		}
++		global $db;
++		$data=array();
++		if (true) {
++			if (!empty($this->items)) {
++				// zapisujemy dane potrzebne do odtworzenia koszyka
++				foreach ($this->items as $value=>$key) {
++					$num=$key['num'];
++					$id=$key['ID'];
++					if (isset($key['options'])) {
++						$xml_options=$key['options'];
++						$xml_options=serialize($xml_options);
++					} else $xml_options='';
++					// zapisujemy user_id poniewa¿ ono nie ulega zmianom
++					$user_id=$this->_get_user_id($id);
++					$data[]=array("user_id"=>$user_id,"num"=>$num,"xml_options"=>$xml_options);
++				}
++			}
++			if (empty($data)) { $data[]="Blank" ;}
++			$data=serialize($data);
++			$query="UPDATE basket SET data=? WHERE id=?";
++			$prepared_query=$db->PrepareQuery($query);
++			if ($prepared_query && !empty($this->_id_basket)) {
++				$db->QuerySetText($prepared_query,1,$data);
++				$db->QuerySetInteger($prepared_query,2,$this->_id_basket);
++				$result=$db->ExecuteQuery($prepared_query);
++				if ($result!=0) {
++					return 2; // b³±d podczas zapisywania informacji w bazie
++				}
++			} return 3; // b³±d przygotowanego zapytania/puste id koszyka
++		} return 4;// b³±d pobierania listy produktów
++	}
++
++	/**
++	 * Wyci±gnij z bazy danych user_id produktu na podstawie jego id
++	 *
++	 * @param int $id
++	 * @return string
++	 */
++	function _get_user_id($id) {
++		global $mdbd;
++		$user_id='';
++		if (empty($id)) return "unknown";
++		$user_id=$mdbd->select('user_id','main',"id=?",array("$id"=>"int"));
++		return $user_id;
++	}
++
++	/**
++	 * Wyci±gnij z bazy danych id produktu na podstawie jego user_id
++	 *
++	 * @param string $user_id
++	 * @return int
++	 */
++	function _get_id($user_id) {
++		global $mdbd;
++		$id=0;
++		$id=$mdbd->select('id','main','user_id=?',array("$user_id"=>"text"));
++		return $id;
++	}
++
++	/**
++	 * Dodaj produkt do obiektu
++	 *
++	 * @param int $id
++	 * @param int $num
++	 * @param mixed $xml_options
++	 * @param mixed $basket_cat
++	 * @param mixed $ext_basket
++	 * @param bool $ignore_lock
++	 */
++	function add_prod($id,$num=1,$xml_options='',$basket_cat='',$ext_basket='',$ignore_lock=false) {
++		// produkt jest niedostepny do tego stopnia ze w ogole nie figuruje w bazie danych
++		// sprawdz czy produkty maja byc sprawdzane pod katem obecnosci.
++		if ($this->point_check->check_avail($id,$this->mode)!='1') {
++			$this->error($this->point_check->check_avail($id,$this->mode));
++//			$this->_show_error();
++			return (0);
++		}
++		if ($this->mode=='points') {
++			$this->add_for_points($id,$num,$xml_options);
++			return (0);
++		}
++		if (!$this->_allow_not_avail && $this->_auto_add) {
++			if ($this->_get_user_id($id)=='unknown') {
++				// produkt jest niedostepny
++				$this->_move_target->_add_unknown_product($id,$num);
++				return;
++			} else if ($this->_check_avail($id,$xml_options)) {
++				// produkt jest dostepny - dodajemy
++				$this->add($id,$xml_options,$num,$basket_cat,$ext_basket,$ignore_lock);
++			} else {
++				// produkt niedostepny - dodajemy, ale do brata
++				$this->_move_target->add_prod($id,$num,$xml_options,$basket_cat,$ext_basket,$ignore_lock);
++				// zaznaczamy jako niedostepny
++				$this->_move_target->_mark_unavail($this->_count);
++			}
++			// tutaj zaczynamy dzialania na produktach ktore napewno beda dodane do tego obiektu
++		} else if ($this->_auto_add) {
++			if ($this->_get_user_id($id)=='unknown') {
++				// produkt jest niedostepny
++				$this->_add_unknown_product($id,$num);
++			} elseif (!$this->_check_avail($id,$xml_options)) {
++				// produkt jest niedostepny ale istnieje (xml_options)
++				$this->add($id,$xml_options,$num,$basket_cat,$ext_basket,$ignore_lock);
++				$this->_mark_unavail($this->_count);
++			} else {
++				$this->add($id,$xml_options,$num,$basket_cat,$ext_basket,$ignore_lock);
++			}
++		} else {
++			$this->add($id,$xml_options,$num,$basket_cat,$ext_basket,$ignore_lock);
++		}
++		// czy pozwalamy na dodawanie niedostêpnych produktów
++		// i czy dodajemy automatycznie (nie ladujac z bazy danych)
++		// czy to jest pierwsze wywolanie koszyka usera ktory nie ma ciastka, id ani wpisu ?
++		if ($this->_new_on_add) {
++			// wygeneruj id, klucz i zapisz to w ciastku
++			$this->_write_cookie();
++		}
++		// wy³±cz generowanie nowego ciastka
++		$this->_new_on_add=false;
++		// zapisz do bazy i zarejestruj
++		$this->_save_to_db();
++		return (0);
++	}
++
++	/**
++	 * Prze³adowanie zawarto¶ci koszyka - 
++	 * usuniêcie wszystkich produktów które znajduj± siê w obiekcie i ich ponowne dodanie
++	 * celem np. ponownego obliczenia ceny, rabatu itd.
++	 * wykorzystywane przy okazji logowania uzytkownika i wej¶cia w grupe rabatow±.
++	 *
++	 */
++	function reload(){
++		$old_items=$this->items;
++		$this->emptyBasket();
++		if (count($old_items)>=1) {
++			foreach ($old_items as $key=>$value) {
++				$this->add_prod($value['ID'],$value['num'],$value['data']['options'],'','',true);
++			}
++		}
++		$this->register();
++	}
++	
++	/**
++	 * Usuwamy wiele produktów
++	 *
++	 * @param array $items - array($int_id1,$int_id2)
++	 */
++	function del_many_prod($items) {
++		$this->del_many($items);
++		$this->update_points();
++		$this->_save_to_db();
++		if (empty($this->items) && $this->_display_above) {
++			$this->mode='unset';
++		}
++		return (0);
++	}
++
++	/**
++	 * Dodajemy do listy produkt który nie figuruje w bazie danych
++	 *
++	 * @param unknown_type $id
++	 * @param unknown_type $num
++	 */
++	function _add_unknown_product($id,$num) {
++		global $config;
++		global $lang;
++		global $sess;
++		global $_SESSION;
++		$link['before']="<a href=\"/?did=$id\">";
++		$link['after']="</a>";
++		foreach ($config->lang_active as $key=>$value) {
++			$sess_data[$key]=$link['before'].$lang->basket_elements['name_unavailable'].$link['after'];
++			$lang_id=array_search($key,$config->langs_symbols);
++			$sess_data["$lang_id"]=$link['before'].$lang->basket_elements['name_unavailable'].$link['after'];
++		}
++		$lang_names=$_SESSION['products_lang_name'];
++		$lang_names[$lang->basket_elements['name_unavailable']]=$sess_data;
++		$sess->register("products_lang_name",$lang_names);
++		$data=array();
++		$data['vat']=0;
++		$data['weight']=0;
++		$data['options']='';
++		$data['ID']=$id;
++		$data['lang_names']=$sess_data;
++		$data['user_id']="unavailable";
++		$this->items[++$this->_count]=array("ID"=>$id,"name"=>$lang->basket_elements['name_unavailable'],"num"=>$num,"price"=>'0',"data"=>$data,"unavail"=>1);
++		return (0);
++	}
++
++	/**
++	 * Zaznacz produkt jako niedostepny
++	 *
++	 * @param int $int_id - wewnetrzne id produktu w tabeli items
++	 */
++	function _mark_unavail($int_id) {
++		$this->items[$int_id]["unavail"]="1";
++		return (0);
++	}
++
++	/**
++	 * Zaznacz produkt jako dostepny
++	 *
++	 * @param int $int_id - wewnetrzne id produktu w tabeli items
++	 */
++	function _mark_avail($int_id) {
++		unset($this->items[$int_id]["unavail"]);
++		return (0);
++	}
++
++
++	/**
++	 * Przenosimy produkty z jednego obiektu do drugiego
++	 *
++	 * @param array $items - array ($int_id_in_basket => $is_checked)
++	 */
++	function move_many_prod($items) {
++		foreach ($items as $key => $value) {
++			$int_id=key($value);
++			$id=$this->items[$int_id]['ID'];
++			$xml_options=$this->items[$int_id]['options'];
++			$num=$this->items[$int_id]['num'];
++			$this->_move_target->add_prod($id,$num,$xml_options,'','',true);
++		}
++		$this->del_many_prod($items);
++		$this->_save_to_db();
++		return (0);
++	}
++
++	/**
++	 * Sprawd¼ czy produkt jest dostêpny
++	 *
++	 * @param int $id - id produktu
++	 * @param string $xml_options - opcje xml produktu
++	 * @return bool
++	 */
++	function _check_avail($id,$xml_options='') {
++		global $db;
++		$is_xml=false;
++		// czy s± jakie¶ opcje xml
++		if (!empty($xml_options)) {
++			// czy s± zapisane w tablicy
++			if (is_array($xml_options)) {
++				foreach ($xml_options as $key) {
++					// czy s± ró¿ne od zera ?
++					if ($key!="") $is_xml=true;
++				}
++			}
++		}
++		if ($is_xml && $this->_auto_add) return false;
++		$sql="SELECT id FROM main WHERE id=? AND active=1 AND ask4price!=1 AND hidden_price!=1";
++		$prepared_query=$db->PrepareQuery($sql);
++		if ($prepared_query) {
++			$db->QuerySetInteger($prepared_query,1,$id);
++			$result=$db->ExecuteQuery($prepared_query);
++			if ($result!=0) {
++				$num_rows=$db->NumberOfRows($result);
++				if ($num_rows==1) {
++					return true; // znaleziono dok³adnie jeden produkt który spe³nia kryteria;
++				}
++			}
++		}
++		return false;
++	}
++
++	
++	/**
++	 * Aktualizacja liczby produktów na stronie.
++	 *
++	 * @param array $items array (array($id=>$num),array($id2=>$num),[...])
++	 */
++	function update_many($items) {
++		// je¿eli operujemy na produktach punktowych to aktualizujemy liczbe punktów
++		if ($this->mode=='points') {
++			foreach ($items as $key) {
++				$id=key($key);
++				$value=$key[$id];
++				// nie pozwalamy na ujemne warto¶ci liczby produktów
++				// ¿eby nie umo¿liwiæ wygenerowania -1000 punktów i skorzystania z ró¿nicy aby wk³adaæ do koszyka kolejne produkty
++				if ($value<0) {
++					$value=0;
++				}
++				// aktualna liczba punktów w warto¶æ punktowa produktu (liba punktów obecnie/liczba produktów obecnie) * nowa ilo¶æ produktów
++				$this->items[$id]['points_value']=$this->items[$id]['points_value']/$this->items[$id]['num']*$value;
++			}
++		}
++		// lepiej nie ryzykowaæ
++		reset($items);
++		if ($this->mode=="points") {
++			// to wszystko robimy tylko je¿eli jestesmy w trybie punktowym
++			// w przeciwny wypadku mielibysmy zera i cholera wie co siê stanie
++			$this->update_points();
++			$total_points=@$_SESSION['form']['points']+@$_SESSION['form']['points_reserved'];
++			if ($this->_points_value>$total_points) {
++				// jest za ma³o punktów - wiêc wywo³ujemy b³êda
++				$this->error(302);
++				// i ³adujemy dane z sesji jeszcze raz - bo juz je zmienili¶my w obiekcie
++				$this->_load_from_session();
++				// i jeszcze raz przeliczamy punkty
++				$this->update_points();
++			} else {
++				// wywo³ujemy metode rodzica - po co pisaæ to jeszcze raz jak ju¿ jest i dzia³a ? :)
++				parent::update_many($items);
++			}
++		} else {
++			parent::update_many($items);
++		}
++		// aktualizujemy liczbe dostêpnych punktów
++	}
++
++	/**
++	 * Aktualizujemy liczbe punktów w sesji
++	 * Uwaga!
++	 * Jako ¿e mo¿liwe s± tutaj nadu¿ycia, konieczna jest weryfikacja sumy punktów
++	 * zarezerwowanych i wolnych pod koniec zamówienia - czy te dane zgadzaj± sie z zawarto¶ci± bazy!
++	 *
++	 */
++	function update_points($update_session=true) {
++		global $sess;
++		$points_total=0;
++		reset ($this->items);
++		// sumujemy punkty produktów które s± w sesji
++		foreach ($this->items as $key=>$value) {
++			$points_total=$points_total+@$value['points_value'];
++		}
++		reset($this->items);
++		// czytamy dane które z sesji które bêdziemy aktualizowaæ
++		$points_reserved=@$_SESSION['form']['points_reserved'];
++		$points=@$_SESSION['form']['points'];
++		// zuzytych jest wiecej punktow niz zapisanych w sesji
++		// dodano produkt - zwiekszono jego ilosc
++		if ($points_total>$points_reserved) {
++			$points=$points-($points_total-$points_reserved);
++			$points_reserved=$points_total;
++		// zuzytych jest mniej punktow niz zapisanych w sesji
++		// usunieto produkt - zmniejszono jego ilosc
++		} else if ($points_total<$points_reserved) {
++			$points=$points+($points_reserved-$points_total);
++			$points_reserved=$points_total;
++		}
++		// je¿eli nie zaszed³ ¿aden z schematów opisanych powy¿ej - niema potrzeby czegokolwiek zmieniaæ
++		// tworzymy kopie form z sesji
++		$form=@$_SESSION['form'];
++		// aktualizujemy dane
++		$form['points']=$points;
++		$form['points_reserved']=$points_reserved;
++		$this->_points_value=$points_reserved;
++		// zapisujemy w sesji
++		if ($update_session) {
++			$sess->register("form",$form);
++		}
++		// sprawdzamy czy nie trzeba zmieniæ trybu:
++		// istotne tylko przy pustym koszyku
++		if ($this->_display_above && $this->isEmpty()) {
++			$this->mode='unset';
++		}
++	}
++
++	/**
++	 * Dodawanie produktów za punkty do listy
++	 * Metoda jest w sumie zmodyfikowan± metod± add_produkt w której za³adowana jest "stara" zawarto¶æ basket_add.inc.php
++	 *
++	 * @param int $id - id produktu który ma zostaæ dodany
++	 * @param int $num - ilo¶æ danego produktu
++	 * @param string $xml_options - opcje xml do danego produtku (musz± byæ puste)
++	 * @param bool $igonre_lock - czy zignorowaæ dodawanie tego produktu podczas pobytu w koszyku ?
++	 */
++	function add_for_points($id,$num=1,$xml_options='',$ignore_lock=false) {
++		global $global_prev_request_md5;
++		global $global_request_md5;
++		global $sess;
++		global $config;
++		global $db;
++		if ($xml_options!='') {
++			// do koszyka w trybie punktowym nie wolno dodawaæ produktów z xml_options!!!
++			$this->error("103");
++			return;
++		}
++		$reload=false;
++		if (! empty($global_prev_request_md5)) {
++			if ($global_prev_request_md5==$global_request_md5) {
++				// wywolano reload w koszyku, zapamietaj zeby nie dodawac produktu
++				$reload=true;
++			}
++		}
++		$ignore_lock=true;
++		if ($num==0) $num=1;
++		// sprawdzamy czy wolno nam dodaæ produkt - czy nie ma prze³adowania strony itd.
++		if ((($reload==false) && (@$_SESSION['basket_add_lock']!=1)) || $ignore_lock) {
++			// tutaj zaczynamy dodawanie
++			// w³±czamy blokade
++			$basket_add_lock=1;
++			$sess->register("basket_add_lock",$basket_add_lock);
++
++			// zapytanie o wlaciwosci rekordu
++			$query = "SELECT * FROM main WHERE id=? AND active=1";
++			$prepared_query=$db->PrepareQuery($query);
++			$db->QuerySetText($prepared_query,1,"$id");
++			$result=$db->ExecuteQuery($prepared_query);
++
++			// tutaj skorzystamy z mo¿liwo¶ci dodanej obs³ugi b³êdów do koszyka...
++			if ($result==0) {
++				// nie ma takiego produktu lub b³±d w zapytaniu
++				$this->error("102");
++				return;
++			}
++			// je¿eli dot±d by³o ok - to lecimy dalej
++			$id=$db->FetchResult($result,0,"id");
++			$user_id=$db->Fetchresult($result,0,"user_id");
++
++			// odczytaj nazwy w aktywnych jezykach
++			$name=$db->FetchResult($result,0,"name_L0");
++			for($i = 0; $i < count($config->langs_active); $i++) {
++				if($config->langs_active[$i] == 1) {
++					$lang_name[$config->langs_symbols[$i]]=$db->FetchResult($result,0,"name_L" . $i);
++					$lang_name[$i]=$lang_name[$config->langs_symbols[$i]];
++					if (empty($lang_name[$config->langs_symbols[$i]])) {
++						$lang_name[$config->langs_symbols[$i]] = $name;
++						$lang_name[$i] = $name;
++					}
++				}
++			}
++			// zapamiêtaj w sesji t³umaczenia zakupionych produktów
++			if (! empty($_SESSION['products_lang_name'])) {
++				$products_lang_name=$_SESSION['products_lang_name'];
++			} else $products_lang_name=array();
++			$products_lang_name[$name]=$lang_name;
++			$sess->register("products_lang_name",$products_lang_name);
++			// end
++
++			$producer=$db->FetchResult($result,0,"producer");
++			$points_value=$db->FetchResult($result,0,"points_value");
++			// zapamietaj do jakiej kategorii nalezy dodawany produkt; informacja ta bedzie wykorzytana
++			// do stworzenia linku do kategorii produtku w celu kontynuwoania zakupow w danej kategorii
++			$__add_basket_category['id_category1']=$db->Fetchresult($result,0,"id_category1");
++			$__add_basket_category['id_category2']=$db->Fetchresult($result,0,"id_category2");
++			$__add_basket_category['id_category3']=$db->Fetchresult($result,0,"id_category3");
++			$__add_basket_category['id_category4']=$db->Fetchresult($result,0,"id_category4");
++			$__add_basket_category['id_category5']=$db->Fetchresult($result,0,"id_category5");
++			$__add_basket_category['category1']=$db->Fetchresult($result,0,"category1");
++			$__add_basket_category['category2']=$db->Fetchresult($result,0,"category2");
++			$__add_basket_category['category3']=$db->Fetchresult($result,0,"category3");
++			$__add_basket_category['category4']=$db->Fetchresult($result,0,"category4");
++			$__add_basket_category['category5']=$db->Fetchresult($result,0,"category5");
++			$__add_basket_category['id_producer'] =$db->Fetchresult($result,0,"id_producer");
++			$__add_basket_category['producer'] =$db->Fetchresult($result,0,"producer");
++			$data['category']=$__add_basket_category;
++
++			// dodatkowe atrybuty rekordu zapamietywane w koszyku
++			// niektóre s± niepotrzebne i dla pewno¶ci zerowane
++			$data['currency']=$config->currency;
++			$data['vat']=0;
++			$data['user_id']=$user_id;
++			$data['weight']=0;
++			$data['lang_names'] = $lang_name;
++			// dodajemy obs³uge punktów
++			
++			// a teraz w³a¶ciwe dodawanie:
++			//sprawdzamy czy produkt dodaæ, czy tylko zwiêkszyæ liczbe ju¿ istniej±cego?
++			$pos=$this->getId($id,$data);
++			// nie jest konieczna weryfikacja opcji koszyka tak jak by¶my to robili normalnie
++			// poniewa¿ produkty punktowe nie mog± mieæ xml_options
++			if ($pos>0) {
++				// tutaj obs³uga zwiêkszania ilo¶ci
++				$this->items[$pos]['num']++;
++				$this->items[$pos]['points_value']=$points_value*$this->items[$pos]['num'];
++				$this->update_points();
++			} else {
++				// poprostu dodajemy
++				// dodaj produkt do koszyka
++				$this->items[++$this->_count]=array("ID"=>$id,"name"=>$name,"num"=>$num,"price"=>0,"points_value"=>$points_value,"data"=>$data);
++				// zaznaczamy produkt tak ¿eby nie mo¿na by³o go przenosiæ miêdzy przechowalni± a koszykiem
++				$this->_mark_unavail($this->_count);
++				// przenosimy odliczamy punkty (w sesji)
++				$form=$_SESSION['form'];
++				
++				$form['points_reserved']=@$form['points_reserved']+$points_value;
++				if ((empty($form['points_left']) && @$form['points_left']!=0) || @$form['points_left']<0) {
++					$form['points_left']=$form['points'];
++				}
++				$form['points']=$form['points']-$points_value;
++//				$form['points_left']=$form['points_left']-$points_value;
++				$sess->register("form",$form);
++			}
++		}
++	}
++
++	/**
++	 * Pokazujemy kominikat b³êdu nad koszykiem, wraz z przyciskiem kontynuuj zakupy
++	 *
++	 * @return bool - true je¿eli wyst±pi³ b³±d, false je¿eli nie.
++	 */
++	function _show_error() {
++		global $theme;
++		global $lang;
++		// dodajemy obs³uge b³êdów
++		if ($this->_error) {
++			// dodatkowy b³±d widoczny tylko w przechowalni
++			// ¿eby pokazaæ ¿e do przechowalni nie mozna dodawac prezentow
++			if (!$this->_display_above && $this->_error_code=="2") {
++				$this->error("002");
++			}
++			print "<p>\n";
++			print "<div align=\"left\">\n";
++			print "<table cellspacing=\"0\" cellpadding=\"0\" border=\"0\">\n";
++			print "  <tr>\n";
++			print "    <td valign=\"top\" align=\"left\">";
++			// button kontynuuj zakupy
++			if ($this->display=='form') {
++				$theme->button($lang->basket_order_continue,"/",220);
++			}
++			print "</td>\n";
++			print "  </tr>\n";
++			print "</table>\n";
++			print "<table cellspacing=\"0\" cellpadding=\"0\" border=\"0\">\n";
++			print "  <tr>\n";
++			print "    <td>\n";
++			// pokaz kategorie dodawanego produktu - linki do ketegorii
++			$this->add_category_links();
++			print "<td>\n";
++			print "  </tr>\n";
++			print "</table>\n";
++			print "</div>\n";
++			print "<br><br>";
++			print "<center>$this->error_message</center>";
++			//			print "<b>$this->_error</b>";
++			return true;
++		}
++		return false;
++	}
++
++	/**
++    * Formularz z zawartoscia koszyka.
++    * Wyswo³anie funckji powoduje wy¶wietlenie na stronie koszyka + elementów formularza (zmiana ilo¶ci).
++    * Funkcja wywo³uje tabelke z opisem oraz pe³ny formularz <form> ... </form>. WY¶wietlane te¿ s±
++    * informacje o dostawie i promocjach, które mo¿na wybraæ w koszyku.
++    *
++    * @return wartosc zamowienia, bez kosztow dostawy
++    * \@global object $basket        obiekt klasy Basket
++    * \@global object $delivery_obj  obiekt z klasy Delivery
++    */
++	function showBasketForm() {
++		global $theme;
++		global $lang;
++		global $delivery_obj;
++		global $global_basket_calc_button;
++		global $config;
++		global $shop;
++		// je¶li koszyk jest pusty to poka¿ odpowiedni komunikat
++		if ($this->_display_above) {
++			$formname="basketForm";
++		} else {
++			$formname="wishlistForm";
++			if ($this->display!="form") {
++				return;
++			}
++		}
++		if (empty($this->items)) {
++			if ($this->_display_above) {
++				if ($this->_error) {
++					$theme->bar($lang->$formname);
++					$this->_show_error();
++					return;
++				}
++				$theme->basket_empty();
++				$theme->file("basket_up_empty.html");
++			} else {
++				if ($this->_error) {
++					$theme->bar($lang->$formname);
++					$this->_show_error();
++					return;
++				}
++				global $submit_type;
++				if (!empty($submit_type)) {
++					global $sess;
++					$sid=$sess->param."=".$sess->id;
++					print "
++				<script language=\"JavaScript\">\n
++				window.location.href='/go/_basket/?$sid';
++				</script>
++				";
++				}
++				$theme->wishlist_empty();
++				$theme->file("wishlist_up_empty.html");
++			}
++			return;
++		}
++		$theme->bar($lang->$formname);
++		if ($this->_show_error()) {
++			return;
++		}
++		if ($this->display=="form") {
++			print "
++			<script language=\"JavaScript\">\n
++			function toggleAll(sender,id,formname) {\n
++			    check_yes_no = sender.checked;\n
++			    for(i = 0; i < document.forms[formname].elements.length; i++) {\n
++			        if((document.forms[formname].elements[i].type == 'checkbox') && (document.forms[formname].elements[i].name != \"toggle_all\") && (document.forms[formname].elements[i].id == id))\n
++			            document.forms[formname].elements[i].checked = check_yes_no;\n
++			    }\n
++			}\n
++			</script>\n";
++		}
++		// pasek "bar" koszyka
++		//		$theme->bar($lang->$formname);
++
++		//		if ($this->_display_above) {
++		print "<p>\n";
++		print "<div align=\"left\">\n";
++		print "<table cellspacing=\"0\" cellpadding=\"0\" border=\"0\">\n";
++		print "  <tr>\n";
++		print "    <td valign=\"top\" align=\"left\">";
++		// button kontynuuj zakupy
++		if ($this->display=='form') {
++			$theme->button($lang->basket_order_continue,"/",220);
++		}
++		print "</td>\n";
++		print "  </tr>\n";
++		print "</table>\n";
++		print "<table cellspacing=\"0\" cellpadding=\"0\" border=\"0\">\n";
++		print "  <tr>\n";
++		print "    <td>\n";
++		// pokaz kategorie dodawanego produktu - linki do ketegorii
++		$this->add_category_links();
++		print "<td>\n";
++		print "  </tr>\n";
++		print "</table>\n";
++		print "</div>\n";
++		//		}
++		print "<div align=left>";
++		if ($this->display=='form') {
++			if ($this->_display_above) {
++				$theme->theme_file("basket_up.html.php");
++			} else {
++				$theme->theme_file("wishlist_up.html.php");
++			}
++		}
++		
++		if ($_SESSION['depository_status'] == false and isset($_SESSION['depository_status']))
++		{
++			print "<center><font color=\"red\"><b>$lang->basket_depository_error</b></font></center>";
++			//print "<br>".$_SESSION['depository_error_id'];
++		}
++		
++		if ($this->mode!="points") {
++			print "<br>".$lang->basket_currency.": ".$shop->currency->currency;
++		}
++		
++
++		
++		print "</div>";
++		if ($this->display=="form") {
++			if ($this->_display_above) {
++				// obs³uga ssl'a - tylko w koszyku
++				if ($config->ssl) {
++					global $sess;
++					print "<form action=\"https://".$_SERVER['HTTP_HOST']."/go/_basket/index.php\" method=\"post\" name=\"$formname\">\n";
++					// koniecznie przekazaæ sid przy takim przej¶ciu !
++					print "<input type=\"hidden\" name=\"sid\" value=".$sess->id.">\n";
++				} else {
++					print "<form action=\"index.php\" method=\"post\" name=\"$formname\">\n";
++				}
++			} else {
++				print "<form action=\"index3.php\" method=\"post\" name=\"$formname\">\n";
++			}
++			print "<input name=\"formName\" id=\"formName\" value=\"$formname\" type=hidden>\n";
++		}
++		
++		// start koszyk lista produktów
++		print  "<table border=\"0\" cellspacing=\"2\" cellpadding=\"2\" align=\"center\" width=\"100%\">\n";
++		$this->basket_th($this->display,$this->_display_above);
++
++		/* uaktualnij warto¶c zakupów i dodatkowe dane prodyuktów */
++		$this->calc();
++
++		// wy¶wietl pozycje z koszyka w wierszach
++		reset($this->items);
++		foreach ($this->items as $id=>$item) {
++			$this->_row($id,$item);
++		}
++
++		print "</table>\n";
++		// end koszyk lista produktów
++		print "<div align=\"right\"><br>";
++		if ($this->display=="form") {
++			print $lang->check_uncheck_all;
++			print $lang->to_be_deleted;
++			print "<input type=\"checkbox\" name=\"toggle_all\" id=\"toggle_all\" onclick=\"toggleAll(this,'del','$formname')\"><br>";
++			print $lang->check_uncheck_all;
++			if ($this->_display_above) {
++				print $lang->to_be_moved;
++			} else {
++				print $lang->to_be_moved_2basket;
++			}
++
++			print "<input type=\"checkbox\" name=\"toggle_all\" id=\"toggle_all\" onclick=\"toggleAll(this,'move','$formname')\"><br><br>";
++		}
++		if (! empty($global_basket_calc_button)) {
++			// przycisk podsumuj
++			print $lang->basket_order_update_note."&nbsp;&nbsp;";
++			$theme->calc_button();
++			print "<br><br><br><br>";
++			print "</div>";
++
++		}
++		if (($this->display=="form") && ($this->_display_above) && ($this->mode=='standard')) {
++			// pokaz: suma zamowienia, podsumuj wprowadzone zmiany, zaplac, powrot
++			$delivery_obj->show_country();
++			print "<div align=left>";
++			$delivery_obj->show();
++			print "</div>";
++			$this->order_amount=$this->amount+$delivery_obj->delivery_cost;
++			$theme->basket_submit($theme->price($this->amount),$theme->price($this->order_amount),
++			$delivery_obj->delivery_name,$delivery_obj->delivery_cost);
++			print "</form>\n";
++
++			// pokaz dostepne promocje
++			global $config;
++			if ((in_array("promotion",$config->plugins)) && ($this->_display_above)) {
++				$theme->showPromotions();
++			}
++		} else if (($this->display=="form") && ($this->mode=='points')) {
++			$delivery_obj->show_country();
++			print "<div align=left>";
++			$delivery_obj->show();
++			print "</div>";
++			$theme->basket_points_submit($theme->price($this->amount),$theme->price(@$this->order_amount),
++			$delivery_obj->delivery_name,$delivery_obj->delivery_cost);
++			print "</form>\n";
++		} else {
++			print "<p>";
++		}
++		//        if ($this->_display_above) $this->_move_target->showBasketForm();
++		return $this->amount;
++	} // end showBasketForm()
++
++	/**
++    * Przedstaw pozycje/wiersz z koszyka w formacie html
++    *
++    * @param int   $id   id systemowe koszyka, pozycja w koszyku
++    * @param array $item dane dot. produktu
++    *
++    * @access private
++    * @return none
++    */
++	function _row($id,$item) {
++		global $theme, $config, $lang, $mdbd;
++		if ($this->_display_above) {
++			$formname="basketForm";
++		} else {
++			$formname="wishlistForm";
++		}
++		// przet³umacz nazwê
++		$name=$item['data']['lang_names'][$config->lang_id];
++		$user_id=$this->_get_user_id($item['ID']);
++		$namelink="<a href=\"/?id=$user_id\">$name</a>";
++		$points_value=$item['points_value'];
++		if ($this->mode!="points" && $config->basket_wishlist['prod_ext_info']==1) {
++			$namelink.="<br>".$lang->basket_products_extra['user_id'].": $user_id, ".$lang->basket_products_extra['points_value'].": $points_value";
++		}
++		print "<tr bgcolor=" . @$config->theme_config['colors']['basket_td'] . ">\n";
++		print "<td>".$namelink;
++		if (! empty($item['data']['options'])) {
++			$options=$item['data']['options'];
++			$this->_showOptions($options,"html");
++		}
++		print "</td>\n";
++
++		// start waluty:
++		global $shop;
++		$shop->currency();
++		$item2=$item;
++		if ($shop->currency->changed()) {
++			$item2['price']=$shop->currency->price($item2['price']);
++			$item2['price_netto']=$shop->currency->price($item2['price_netto']);
++			$item2['sum_brutto']=$shop->currency->price($item2['sum_brutto']);
++		}
++		// end waluty:
++		if ($this->mode!='points') {
++			print "<td align=\"center\">".$item2['price_netto']."</td>\n";
++			print "<td align=\"center\">".$item['data']['vat']."</td>\n";
++			print "<td align=\"center\">".$item2['price']."</td>\n";
++		}
++		if ($this->display=="form") {
++			if ($_SESSION['depository_status'] == false and isset($_SESSION['depository_status']))
++			{
++				$num_max = $mdbd->select("num","depository","user_id_main=?",array($user_id=>"text"),"","auto");
++				$num_id = explode(" ",$_SESSION['depository_error_id']);
++				for ($i=0;$i<=count($num_id)-1;$i++)
++				{
++					if ($user_id == $num_id[$i]) $item['num'] = $num_max;
++				}
++			}
++			print "<td align=\"center\">
++            <input type=\"text\" size=\"4\" maxsize=\"6\" name=\"num[$id]\" value=\"".$item['num']."\">";
++			if ($_SESSION['depository_status'] == false and isset($_SESSION['depository_status'])) {
++				for ($i=0;$i<=count($num_id)-1;$i++)
++				{
++					if ($user_id == $num_id[$i] and $num_max != 0){ print "<br /><font color=\"red\"><b>($num_max $lang->basket_max)</b></font>"; break; } 
++					elseif ($user_id != $num_id[$i] and $num_max != 0) { print "<br />($num_max $lang->basket_max)"; break; }
++				} 
++			}
++			
++			print "</td>\n";
++			
++		} else {
++			print "<td align=\"center\">".$item['num']."</td>\n";
++		}
++		if ($this->mode!='points') {
++			print "<td align=\"center\">".$item2['sum_brutto']."</td>\n";
++		}
++		// je¿eli tryb punktów to poka¿ te dane
++		if ($this->mode=='points') {
++			print "<td align=\"center\">".$item['points_value']."</td>";
++		}
++		$target_mode=@$this->_move_target->mode;
++		$compatible_target=false;
++		if ($this->mode==$target_mode) {
++			$compatible_target=true;
++		} else if ($this->mode=="unset" || $target_mode=="unset") {
++			$compatible_target=true;
++		}
++		// checkboxy usuñ i do przechowalni
++		if ($this->display=="form") {
++			// w trybie punktowym nie mo¿na przenosiæ
++			if ($this->mode!='points') {
++				// nie wy¶wietlaj opcji przeniesienia produktu je¿eli jest on zaznaczony jako niedostêpny
++				if ((@$this->items[$id]['unavail']!=1) && $compatible_target) {
++					print "<td align=\"center\"><input class=\"border0\" type=\"checkbox\" id=\"move\" name=\"move[$id]\" ></td>\n";
++				} else print "<td></td>";
++				//onClick=\"this.form.submit();
++			}
++			print "<td align=\"center\"><input class=\"border0\" type=\"checkbox\" id=\"del\" name=\"del[$id]\" ></td>\n";
++
++		}
++		print "</tr>\n";
++		return;
++	} // end _row()
++
++
++	/**
++    * Wyswietl nazwy pol formularza w koszyku. Jesli jest to prezentacja z formularzem
++    * to dodaj pole "usun"
++    * funkcja przeniesiona z theme.inc.php dla zachowania spójno¶ci koszyka i umo¿liwenia dynamicznego pokazywania kolumn.
++    *
++    * @param string $display "form" - wyswietl naglowek "usun" do tabeli z lista produktow w koszyku
++    */
++	function basket_th($display="",$is_basket=true) {
++		global $lang, $config;
++		global $shop;
++		// poprawiamy szeroko¶æ nazwy przy trybie punktowym
++		if ($this->mode!='points') {
++			$proc="40%";
++		} else $proc="70%";
++		// jesli koszyk jest do wydruku to nie wyswietlaj kolorów i usuñ
++		if ($config->theme!='print'){
++			print "<tr bgcolor='"; echo $config->theme_config['colors']['basket_th']; echo "'>
++                 <th width=$proc>$lang->basket_th_product_name</th>";
++            if ($this->mode!='points') {
++				print "     
++		         <th>$lang->basket_th_netto</th>
++                 <th>$lang->basket_th_vat</th>
++		         <th>$lang->basket_th_brutto</th>";
++            }
++		    print "<th>$lang->basket_th_count</th>";
++		    if ($this->mode!='points') {
++				print "<th>$lang->basket_th_sum</th>";
++		    } else {
++				print "<th>$lang->basket_th_points</th>";
++			}
++			if ($display=="form") {
++				// w trybie punktowym nie mo¿na przenosiæ
++				if ($this->mode!='points') {
++					if ($is_basket) {
++						print "<th>$lang->basket_th_move</th>\n";
++					} else {
++						print "<th>$lang->wishlist_th_move</th>\n";
++					}
++				}
++				print "<th>$lang->basket_th_delete</th>";
++			}
++
++		}else{
++			// to jest przypadek w którym wy¶wietlamy liste do wydruku
++			print "<tr>
++                 <th width=$proc>$lang->basket_th_product_name</th>";
++				if ($this->mode!='points') {
++	                 print "
++			         <th>$lang->basket_th_netto ".$shop->currency->currency."</th>
++	                 <th>$lang->basket_th_vat</th>
++	                 <th>$lang->basket_th_brutto ".$shop->currency->currency."</th>
++	                 <th>$lang->basket_th_count</th>
++			         <th>$lang->basket_th_sum ".$shop->currency->currency."</th>";
++				}
++			if ($this->mode=='points') {
++				print "<th>$lang->basket_th_sum ".$shop->currency->currency."</th>";
++				print "<th>$lang->basket_th_points</th>";
++			}
++			print "</tr>";
++		}
++		return(0);
++
++	} // end basket_th()
++
++	/**
++    * Oproznij koszyk
++    *
++    * @access public
++    * @return none
++    */
++	function emptyBasket() {
++		$this->amount=0;
++		$this->_item=array();
++		$this->items=array();		
++		$this->_count=0;             // #3012 poprawka dodawania pustego wiersza do zamowienia m@sote.pl		
++		$this->basket_data_txt="";
++		$this->_save_to_db();
++		if ($this->_display_above) {
++			$this->mode='unset';
++		}
++		$this->register();
++		return(0);
++	} // end empty_basket()
++	
++	
++	/**
++	 * Przedstaw zawartosc koszyka w TXT, ale w tym wypadku z produktami punktowymi.
++	 * Informacje te sa dodawane do maila z zamowieniem.
++	 *
++	 */
++	function basket_txt_points() {
++		global $lang;
++		// obliczamy warto¶æ zamówienia w punktach, ale nie zapisujemy danych do sesji
++		// bo w sesji liczniki s± ju¿ pokasowane i ich aktualizacja spowoduje dublowanie siê kosztów punktowych
++		$this->update_points(false);
++		
++		$this->basket_data_txt.=$lang->basket_txt_title.":\n";
++        reset($this->items);$this->_pos=1;
++        foreach ($this->items as $id=>$item) {
++            $this->basket_data_txt.=$this->_rowTXT_points($item);
++            $this->_pos++;
++        }
++        $o=$this->basket_data_txt;
++        $o.=$lang->basket_amount_name."\n";
++        $o.=$lang->basket_points_cost.": ".$this->_points_value."\n";
++        $o.=$lang->basket_points_left.": ".$_SESSION['form']['points']."\n";
++        return $o;
++	}
++
++	
++    /**
++    * Przedstaw zawartosc koszyka w postaci TXT. Informacja ta zostanie dodana do
++    * maila z zamowieniem
++    *
++    * proste przeci±¿enie metody ¿eby mo¿na by³o w inny sposób wy¶wietlaæ produkty punktowe
++    * @access public
++    * @return string zwraca zawartosc calego goszyka w formacie TXT
++    */
++    function basket_txt() {
++        global $lang;
++        global $_SESSION;
++        global $config;
++        if ($this->mode=="points") {
++        	return ($this->basket_txt_points());
++        }
++        $this->calc();
++        
++        $global_delivery=$_SESSION['global_delivery'];
++        $global_order_amount=$_SESSION['global_order_amount'];
++        
++        $this->basket_data_txt.=$lang->basket_txt_title.":\n";
++        reset($this->items);$this->_pos=1;
++        foreach ($this->items as $id=>$item) {
++            $this->basket_data_txt.=$this->_rowTXT($item);
++            $this->_pos++;
++        }
++        
++        
++        // start waluty:
++        global $shop;
++        $shop->currency();
++        
++        $curr_delivery_cost=$shop->currency->price($global_delivery['cost']);
++        $curr_amount=$shop->currency->price($this->amount);
++        $curr_order_amount=$shop->currency->price($global_order_amount);
++        
++        // end waluty:
++        
++        $o=$this->basket_data_txt;
++        $o.="\n".$lang->basket_delivery_name.": ".$global_delivery['name'].", ";
++        $o.=$lang->basket_delivery_cost.": ".$curr_delivery_cost." ".$shop->currency->currency."\n";
++        $o.=$lang->basket_amount_name.": ".$curr_amount." ".$shop->currency->currency."\n";
++        $o.=$lang->basket_order_amount_name.": ".$curr_order_amount." ".$shop->currency->currency."\n";
++        
++        global $shop;
++        $shop->promotions();
++        $o.=$shop->promotions->txtInfo();
++        
++        return $o;
++    } // end basket_txt()
++    
++        
++    /**
++    * Dane rekordu z koszyka w postaci TXT dla produtków punktowych
++    *
++    * @param array $item dane produktu
++    *
++    * @access private
++    * @return string dane produktu w TXT
++    */
++    function _rowTXT_points($item) {
++        global $lang;
++        
++        // przet³umacz nazwê produktu
++        $name=LangF::name($item['name']);
++        
++        $o="";
++        $nr=$this->_pos;
++        $o.="$nr ".$lang->basket_elements['name'].": ".$name;
++        
++        $o.="\n";
++        $o.="\t".$lang->basket_elements['user_id'].": ".$item['data']['user_id']."\n";
++        $o.="\t".$lang->basket_elements['points_value'].": ".$item['points_value']."\n";
++        $o.="\t".$lang->basket_elements['num'].": ".$item['num']."\n";
++//        $o.="\t".$lang->basket_elements['sum_brutto'].": ".$item['sum_brutto']." ".$shop->currency->currency."\n\n";
++        
++        return $o;
++    } // end _row_txt()
++
++    
++	/**
++	 * Obs³uga b³êdów koszyka
++	 * za³o¿enie jest takie ¿e wywo³ujemy t± metodê je¿eli sta³o siê co¶ nie tak
++	 * kody b³êdów s± przechowywane w langach modu³u, ka¿demu kodowi odpowiada komunikat
++	 * kody b³êdów powinny zaczynaæ siê od ??2, ¿eby zachowaæ zgodno¶æ z typem bool.
++	 * na zasadzie ¿e je¿eli funkcja zaraca true lub false - jest ok, ale je¿eli zwraca integera wyst±pi³ b³±d o tym numerze.
++	 *
++	 * @param int $error_id - id b³êdu którego opis znajduje siê w langach
++	 */
++	function error($error_id) {
++//		print "<pre>";
++//		print_r (debug_backtrace());
++//		print "</pre>";
++		global $lang;
++		$this->error_message=@$lang->basket_error[$error_id];
++		$this->_error=true;
++		$this->_error_code=$error_id;
++	}
++} // end class MyExtBasket
++?>
+diff -ruN ../soteesklep3/htdocs/go/_basket/include/my_new_basket.inc.php soteesklep3/htdocs/go/_basket/include/my_new_basket.inc.php
+--- ../soteesklep3/htdocs/go/_basket/include/my_new_basket.inc.php	1970-01-01 01:00:00.000000000 +0100
++++ soteesklep3/htdocs/go/_basket/include/my_new_basket.inc.php	2006-08-28 14:32:07.000000000 +0200
+@@ -0,0 +1,408 @@
++<?php
++
++require_once ("./include/my_basket.inc.php");
++
++require_once ("./include/basket_options.inc.php");
++
++/**
++ * Wrapper do istniej±cych (starych) funkcji koszyka - emulacja postów, getów i requestów
++ * Nadaje koszykowi w³a¶ciwo¶ci obiektowe.
++ *
++ * @author lukasz@sote.pl
++ * @package basket
++ * @since 3.1RC9-devel
++ * @version $Id: my_new_basket.inc.php,v 2.13 2006/08/16 10:22:26 lukasz Exp $
++ *
++ */
++class My_New_Basket extends MyBasket {
++
++	/**
++	 * Blokada wywo³añ - czy wowo³aæ rodzica, czy lokaln± metode
++	 *
++	 * @var bool
++	 */
++	var $local_lock = false;
++
++	/**
++	 * Tablica przechowywanych $_POST'ow
++	 *
++	 * @var array
++	 */
++	var $POST;
++
++	/**
++	 * Tablica przechowywanych $_GET'ow
++	 *
++	 * @var array
++	 */
++	var $GET;
++
++	/**
++	 * Tablica przechowywanych $_REQUEST'ow
++	 *
++	 * @var array
++	 */
++	var $REQUEST;
++
++
++	/**
++	 * Zapisuwanie napisywanie wszystkich elementow $_POST odpowiednimi elementami z $items, zapisujac stare wartosci w $this->POST
++	 *
++	 * @param array $items
++	 */
++	function _switch_POST (&$items) {
++		foreach ($items as $name => $value) {
++			$this->POST[$name] = @$_POST[$name];
++			unset($_POST[$name]);
++			if (!empty($value)) {
++				$_POST[$name]=$value;
++			}
++		}
++	}
++
++	/**
++	 * Odtwarzanie elemetow $_POST okreslonych w $items, na podstawie $this->POST
++	 *
++	 * @param array $items
++	 */
++	function _restore_POST (&$items) {
++		foreach ($items as $name => $value) {
++			unset ($_POST[$name]);
++			$_POST[$name]=$this->POST[$name];
++		}
++	}
++
++	/**
++	 * Zapisuwanie napisywanie wszystkich elementow $_POST odpowiednimi elementami z $items, zapisujac stare wartosci w $this->POST
++	 *
++	 * @param array $items
++	 */
++	function _switch_REQUEST (&$items) {
++		foreach ($items as $name => $value) {
++			$this->REQUEST[$name] = @$_REQUEST[$name];
++			unset($_REQUEST[$name]);
++			if (!empty($value)) {
++				$_REQUEST[$name]=$value;
++			}
++		}
++	}
++
++	/**
++	 * Odtwarzanie elemetow $_POST okreslonych w $items, na podstawie $this->POST
++	 *
++	 * @param array $items
++	 */
++	function _restore_REQUEST (&$items) {
++		foreach ($items as $name => $value) {
++			unset ($_REQUEST[$name]);
++			$_REQUEST[$name]=$this->REQUEST[$name];
++		}
++	}
++
++	/**
++	 * Zapisuwanie napisywanie wszystkich elementow $_GET odpowiednimi elementami z $items, zapisujac stare wartosci w $this->GET
++	 *
++	 * @param array $items
++	 */	
++	function _switch_GET (&$items) {
++		foreach ($items as $name => $value) {
++			$this->GET[$name] = @$_GET[$name];
++			unset($_GET[$name]);
++			if (!empty($value)) {
++				$_GET[$name]=$value;
++			}
++		}
++	}
++
++	/**
++	 * Odtwarzanie elemetow $_GET okreslonych w $items, na podstawie $this->GET
++	 *
++	 * @param array $items
++	 */
++	function _restore_GET (&$items) {
++		foreach ($items as $name => $value) {
++			unset ($_GET[$name]);
++			$_GET[$name]=$this->GET[$name];
++		}
++	}
++
++	/**
++	 * Dodawanie produktu do koszyka
++	 *
++	 * @param int $id id produku - ¿ywcem z bazy danych
++	 * @param array $options - tablica opcji (zaawansowanych atrybutów)
++	 * @param int $num - ilo¶æ dodwanych produktów (s± bugi warstwe ni¿ej)
++	 * @param array $basket_cat - lista produktów dodanych (przez xml_options)
++	 * @param array $ext_basket - dodatkowe produkty dodane do koszyka (akcesoria)
++	 * @param bool $ignore_lock - ignoruj blokadê dodawania produktów gry jest siê w koszyku (wymagane do wielokrotnego dodawania)
++	 */
++	function add($id,$options='',$num='',$basket_cat='',$ext_basket,$ignore_lock=false) {
++		global $_SESSION;
++		global $global_secure_test, $sess, $global_request_md5, $global_prev_request_md5, $db, $mdbd;
++		// sprawdzamy blokade - czy wywo³aæ dodawanie u rodzica
++		if ($this->local_lock) {
++			$this->items[++$this->_count]=array("ID"=>$id,"name"=>$options,"num"=>$num,"price"=>$basket_cat,"data"=>$ext_basket,"points_value"=>$ignore_lock);
++			//			$this->register();
++		} else {
++			// ignorujemy zabezpieczenie przed dodawaniem wielu produktów do koszyka (np przez od¶wierzanie)
++			if ($ignore_lock) {
++				$_basket_add_lock=@$_SESSION['basket_add_lock'];
++				unset($_SESSION['basket_add_lock']);
++				$_global_prev_request_md5=$global_prev_request_md5;
++				$global_prev_request_md5='false';
++			}
++			// tablica podmienianych elemetów
++			$items= array (
++			'id'=>"$id",
++			'num'=>"$num",
++			'basket_cat'=>$basket_cat,
++			'options'=>$options,
++			'basket'=>$ext_basket,
++			);
++			// podmieniam i zapamiêtuje requesty
++			$this->_switch_REQUEST($items);
++
++			// blokada, wywo³ania, blokada
++			$this->local_lock=true;
++			$basket=$this;
++//			print getcwd();
++			$old_dir=getcwd();
++			global $DOCUMENT_ROOT;
++			$path_to_basket=$DOCUMENT_ROOT."/go/_basket/";
++			chdir($path_to_basket);
++			require_once("./include/container.inc.php");
++			$container=& new Basket_Container();
++			require("./include/basket_add.inc.php");
++			$container->me=&$this;
++			$container->me=$basket;
++			chdir($old_dir);
++//			$this=$basket;
++			$this->local_lock=false;
++
++			// odtwarzam requesty z przed wywo³ania
++			$this->_restore_REQUEST($items);
++			// odtwarzamy zabezpieczenie
++			if ($ignore_lock) {
++				$sess->register("basket_add_lock",$_basket_add_lock);
++				$global_prev_request_md5=$_global_prev_request_md5;
++			}
++		}
++	}
++
++	/**
++	 * Usuwamy produkt o wewnêtrznym id koszyka (Basket->items)
++	 *
++	 * @param int $id
++	 */
++	function del ($id) {
++		// sprawdzamy blokade - czy wywo³aæ usuwanie u rodzica
++		if ($this->local_lock) {
++			unset($this->items[$id]);
++		} else {
++			global $global_secure_test, $sess;
++			// generujemy tablice do posta
++			// i zapisujemy num ¿eby nie wywo³ywaæ aktualizacji liczby produktów
++			$int_prod_id=key($id);
++			$items=array(
++			'del' => array( "$int_prod_id" => "on" ),
++			'num' => '',
++			);
++
++			// podmieniamy posty
++			$this->_switch_POST($items);
++
++			// blokada, wywo³anie, blokada
++			$this->local_lock=true;
++			$basket=$this;
++			$old_dir=getcwd();
++			global $DOCUMENT_ROOT;
++			$path_to_basket=$DOCUMENT_ROOT."/go/_basket/";
++			chdir($path_to_basket);
++			require_once("./include/container.inc.php");
++			$container=& new Basket_Container();
++			include("./include/basket_update.inc.php");
++			$container->me=&$this;
++			$container->me=$basket;
++			
++			chdir($old_dir);
++			
++			$this->local_lock=false;
++
++			// odtwarzamy posty i zmienne
++			$this->_restore_POST($items);
++		}
++	}
++
++	/**
++	 * Aktualizujemy liczbe sztuk produktu o wewnêtrznym id koszyka (Basket->items)
++	 *
++	 * @param int $id
++	 * @param int $num
++	 */
++	function update($id,$num) {
++		global $global_secure_test, $sess;
++
++		// nie sprawdzamy locka poniewa¿ nie istnieje taka metoda w ¿adnym z rodziców
++		// ale i tak bêdziemy musieli go w³±czyæ na czas wykonywania w³a¶ciwej procedury.
++
++		// generujemy tablice do posta
++		// i zapisujemy del ¿eby nie usuwaæ produktów
++
++		$items=array(
++		'num' => array( "$id" => "$num" ),
++		'del' => '',
++		);
++
++		// podmieniamy posty
++		$this->_switch_POST($items);
++
++		// blokada, wywo³anie, zdjecie blokady
++		$this->local_lock=true;
++		$basket=$this;	
++		$old_dir=getcwd();
++		global $DOCUMENT_ROOT;
++		$path_to_basket=$DOCUMENT_ROOT."/go/_basket/";
++		chdir($path_to_basket);
++		require_once("./include/container.inc.php");
++		$container=& new Basket_Container();
++		include("include/basket_update.inc.php");
++		chdir($old_dir);
++		$container->me=&$this;
++		$container->me=$basket;
++			
++//		$this=$basket;
++		$this->local_lock=false;
++
++		// odtworzenie postów
++		$this->_restore_POST($items);
++	}
++
++	//num - to tablica elementów do zaktualizowania liczby
++	//del - to tablica elementów do usuniêcia
++	// zachowane dla pe³nej emulacji
++	/**
++	 * Po przej¶cie do kolejnego etapu zamawiania
++	 * Zastosowanie wszystkich zmian wprowadzonych do formularza (usuniêcia, zmiany w ilo¶ci) oraz obliczenie kosztów dostawy
++	 *
++	 * @param array $num
++	 * @param array $del
++	 */
++	function proceed($num='', $del='') {
++		global $delivery_obj, $global_delivery, $theme, $sess, $mdbd, $db;
++		
++		$i=0;
++		$_SESSION['depository_status'] = "";
++		$_SESSION['depository_error_id'] = "";
++		foreach($_SESSION['global_basket_data']['items'] as $key => $value ){
++
++			$item_id = $mdbd->select("user_id","main","id=?",array($value['ID']=>"text"),"","auto");
++			$select = $mdbd->select("num","depository","user_id_main=?",array($item_id=>"text"),"","auto");
++
++			//echo "select: ".$select."; ".$item_id;
++			if ($select == 0) $select="n";
++			if ($select >= $num[$i][$key] or $select == "n") 
++			{
++				$_SESSION['depository_status'] = true;
++			}
++			else
++			{
++				$_SESSION['depository_status'] = false;
++				$_SESSION['depository_error_id'].= $item_id." ";
++				if ($i == count($_SESSION['global_basket_data']['items'])-1) return false;
++			} 
++			$i++;
++		}
++			/* zapisz dane koszyka w sesji */
++		// aktualizujemy wszystkie produkty którym chcemy zmieniæ ilo¶æ
++		$this->update_many($num);
++		// usuwamy wszystkie zaznaczone produkty
++		if (is_array($del)) {
++			$this->del_many($del);
++		} else if (is_int($del)) {
++			$this->del($id);
++		}
++		// oblicz koszty dostawy
++		// #505 local
++		$this->calc();
++		$this->register();
++		$this->calc_delivery();
++		/**
++	    * Zapisz dane koszyka w sesji 
++	    * Dane s± zapisuwane przed head(), gdy¿ s± one wykorzystywane m.in. do pokazania ilo¶ci produktów w koszyku itp.
++	    * w nag³ówku.
++	    */
++		$this->register();
++		// end #505 local
++		$basket=$this;
++		$my_basket=&$basket;
++		// wywolaj nowy skrypt
++		include_once("go/_register/index.php");
++		// zakoncz dzialanie tego skryptu
++		exit;
++	}
++
++	/**
++	 * Oblicz koszta dostawy
++	 *
++	 */
++	function calc_delivery() {
++		global $delivery_obj, $global_delivery, $theme, $sess;
++		$delivery_obj->calc();
++		$global_delivery=array();
++		$global_delivery['id']=$delivery_obj->delivery_id;
++		$global_delivery['name']=$delivery_obj->delivery_name;
++		$global_delivery['cost']=$theme->price($delivery_obj->delivery_cost);
++		$global_delivery['pay']=$delivery_obj->delivery_pay;
++		$sess->register("global_delivery",$global_delivery);
++	}
++
++	/**
++	 * Aktualizacja wielu produktów naraz
++	 *
++	 * @param array $items
++	 */
++	function update_many($items) {
++		foreach ($items as $key) {
++			$id=key($key);
++			$value=$key[$id];
++			$this->update($id,$value);
++		}
++	}
++
++	/**
++	 * Usuwanie wielu produktów naraz
++	 *
++	 * @param array $items ($int_id1,$int_id2)
++	 */
++	function del_many($items) {
++		foreach ($items as $id) {
++			$this->del($id);
++		}
++	}
++
++	/**
++	 * Dodanie wielu produktów naraz
++	 * Tablica wej¶æiowa: 
++	 *	 array ('1' => array (
++	 *			 	"id" => id produktu (z bazy danych),
++	 *			 	"options" => xml_options,
++	 *			 	"num" => liczba produktow,
++	 *			 	"bakset_cat" => nieznana (przekazywana w ciemno),
++	 *			 	),
++	 *			 )
++	 *	Dane przekazywane bez zmian do $this->add	 	
++	 *
++	 * @param array $items
++	 * @param bool $ignore_lock
++	 */
++	function add_many($items,$ignore_lock) {
++		foreach ($items as $key) {
++			$id=$items[$key]['id'];
++			$options=$items[$key]['options'];
++			$num=$items[$key]['num'];
++			$basket_cat=$items[$key]['basket_cat'];
++			$this->add($id,$options,$num,$basket_cat,$ignore_lock);
++		}
++	}
++}
++?>
+diff -ruN ../soteesklep3/htdocs/plugins/_pay/_allpay/include/online.inc.php soteesklep3/htdocs/plugins/_pay/_allpay/include/online.inc.php
+--- ../soteesklep3/htdocs/plugins/_pay/_allpay/include/online.inc.php	1970-01-01 01:00:00.000000000 +0100
++++ soteesklep3/htdocs/plugins/_pay/_allpay/include/online.inc.php	2006-08-30 09:01:16.000000000 +0200
+@@ -0,0 +1,297 @@
++<?php
++/**
++ * Klasa do potwierdzen platnosci w tle z serwisu allpay
++ *
++ */
++
++
++define ("ALLPAY_SERVER","217.17.41.5");
++
++class AllpayOnline {
++
++    /**
++	 * Konstruktor klasy
++	 *
++	 * @return AllpayOnline
++	 */
++    function AllpayOnline() {
++        global $database, $db;
++        ob_start();
++        if($this->checkParam()) {
++            if($this->prepareData2()) {
++                $database->sql_insert("allpay_trans",array("status"=>"OK","order_id"=>$_REQUEST['description']));
++                print "OK";
++            } else {
++                $database->sql_insert("allpay_trans",array("status"=>"ERROR","order_id"=>$_REQUEST['description']));
++                print "ERROR";
++            }
++        }
++//        $query="INSERT INTO log (order_id, message) VALUES ('".$_REQUEST['description']."','".ob_get_contents()."')";
++//        $db->Query($query);
++        ob_flush();
++
++    } // end func AllpayOnline
++
++    /**
++	 * Zapisz parametry do bazy danych
++	 *
++	 */
++    function checkParam()
++    {
++        global $_REQUEST;
++        global $database;
++        global $mdbd;
++        foreach($_REQUEST as $key=>$value) {
++            $_REQUEST[$key]= addslashes($_REQUEST[$key]);
++        }
++        $database->sql_insert("allpay_trans",$_REQUEST);
++        $session=$mdbd->select('data','order_session',"order_id='".$_REQUEST['description']."'");
++        if (!empty($session)) {
++            $_SESSION=unserialize($session);
++            // zapalamy flage
++            global $session_restored;
++            $session_restored=true;
++        }
++        return true;
++    } // end func checkParam
++
++    function server() {
++        if ($_SERVER['REMOTE_ADDR']==ALLPAY_SERVER) {
++            return true;
++        }
++        return false;
++    }
++    function prepareData2() {
++        global $db, $allpay_config, $config, $database, $mdbd, $DOCUMENT_ROOT;
++        $data=$database->sql_select_multi_array4("*","order_register","order_id=".$_REQUEST['description']);
++        if (!is_array($data)) return true;
++        $amount=$data[0]['amount']+$data[0]['delivery_cost'];
++        if(!preg_match("/\./",$amount)) {
++            $amount=$amount.".00";
++        }
++        if(preg_match("/\.[0-9]$/",$amount)) {
++            $amount=$amount."0";
++        }
++        $md5=md5(
++            @$allpay_config->allpay_pin.":".
++            $allpay_config->allpay_id.":".
++            $_REQUEST['control'].":".
++            $_REQUEST['t_id'].":".
++            $amount.":".
++            $_REQUEST['email'].":".
++            @$_REQUEST['service'].":".
++            @$_REQUEST['code'].":".
++            @$_REQUEST['username'].":".
++            @$_REQUEST['password'].":".
++            $_REQUEST['t_status']
++        );
++        $database->sql_insert("allpay_trans",array(
++            "control"=>@$_REQUEST['control'],
++            "t_id"=>@$_REQUEST['t_id'],
++            "order_id"=>@$_REQUEST['description'],
++            "amount"=>$amount,
++            "email"=>@$_REQUEST['email'],
++            "service"=>@$_REQUEST['service'],
++            "code"=>@$_REQUEST['code'],
++            "username"=>@$_REQUEST['username'],
++            "password"=>@$_REQUEST['password'],
++            "t_status"=>$_REQUEST['t_status'],
++            "md5"=>$md5,
++            "md5_req"=>$_REQUEST['md5'],
++            "orginal_amount"=>$_REQUEST['amount'],
++            "remote_addres"=>$_SERVER["REMOTE_ADDR"]
++            )
++        );
++        // wylaczyc do testow - nie beda sprawdzane parametry posta i bedzie mozna wchodzic przez przegladarke zeby akceptowac transakcje
++        if ($md5!=@$_REQUEST['md5'] || !$this->server()) {
++            return false;
++        }
++        switch ($_REQUEST['t_status']) {
++            case 0:
++            // koniec powiadomien
++            return true;
++            break;
++            case 1:
++            // nowa
++            return true;
++            break;
++            case 2:
++            // ok
++            // wlaczanie mozliwosci wielokrotnego akceptowania transakcji
++//            if (true) {
++            if ($data[0]['confirm_online']!=1) {
++                global $auto_transaction;
++                $auto_transaction=true;
++                global $__secure_test;
++                $__secure_test=1;
++               
++                require_once ("include/order_register.inc");
++                $amount_all=number_format(($data[0]['amount']+$data[0]['delivery_cost']),2,".","");
++                $order_id=$_REQUEST['description'];
++                $my_checksum=OrderRegisterChecksum::checksum($_REQUEST['description'],1,$amount_all);
++                $database->sql_update("order_register","order_id=".$_REQUEST['description'],array(
++                "confirm_online"=>"1",
++                "confirm"=>"1",
++                "pay_status"=>"001",
++                "checksum_online"=>$my_checksum,
++                )
++                );
++                 include_once("$DOCUMENT_ROOT/go/_register/include/send_order.inc.php");
++                if (in_array("main_keys",$config->plugins)) {
++                    require_once ("go/_register/include/main_keys.inc.php");
++                    $main_keys = new MainKeys;
++                    $main_keys->show();
++                }
++            }
++            return true;
++            break;
++            case 3:
++            // odmowa
++            require_once ("include/order_register.inc");
++            $my_checksum=OrderRegisterChecksum::checksum($_REQUEST['description'],0,$data[0]['amount']);
++            $database->sql_update("order_register","order_id=".$_REQUEST['description'],array(
++            "confirm_online"=>"0",
++            "confirm"=>"0",
++            "pay_status"=>"003",
++            "checksum_online"=>$my_checksum,
++            )
++            );
++            return true;
++            break;
++            case 4:
++            // anulowana/zwrot
++            require_once ("include/order_register.inc");
++            $my_checksum=OrderRegisterChecksum::checksum($_REQUEST['description'],0,$data[0]['amount']);
++            $database->sql_update("order_register","order_id=".$_REQUEST['description'],array(
++            "confirm_online"=>"0",
++            "confirm"=>"0",
++            "pay_status"=>"004",
++            "checksum_online"=>$my_checksum,
++            )
++            );
++            return true;
++            break;
++            case 5:
++            // reklamacja
++            require_once ("include/order_register.inc");
++            $my_checksum=OrderRegisterChecksum::checksum($_REQUEST['description'],0,$data[0]['amount']);
++            $database->sql_update("order_register","order_id=".$_REQUEST['description'],array(
++            "confirm_online"=>"0",
++            "confirm"=>"0",
++            "pay_status"=>"005",
++            "checksum_online"=>$my_checksum,
++            )
++            );
++            return true;
++            break;
++            default:
++            return false;
++            break;
++        }
++        return;
++    }
++    /**
++     * Sprawdz trenaskacje
++     *
++     */
++    function prepareData()
++    {
++        ob_start();
++        global $database;
++        global $allpay_config;
++        global $DOCUMENT_ROOT;
++        global $config;
++        global $mdbd;
++        $data=$database->sql_select_multi_array4("*","order_register","order_id=".$_REQUEST['description']);
++
++        $amount=$data[0]['amount']+$data[0]['delivery_cost'];
++        if(!preg_match("/\./")) {
++            $amount=$amount.".00";
++        }
++
++        //$md5=md5(":10045:b03337e6e90a9dc291d528d113cdf3c3:10045-P12:70:fsd@fsdfsd.pl:::::1");
++        $md5=md5(
++        @$allpay_config->allpay_pin.":".
++        $allpay_config->allpay_id.":".
++        $_REQUEST['control'].":".
++        $_REQUEST['t_id'].":".
++        $amount.":".
++        $_REQUEST['email'].":".
++        @$_REQUEST['service'].":".
++        @$_REQUEST['code'].":".
++        @$_REQUEST['username'].":".
++        @$_REQUEST['password'].":".
++        $_REQUEST['t_status']
++        );
++
++        $database->sql_insert("allpay_trans",array(
++        "control"=>@$_REQUEST['control'],
++        "t_id"=>@$_REQUEST['t_id'],
++        "order_id"=>@$_REQUEST['description'],
++        "amount"=>$amount,
++        "email"=>@$_REQUEST['email'],
++        "service"=>@$_REQUEST['service'],
++        "code"=>@$_REQUEST['code'],
++        "username"=>@$_REQUEST['username'],
++        "password"=>@$_REQUEST['password'],
++        "t_status"=>$_REQUEST['t_status'],
++        "md5"=>$md5,
++        "md5_req"=>$_REQUEST['md5'],
++        "orginal_amount"=>$_REQUEST['amount'],
++        "remote_addres"=>$_SERVER["REMOTE_ADDR"]
++        )
++        );
++        if ($data[0]['confirm_online']==1) return;
++        // transakcja nowa lub odmowna
++        $mdbd->insert("log","order_id,message",array(
++        @$_REQUEST['description']=>"text",
++        print_r($_REQUEST,1)=>"text",
++        )
++        );
++        if($md5 == $_REQUEST['md5'] && ($_REQUEST['t_status'] == 1 || $_REQUEST['t_status'] == 3) && $_SERVER["REMOTE_ADDR"] == ALLPAY_SERVER) {
++            return true;
++        }
++        // potwierdzenie trasakcji
++        if($md5 == $_REQUEST['md5'] && $_REQUEST['t_status'] == 2 && $_SERVER["REMOTE_ADDR"] == ALLPAY_SERVER && $data['confirm_online']==0) {
++            // jesli skroty sa dobre tzn ze transakcja jest prawidlowa
++
++            global $auto_transaction;
++            $auto_transaction=true;
++            if (in_array("main_keys",$config->plugins)) {
++                require_once ("go/_register/include/main_keys.inc.php");
++                $main_keys = new MainKeys;
++                $main_keys->show();
++            }
++            require_once ("include/order_register.inc");
++            $my_checksum=OrderRegisterChecksum::checksum($_REQUEST['description'],1,$data[0]['amount']);
++            $database->sql_update("order_register","order_id=".$_REQUEST['description'],array(
++            "confirm_online"=>"1",
++            "confirm"=>"1",
++            "pay_status"=>"001",
++            "checksum_online"=>$my_checksum,
++            )
++            );
++
++            include_once("$DOCUMENT_ROOT/go/_register/include/send_order.inc.php");
++
++
++
++
++            $result_online=$database->sql_select("confirm_online","order_register","order_id=".$_REQUEST['description']);
++            if($result_online == 1) {
++                return true;
++            } else {
++                return false;
++            }
++
++        }
++
++        $mdbd->insert("log","order_id,message",array(
++        @$_REQUEST['description']=>"text",
++        ob_get_contents()=>"text",
++        )
++        );
++        ob_flush();
++    } // end func prepareData
++} // end class AllpayOnline
++?>
+diff -ruN ../soteesklep3/sql/upgrade_16.mysql soteesklep3/sql/upgrade_16.mysql
+--- ../soteesklep3/sql/upgrade_16.mysql	1970-01-01 01:00:00.000000000 +0100
++++ soteesklep3/sql/upgrade_16.mysql	2006-08-30 08:56:25.000000000 +0200
+@@ -0,0 +1,4 @@
++ALTER TABLE `allegro_auctions` CHANGE `allegro_pay_collect_on_delivery_price` `allegro_pay_collect_on_delivery_price` FLOAT NULL, CHANGE `allegro_pay_wire_transfer_price` `allegro_pay_wire_transfer_price` FLOAT NULL;
++ALTER TABLE `allegro_auctions` ADD `allegro_delivery_other` INT(11) NOT NULL;
++ALTER TABLE `allegro_auctions` ADD `allegro_delivery_other_text` TEXT NULL;
++ALTER TABLE `allegro_auctions` ADD `allegro_delivery_abroad` INT(11) NOT NULL;
+\ No newline at end of file
+diff -ruN ../soteesklep3/VERSION soteesklep3/VERSION
+--- ../soteesklep3/VERSION	1970-01-01 01:00:00.000000000 +0100
++++ soteesklep3/VERSION	2006-08-30 09:10:31.000000000 +0200
+@@ -0,0 +1 @@
++3.5RC16

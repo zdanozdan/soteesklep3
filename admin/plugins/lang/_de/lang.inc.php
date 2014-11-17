@@ -1,0 +1,18 @@
+<?php
+$lang->tips="";
+$lang->plugins="";
+$lang->plugins_name=array(
+                'market'=>'',
+                'discounts'=>'',
+                'newsletter'=>'',
+                'reviews'=>'',
+                'sales'=>'',
+                'synch'=>'',
+                'onet'=>'',
+                'partners'=>'',
+                'inteligo'=>'',
+                'promotion'=>'',
+                'multi_lang'=>'',
+                'cd'=>'',
+                );
+?>

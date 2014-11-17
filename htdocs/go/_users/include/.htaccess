@@ -1,0 +1,7 @@
+<?php
+/**
+* @version    $Id: .htaccess,v 2.2 2004/12/20 18:01:53 maroslaw Exp $
+* @package    users
+*/
+?>
+deny from all

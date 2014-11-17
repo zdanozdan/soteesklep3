@@ -1,0 +1,3 @@
+Oba pliki skopiowac do katalogu admin/tmp/ i uruchomic skrypt.
+Dzialanie jest opisane w pliku,
+packer jest zapisany zgodnie z phpDoc i na koncu pliku tez jest skrocony opis uzytkowania.

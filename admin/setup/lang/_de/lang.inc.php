@@ -1,0 +1,54 @@
+<?php
+$lang->setup_start_info="";
+$lang->setup_choose_lang="";
+$lang->setup_next="";
+$lang->setup_license_accept="";
+$lang->setup_system_php="";
+$lang->setup_system_type_title="";
+$lang->setup_system_type=array(
+                );
+$lang->setup_system_os_title="";
+$lang->setup_system_os=array(
+                );
+$lang->setup_system_host_title="";
+$lang->setup_system_host=array(
+                );
+$lang->setup_system_plugins_title="";
+$lang->setup_system_plugins=array(
+                );
+$lang->setup_plugins_code="";
+$lang->setup_steps=array(
+                );
+$lang->setup_form_mysql=array(
+                );
+$lang->setup_form_ftp=array(
+                );
+$lang->setup_simple_title="";
+$lang->setup_simple_errors=array(
+                );
+$lang->setup_ftp_dir="";
+$lang->setup_ftp_select="";
+$lang->setup_ftp_dir2="";
+$lang->setup_ftp_dir2_not_found="";
+$lang->setup_ftp_dir_error="";
+$lang->setup_pin_title="";
+$lang->setup_create_db="";
+$lang->setup_license_nr="";
+$lang->setup_errors=array(
+                );
+$lang->setup_license="";
+$lang->setup_ftp_changed="";
+$lang->setup_ftp_change="";
+$lang->setup_homepl_info="";
+$lang->setup_install_complete="";
+$lang->setup_pin="";
+$lang->setup_pin2="";
+$lang->setup_pin_info="";
+$lang->setup_license_who="";
+$lang->setup_create_table="";
+$lang->setup_create_table_ok="";
+$lang->setup_create_table_error="";
+$lang->setup_ftp_save="";
+$lang->setup_crypt=array(
+                );
+?>

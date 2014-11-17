@@ -1,0 +1,4 @@
+Location /plugins/_main_keys/
+Access deny any
+
+ErrorDoc 403 /download.php

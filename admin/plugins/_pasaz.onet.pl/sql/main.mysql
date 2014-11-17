@@ -1,0 +1,7 @@
+
+ALTER TABLE main ADD onet_status int(11) default 0;
+ALTER TABLE main ADD onet_export int(11) default 0;
+ALTER TABLE main ADD onet_image_export int(11) default 0;
+ALTER TABLE main ADD onet_image_desc varchar(255);
+ALTER TABLE main ADD onet_image_title varchar(255);
+ALTER TABLE main ADD onet_attrib varchar(255);

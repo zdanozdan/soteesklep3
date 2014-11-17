@@ -1,0 +1,50 @@
+<?php
+$lang->offline_file_errors=array(
+                );
+$lang->offline_load_errors=array(
+                'not_user_id'=>"",
+                );
+$lang->offline_category_error=array(
+                'category1_load'=>"",
+                );
+$lang->offline_update="";
+$lang->offline_update_ok="";
+$lang->offline_update_ok_but="";
+$lang->offline_update_error="";
+$lang->offline_legend=array(
+                'green'=>"",
+                'blue'=>"",
+                'red'=>"",
+                'fiol'=>"",
+                'sel'=>"",
+                'info'=>"",
+                );
+$lang->offline_menu=array(
+                'load'=>"",
+                'update'=>"",
+                'status'=>"",
+                'examples'=>"",
+                'config'=>"",
+                'help'=>"",
+                );
+$lang->offline_money=array(
+                );
+$lang->offline_upload_info="";
+$lang->offline_load_all="";
+$lang->offline_update_action="";
+$lang->offline_continue="";
+$lang->offline_sql_info="";
+$lang->offline_update_errors="";
+$lang->offline_record_info="";
+$lang->offline_product_update_info="";
+$lang->offline_no_file="";
+$lang->offline_size="";
+$lang->offline_config=array(
+                'option'=>"",
+                'type_file'=>"",
+                'main_table'=>"",
+                );
+$lang->offline_no_error="";
+$lang->offline_names_column=array(
+                );
+?>

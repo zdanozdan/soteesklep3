@@ -1,0 +1,10 @@
+<?php
+$lang->edit_producer_cols_list=array(
+                );
+$lang->edit_producer_cols=array(
+                );
+$lang->edit_category_menu_list=array(
+                );
+$lang->edit_producer_menu=array(
+                );
+?>

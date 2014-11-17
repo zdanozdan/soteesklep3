@@ -1,0 +1,10 @@
+<?php
+$lang->promotions_menu=array(
+                );
+$lang->promotions_cols_list=array(
+                );
+$lang->promotions_cols=array(
+                );
+$lang->promotions_form_errors=array(
+                );
+?>

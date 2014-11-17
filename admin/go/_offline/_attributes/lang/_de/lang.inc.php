@@ -1,0 +1,58 @@
+<?php
+$lang->offline_file_errors=array(
+                );
+$lang->offline_load_errors=array(
+                'not_user_id'=>"",
+                );
+$lang->offline_check_errors=array(
+                'id_main'=>"",
+                'attribute1'=>"",
+                );
+$lang->offline_category_error=array(
+                'category1_load'=>"",
+                );
+$lang->offline_update="";
+$lang->offline_update_ok="";
+$lang->offline_update_error="";
+$lang->offline_money=array(
+                );
+$lang->offline_legend=array(
+                'green'=>"",
+                'blue'=>"",
+                'red'=>"",
+                'fiol'=>"",
+                'sel'=>"",
+                'info'=>"",
+                );
+$lang->offline_menu=array(
+                'load'=>"",
+                'update'=>"",
+                'status'=>"",
+                'examples'=>"",
+                'export'=>"",
+                'doc'=>"",
+                'help'=>"",
+                );
+$lang->offline_upload_info="";
+$lang->offline_load_all="";
+$lang->offline_update_action="";
+$lang->offline_continue="";
+$lang->offline_sql_info="";
+$lang->offline_doc="";
+$lang->offline_submit_data="";
+$lang->offline_examples_price_list="";
+$lang->offline_examples_doc="";
+$lang->offline_update_errors="";
+$lang->offline_date="";
+$lang->offline_record="";
+$lang->offline_record_info="";
+$lang->offline_field="";
+$lang->offline_product_update_info="";
+$lang->offline_no_file="";
+$lang->offline_size="";
+$lang->offline_record_added="";
+$lang->offline_record_updated="";
+$lang->offline_record_deleted="";
+$lang->attributes_export="";
+$lang->attributes_export_ok="";
+?>

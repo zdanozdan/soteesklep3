@@ -1,0 +1,527 @@
+/*  Layout */
+
+
+body, table, tr, td, div, b,  input, textarea, form, select {
+   font-family: Tahoma;
+   font-size: 11px;
+   color: #004080;
+	margin:0px;
+	}
+a {
+   text-decoration: none;
+   color: color: #FF6000;
+}	
+
+
+a:hover {
+	color: #990000;
+	text-decoration: underline;
+	}
+   
+#left {
+   width: 180px;
+}   
+
+#right {
+   
+} 
+
+#center {
+   padding: 0px 5px;
+} 
+
+.space {
+   clear: both;
+}
+
+hr {
+	border: none;
+	height: 1px;
+	background-color: #B8CEE9;
+	color: #B8CEE9;
+}
+
+.buttons {
+   padding: 3px;
+   font: bold 11px Tahoma;
+   color: #004080;
+}
+
+.buttons a.buttons {
+   font: bold 11px Tahoma;
+   color: #004080;
+}
+
+
+
+#header_1  {
+   font: normal 11px Verdana;
+   color: #FFF;
+   width: 770px;
+   position: relative;
+   height: 100px;
+   background: url(http://www.sote.mikran.nazwa.pl/themes/base/base_theme/_img/logo.gif);
+}
+
+#header_1_menu {
+   font: normal 11px Tahoma;
+   color: #FDB342;
+   position: absolute;
+   bottom: 0;
+   right: 0;
+   padding: 2px;
+   display: none;
+}
+
+#header_1_menu a{
+   font: bold 11px Tahoma;
+   color: #004080;
+}
+
+
+#header_2  {
+   background: #446388;
+   font: normal 11px Verdana;
+   color: #FFF;
+   width: 770px;
+   padding: 3px  0px;
+}
+
+#header_2 a {
+   font: bolder 11px Arial;
+   color: #FFF;
+}
+
+#header_3  {
+   background: #B8CEE9;
+   font: normal 11px Verdana;
+   color: #004080;
+   width: 770px;
+}
+
+
+
+#header_3  td {
+   font: normal 11px Verdana;
+   color: #004080;
+}
+
+#header_3  td a {
+   font: bolder 10px Tahoma;
+   color: #002B55;
+}
+
+#header_4 td {
+   font: normal 11px Verdana;
+   color: #004080;
+}
+
+#header_4 td a {
+   font: normal 11px Verdana;
+   color: #FF6000;
+}
+
+#header_4 input.input {
+   font: normal 11px Tahoma;
+   color: #004080;
+   border: 1px solid #B8CEE9;
+   padding: 1px;
+}
+
+#header_4 input.button {
+   font: bolder 11px Tahoma;
+   color: #004080;
+   border: 1px solid #fff;
+   padding: 1px;
+   background: #B8CEE9;
+}
+
+textarea {
+   font: normal 11px Tahoma;
+   color: #004080;
+   border: 1px solid #B8CEE9;
+   padding: 1px;
+}
+
+#login_form_left {
+
+   border: 1px solid #B8CEE9;
+   background: #fff;
+   width: 350px;
+   margin: 10px;
+   padding: 10px;
+   height: 100px;
+   text-align: center;
+}
+
+#login_form_right {
+
+   border: 1px solid #B8CEE9;
+   background: #fff;
+   width: 350px;
+   margin: 10px;
+   padding: 10px;
+   height: 100px;
+   text-align: center;
+}
+
+#footer_2  {
+   background: #446388;
+   font: normal 10px Tahoma;
+   color: #FFF;
+   width: 770px;
+   padding: 4px 0;
+}
+
+#footer_2 a {
+   font: normal 10px Tahoma;
+   color: #FFF;
+}
+
+select.input {
+   font: normal 11px Tahoma;
+   color: #004080;
+   border: 1px solid #B8CEE9;
+   padding: 1px;
+}
+
+input.input {
+   font: normal 11px Tahoma;
+   color: #004080;
+   border: 1px solid #B8CEE9;
+   padding: 1px;
+}
+
+input.button {
+   font: bolder 11px Tahoma;
+   color: #004080;
+   border: 1px solid #fff;
+   padding: 1px;
+   background: #B8CEE9;
+}
+
+button.button {
+   font: bolder 11px Tahoma;
+   color: #004080;
+   border: 1px solid #fff;
+   padding: 1px;
+   background: #B8CEE9;
+}
+
+.block_1 td select {
+   font: normal 11px Tahoma;
+   color: #004080;
+   border: 1px solid #B8CEE9;
+   padding: 1px;
+}
+
+.block_1 td textarea {
+   font: normal 11px Tahoma;
+   color: #004080;
+   border: 1px solid #B8CEE9;
+   padding: 1px;
+}
+
+#header_4 select {
+   font: normal 11px Tahoma;
+   color: #004080;
+   border: 1px solid #B8CEE9;
+   padding: 1px;
+}
+
+.head_1 {
+   background: #5E7CA1 url(../_img/head_1.gif) repeat-x;
+   color: #fff;
+   text-align: center;
+   font: bolder 11px Arial;
+   padding: 2px;
+}
+
+.head_2 a.head_2 {
+   font: bolder 15px Arial;
+   padding: 0 0 3px 0;
+   color: #FF6000;
+}
+
+.head_2 a.head_2:hover {
+   color: #FDBE02;
+   text-decoration: none;
+}
+
+.head_2 a.head_2:visited {
+   color: #FDBE02;
+}
+
+#center td a.head_2 {
+   font: bolder 15px Arial;
+   padding: 0 0 3px 0;
+   color: #FF6000;
+}
+   
+#left td {
+   color: #004080;
+}
+
+#left td a{
+   color: #FF6000;
+}
+
+#right td {
+   color: #004080;
+}
+
+#right td a{
+   color: #FF6000;
+}
+
+#block_search {
+   margin: 0 0 15px 0;
+   border: 1px solid #B8CEE9;
+   padding: 3px;
+   color: #004080;
+   background: #B8CEE9;
+   position: relative;
+   text-align: center;
+}
+
+#block_search div {
+   text-align: center;
+}
+
+#block_search div input.button {
+   font: bolder 11px Tahoma;
+   color: #fff;
+   border: 0px solid #fff;
+   padding: 1px;
+   background: #FF6000;
+}
+
+#block_search div form {
+   text-align: center;
+   vertical-align: middle;
+}
+
+#block_search div a {
+   text-align: center;
+   color: #406085;
+}
+
+#block_1{
+   margin: 2px 0 15px 0;
+   border: 1px solid #B8CEE9;
+   padding: 3px;
+   color: #004080;
+   background: #F4FAFF;
+   position: relative;
+}
+
+#block_1 td {
+   color: #004080;
+   font: normal 11px Tahoma;
+   background: #F4FAFF;
+}
+
+.block_category {
+   margin: 2px 0 10px 0;
+   border: 1px solid #B8CEE9;
+   padding: 3px;
+   font: normal 11px Tahoma;
+   color: #004080;
+   background: #F4FAFF;
+   position: relative;
+   text-align: left;
+}
+
+
+
+.block_1 {
+   margin: 2px 0 10px 0;
+   border: 1px solid #B8CEE9;
+   padding: 3px;
+   font: normal 11px Tahoma;
+   color: #004080;
+   background: #F4FAFF;
+   position: relative;
+   text-align: left;
+}
+
+.block_1  a, .block_1  a u { 
+   color: #FF6000;
+   font: normal 11px Tahoma;
+   text-decoration: none;
+}
+
+.block_1  a u { 
+   color: #FF6000;
+   font: normal 11px Tahoma;
+   text-decoration: none;
+   margin: 0 0 0 10px;
+}
+
+.block_1 td a { 
+   color: #FF6000;
+   font: normal 11px Tahoma;
+}
+
+.block_1 td { 
+   color: #004080;
+   font: normal 11px Tahoma;
+   text-align: left;
+}
+
+.head_2 {
+   font: bolder 15px Arial;
+   padding: 0 0 3px 0;
+   color: #FF6000;
+   text-align: left;
+}
+
+.head_3 {
+     font: Arial bolder 12px;
+   padding: 0 0 3px 0;
+   color: #004080;
+   text-align: left;
+  font-style: normal;
+  font-weight: bolder
+}
+
+.block_2{ 
+   margin: 2px 0 15px 0;
+   border: 1px solid #B8CEE9;
+   padding: 5px;
+   color: #004080;
+   text-align: left;
+   min-height: 200px;
+   .height: 200px;
+   text-align: left;
+}
+
+.block_3{ 
+   margin: 2px 0 15px 0;
+   border: 1px solid #B8CEE9;
+   padding: 5px;
+   color: #004080;
+   text-align: left;
+}
+
+
+.block_3 td { 
+   color: #004080;
+}
+
+.block_4{ 
+   margin: 2px 0 15px 0;
+   border: 1px solid #B8CEE9;
+   padding: 5px;
+   color: #004080;
+   text-align: center;
+   
+}
+
+.opis {
+   font: normal 11px Verdana;
+   color: #707070;
+   padding: 3px;
+   text-align: left;
+}
+
+.tekst_1 {
+   font: normal 11px Verdana;
+   color: #004080;
+   padding: 3px;
+}
+.foto {
+   float: left;
+   border: 1px solid #ccc;
+   padding: 1px;
+   margin: 3px;
+}
+
+.tools {
+   border-top: 1px solid #B8CEE9;
+   margin: 4px 0px;
+   padding: 4px 0 0 0;
+}
+
+.tools_1 {
+   font: normal 11px Tahoma;
+   color: #969696;
+   padding: 2px 0;
+}
+
+.tools_2 {
+   font: bold 11px Arial;
+   color: #004080;
+}
+
+#10{
+  font-size: 10px;
+}
+#11{
+  font-size: 11px;
+}
+#12{
+  font-size: 12px;
+}
+.red{
+  color: #bb0000;
+}
+.green{
+  color: #005500;
+}
+.blue{
+  color: #000033;
+}
+
+
+/* Form elements */
+select, textarea, input, textarea { 
+	border-style: solid;
+	border-top-width: 1px; 
+	border-right-width: 1px; 
+	border-bottom-width: 1px; 
+	border-left-width: 1px;
+	/*border-color: #563409;*/
+	border-color: #777777;
+    font-size: 12px;
+}
+
+.border0{
+	border-top-width: 0px; 
+	border-right-width: 0px; 
+	border-bottom-width: 0px; 
+	border-left-width: 0px;
+
+}
+
+/* Price preview (info) */
+.text_preview { 
+	border-style: solid;
+	border-top-width: 0px; 
+	border-right-width: 0px; 
+	border-bottom-width: 0px; 
+	border-left-width: 0px;
+	border-color: #563409;	
+    font-size: 11px;
+}
+
+/* Terminarz */
+.bg_red {    
+    border-style: solid;
+	border-top-width: 1px; 
+	border-right-width: 1px; 
+	border-bottom-width: 1px; 
+	border-left-width: 1px;
+    border-color: #770000;
+    padding: 8px 16px;
+}
+
+.record_even {
+    background-color: #f2f2f2;
+    padding: 4px;
+}
+.record_odd {
+    background-color: #fefefe;
+    padding: 4px;
+}
+/* end Terminarz */

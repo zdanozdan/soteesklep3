@@ -1,0 +1,117 @@
+<?php
+$lang->themes_title="Zarz±dzanie tematami";
+$lang->themes_titles=array(
+                'category'=>"Edycja w³a¶ciwo¶ci kategorii (menu)",
+                'photos'=>"Edycja zdjêæ",
+                'preferences'=>"Ustawienia preferencje wygl±du sklepu",
+                'files_php'=>"Zmiana plików tematu",
+                'themes'=>"Zarz±dzanie tematami",
+                );
+$lang->themes_select="Wybierz temat";
+$lang->themes_info="W sklepie mo¿esz edytowaæ wygl±d strony. W prosty sposób
+mo¿na wstawiæ w³asn± grafikê (stworzyæ w³asny temat), dziêki czemu sklep staje siê indywidualny i
+niepowtarzalny. Szczego³y dotycz±ce zmiany grafiki znajdziesz w <a href=http://www.sote.pl/go/_soteesklep/_doc/index.php target=sote><u>dokumentacji</u></a>";
+$lang->themes_info_text="Mo¿esz równie¿ skorzystaæ z edycji tekstów/WWW";
+$lang->themes_choose="Wybierz opcjê";
+$lang->themes_menu=array(
+                'category'=>"Wygl±d kategorii",
+                'files_php'=>"Pliki HTML/PHP",
+                'photos'=>"Zdjêcia/Ikonki",
+                'preferences'=>"Preferencje/Ustawienia",
+                'themes'=>"Edytuj temat",
+                'set_theme'=>"Ustaw temat",
+                'add_theme'=>"Dodaj temat",
+                'after_set_theme'=>"Domy¶lny temat",
+                'after_add_theme'=>"Wybrane tematy",
+                );
+$lang->themes_button_return="Powrót - Edycja wygl±du";
+$lang->themes_info_default_theme=" - domy¶lny temat";
+$lang->themes_info_default_theme_description="Domy¶lny temat zosta³ ustawiony ";
+$lang->themes_info_choosen_theme_description="Tematy, które mog± byæ wybrane przez u¿ytkownika sklepu";
+$lang->themes_edit_menu="Pomoc";
+$lang->themes_edit_menu_bar="Pomoc - Edycja wygl±du";
+$lang->themes_help_edit_themes="Edycja istniej±cego tematu";
+$lang->themes_help_edit_themes_body="Edycja istniej±cego tematu umo¿liwia zmianê poszczególnych elementów sk³adowych tematu.";
+$lang->themes_help_add_themes="Dodanie nowego tematu na bazie istniej±cego";
+$lang->themes_help_add_themes_body="Pozwala zdefiniowaæ swój w³asny, nowy temat na bazie wcze¶niej zdefiniowanego tematu.";
+$lang->themes_help_set_dafaul_themes="Ustawienie domy¶lnego tematu w sklepie";
+$lang->themes_help_set_dafaul_themes_body="Opcja ta pozwala na zmianê domy¶lnego tematu, który bêdzie u¿yty przy prezentacji zawarto¶ci sklepu internetowego.";
+$lang->themes_help_active_themes="Aktywowanie dostêpnych tematów";
+$lang->themes_help_active_themes_body="Aktywowanie dostêpnych tematów pozwala na wybranie tych tematów, które bêd± dostêpne dla klienta (osoby odwiedzaj±ce sklep internetowy). Osoba odwiedzaj±ca sklep bêdzie mia³a mo¿liwo¶æ wybierania zdefiniowanych przez projektanta tematów okre¶laj±cych wygl±d sklepu. Do listy udostêpnianych tematów równie¿ jest do³±czony temat wybrany jako domy¶lny w opcji \"Ustawienie domy¶lnego tematu w sklepie\".";
+$lang->themes_category_choose="Wybierz rodzaj prezentacji kategorii (menu)";
+$lang->themes_category_info=array(
+                'treeview_producers'=>"<b>Dynamiczny system prezentacji kategorii.</b><br> System ten pozwala na przegl±danie katgorii i podkategorii bez konieczno¶ci prze³adowywanie strony. System wymaga obs³ugi javascript od w przegl±darce klienta.</u>",
+                'treeview_icons'=>"poka¿ ikonki (foldery) przy kategoriach",
+                'treeview_openall'=>"domy¶lnie kategorie maj± byæ rozwiniête",
+                'static'=>"<b>Statyczne menu.</b><br> Po wybraniu kategorii system automatycznie przedstawia podkategorie prze³adowuj±c jednocze¶nie stronê. Zalet± tego systemu jest to, ¿e <u>dzia³a praktycznie na ka¿dej przegl±darce i nie wymagana jest obs³uga javascript</u>.",
+                'hybrid'=>"<b>Mieszany system kategorii</b><br> G³owne kategorie s± statyczne. Po wybraniu kategorii wg producenta generuj± siê kategorie dynamiczne. System ten zalecany jest kiedy mamy du¿o kategorii i podkategorii - przyspiesza prace - szczegolnie na MacOS(X) + IE.",
+                );
+$lang->themes_category_opt="Zmiany w/w opcji bed± widoczne po wywo³aniu optymalizacji kategorii. Przy zmianie opcji 2.1, nale¿y wykasowaæ cookie w przegl±darce.";
+$lang->themes_edit_info="Je¶li chcesz edytowaæ istniej±cy temat (np. wstawiæ swoje logo do sklepu, zmieniæ przyciski), to wybierz jeden z tematow do edycji. Ka¿dy temat ma indywidualne ustawienia.";
+$lang->themes_set="Ustaw domy¶lny temat w sklepie.";
+$lang->themes_add_info="Dodaj nowy temat bazuj±cy na temacie";
+$lang->themes_show_info="Wybierz tematy, które bed± dostêpne na li¶cie u¿ytkownikowi do wyboru.";
+$lang->color_names=array(
+                'body_background'=>"t³o strony",
+                'box_background'=>"t³o modu³ów",
+                'base_font'=>"czcionka g³ówna",
+                'link_normal'=>"link",
+                'link_over'=>"link pod¶wietlony",
+                'header_font'=>"czcionka nag³ówków",
+                'button_background'=>"t³o przycisków",
+                'button_border'=>"krawêdzie przycisków",
+                'input_background'=>"t³o pól tekstowych",
+                'input_border'=>"krawêdzie pól tekstowych",
+                'basket_th'=>"zawarto¶c koszyka - t³o nag³ówka",
+                'basket_td'=>"zawarto¶æ koszyka - t³o wiersza",
+                'color_1'=>"kolor 1",
+                'color_2'=>"kolor 2",
+                'color_3'=>"kolor 3",
+                'color_4'=>"kolor 4",
+                );
+$lang->buttons_edit_theme="Edycja tematu";
+$lang->buttons_edit_colors="Edycja kolorów";
+$lang->themes_edit_text="Poni¿szy panel umo¿liwia prost± podmianê elementów graficznych strony. Klikaj±c w wybrany element mo¿na zmieniæ grafikê reprezentuj±c± ten element. W ten sposób mo¿liwa jest prosta podmiana na przyk³ad logo w nag³ówku lub nawet przebudowa ca³ego tematu wizerunkowego strony.
+";
+$lang->themese_hide_frames="ukryj krawêdzie elementów";
+$lang->themes_update_changes="Aktualizuj zmiany na stronie";
+$lang->themes_clik2change="Kliknij w element, by zmieniæ obrazek";
+$lang->themes_contents="Tre¶æ";
+$lang->themes_current_graphics="Bie¿±ca grafika";
+$lang->themes_approve="Zatwierd¼";
+$lang->themes_state="stan";
+$lang->themes_page_updated="Wygl±d strony zosta³ zaktualizowany.";
+$lang->themes_window_close="Zamknij okno";
+$lang->themes_color_text="Formularz umo¿liwiaj±cy zmianê kolorów wiêkszo¶ci elementów w temacie strony, które nie s±
+zwi±zane z grafikami (grafiki mo¿na edytowaæ w zak³adce \"Edycja tematu\").";
+$lang->themes_color_bar="Edycja kolorów tematu";
+$lang->themes_addition="Dodanie nowego tematu";
+$lang->themes_enter_name="Wprowad¼ nazwê nowego tematu";
+$lang->themes_set_as_default="Ustaw jako domy¶lny temat w sklepie";
+$lang->themes_exists="Temat o podanej nazwie ju¿ istnieje.";
+$lang->themes_folder_exists="Katalog tematu ju¿ istnieje.";
+$lang->themes_invalid="Nieprawid³owa nazwa tematu. Nazwa mo¿e siê sk³adaæ z ma³ych liter (bez polskich znaków) oraz z cyfr.";
+$lang->themes_added="Temat zosta³ dodany.";
+$lang->themes_deletion="Usuwanie tematu";
+$lang->themes_sure_to_erase="Na pewno chcesz usun±æ ten temat? (katalog tematu NIE zostanie usuniêty)";
+$lang->head_home="Home";
+$lang->head_help="Pomoc";
+$lang->head_contact="Kontakt";
+$lang->head_about_shop="O sklepie";
+$lang->head_your_basket="Twój koszyk";
+$lang->head_basket="Koszyk";
+$lang->head_login_register="Logowanie, rejestracja";
+$lang->head_my_account="Moje konto";
+$lang->head_terms="Regulamin";
+$lang->head_soteshop="SOTEeSKLEP 2";
+$lang->head_in_basket="Warto¶æ";
+$lang->head_products_count="Liczba produktów";
+$lang->head_shop="Sklep";
+$lang->head_search="Szukaj";
+$lang->head_promotions="Promocje";
+$lang->head_news="Nowo¶ci";
+$lang->head_about_company="O firmie";
+$lang->head_users_online="U¿ytkownicy online";
+$lang->head_register="Zarejestruj siê";
+$lang->head_simple_title="Sklep";
+?>

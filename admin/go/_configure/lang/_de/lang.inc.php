@@ -1,0 +1,16 @@
+<?php
+$lang->main_order_default=array(
+                );
+$lang->price_type=array(
+                );
+$lang->configure_record_row_type_default=array(
+                );
+$lang->configure_titles=array(
+                );
+$lang->newsedit_columns_default=array(
+                );
+$lang->configure_form=array(
+                );
+$lang->configure_in_category_down=array(
+                );
+?>

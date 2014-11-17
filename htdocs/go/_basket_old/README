@@ -1,0 +1,11 @@
+Obs³uga koszyka (index2) oraz przechowalni (index3).
+ - dodanie produktu/produktów do koszyka/przechowalni
+ - usuniecie produktu/produktów z koszyka/przechowalni
+ - przeniesienie produktu/produktów miêdzy koszykiem i przechowalni±
+ 
+
+
+Obsluga koszyka. 
+- dodanie produktu do koszyka
+- oblicznie koszow dostawy
+- podsumowanie

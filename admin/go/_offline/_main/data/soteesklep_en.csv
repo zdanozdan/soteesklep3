@@ -1,0 +1,11 @@
+Command	Product ID	Gross price	Product full description	Product short description	Product photo	Flash photo	Flash photo code	PDF photo	Options to product	Promotional products	New product	Bestseller	Main page	Active	Product name	Producer	Category 1	Category 2	Category 3	Category 4	Category 5	Currency	VAT rate	Old price	Availability	Wholesale price	Hide the price	Discount	Accessories	Price in currency	Maximum discount	Google title	Google keywords	Google description	Product in category 2	Product in category 3	Ask about price	 weight 	status_vat
+A	A001	51523	full description	short description	test1.jpg					1	1	1	1	1	Toshiba A100	Toshiba	Category10	Cat21	Cat31	Cat41	Cat51	1	22	134	1	432		5	A002;A003		7				Categoria11/Cat22	Categoria12/Cat123	1	1	1
+A	A002	43	full description	short description	test2.jpg					1	1	1	1	1	Toshiba A100	Toshiba	Category11	Cat22	Cat31	Cat41	Cat52	1	22	134	2	54		5			7				Computers/Cat22		0	2	0
+A	A003	23	full description	short description	test1.jpg					1	1	1	1	1	Toshiba A100	Toshiba	Category11	Cat21	Cat32	Cat42	Cat53	1	22	134	3	53		5							Categoria12/Cat23		1	5	1
+A	A004	7777	full description	short description	test2.jpg					1	1	1	1	1	Toshiba A100	Toshiba	Category10	Cat23	Cat32	Cat43	Cat51	1	22	134	3	2343		5									0	6	1
+A	A005	66	full description	short description	test1.jpg					1	1	1	1	1	Toshiba A100	Toshiba	Category11	Cat22	Cat33			1	22	134	2	23		10									1	8	0
+A	A006	145	full description	short description	test2.jpg					1	1	1	1	1	Toshiba A100	Toshiba	Category11	Cat23	Cat33			1	22	134	1	433		5									1	4	1
+A	A008	333	full description	short description	test2.jpg					1	1	1	1	1	Toshiba A100	Toshiba	Category 1	Cat22	Cat32			1	22	134	2	432		7									1	2	0
+A	A009	122	full description	short description	test1.jpg					1	1	1	1	1	Toshiba A100	Toshiba	Computers	Cat123	Cat32			1	22	134	3	85		7											
+A	A010	444	full description	short description	test2.jpg					1	1	1	1	1	Toshiba A100	Toshiba	Computers	Cat23	Cat33			1	22	134	4	34		7											
+A	A011	55	full description	short description	test1.jpg					1	1	1	1		Toshiba A100	Toshiba	Computers	Cat23	Cat33			1	22	134	2	3		7											

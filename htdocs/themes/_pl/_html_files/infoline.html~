@@ -1,0 +1,33 @@
+<img src="/themes/base/base_theme/_img/woman-right.jpg"/>
+
+<div class="head_2"> Infolinia: </div>
+<span class="contact"><img src="/themes/base/base_theme/_img/phone.gif"/> +48 61 8475858</span>
+<br />
+<br />
+<div class="head_2"> Zamówienia: </div>
+<br />
+   Zamówienia mo¿ecie Pañstwo sk³adaæ równie¿ telefonicznie od poniedzia³ku do piatku w godzinach 8.30 - 18.00, w soboty 9.00 - 14.00
+<table><tr>
+<td>
+<img src="/themes/base/base_theme/_img/mail.gif"/></td>
+<td><form name="sklep" method=post action="/custom/index.php">
+<input type=hidden name="n" value="sklep">
+<a href="javascript:document.sklep.submit();">Wy¶lij email</a>
+</form></td></tr>
+<br />
+<tr><td>
+<img src="/themes/base/base_theme/_img/phone.gif"/></td><td> tel : +48 61 8475858</td>
+</tr>
+<br />
+<tr><td>
+<img src="/themes/base/base_theme/_img/fax.gif"/><td> fax. +48 61 8484457</td>
+</tr>
+</table>
+<br />
+
+<div class="head_2"> Wybierasz siê do nas ? <br /></div>
+Mikran <br>
+Wojskowa 3 / L4 <br>
+60-792 Poznañ  <br>
+<A href="/go/_files/?file=contact.html" class="contact"><br>Jak do nas dojechaæ ?</a>
+

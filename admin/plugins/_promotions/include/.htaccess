@@ -1,0 +1,7 @@
+<?php
+/**
+* @version    $Id: .htaccess,v 1.2 2004/12/20 18:00:44 maroslaw Exp $
+* @package    promotions
+*/
+?>
+deny from all

@@ -1,0 +1,66 @@
+<!-- record_row_short.html.php -->
+
+<?php
+/**
+* Szablon PHP wygl±du rekordu na li¶cie skróconej.
+* Jest on tak¿e wykorzystywany do pokazywania innych produktów z tej samej kategorii i akcesoriów do produktu.
+*
+* @author  m@sote.pl
+* @version $Id: record_row_short.html.php,v 1.4 2007/12/01 12:25:30 tomasz Exp $
+*
+* @todo brak opisu zmiennej $odd
+* @package    themes
+* @subpackage base_theme
+*/
+
+global $shop;
+?>
+
+<tr bgcolor="<?php if($odd==0){ print $this->record_odd_color; } else { print $config->colors['light'];}?>"> 
+  <td class="row_short_td" width="50%" align="left">
+    <?php
+       print $this->get_rewrite_anchor($rec->data['id'],$rec->data['name']);
+       print "".$rec->data['name']."";
+    ?>
+    </a></td>
+                
+  <td  class="row_short_td" width="90" align="left" > 
+   <nobr>
+   <?php 
+   // wy¶wietlaj cene brutto tylko wtedy gdy hidden price=0
+   if ($this->checkView("price",$rec) && (!$this->checkView("points",$rec))) {
+       print "".$this->print_price($rec)." ".$shop->currency->currency."";
+   }
+	if ($this->checkView("points",$rec)) {
+		print $rec->data['points_value']." ".$lang->cols['m_points'];
+	}
+   ?>
+   </nobr>
+  </td>
+               
+  <td class="row_short_td" align="left" width="90">
+	<nobr>
+	<?php 
+	//stara cena
+	//wyswietlaj tylko wted kiedy stara cena jest wprowadzona
+        if ( (!$this->checkView("points",$rec)) && 
+           ($rec->data['price_brutto_detal']>0) && 
+           (!$rec->data['points']))
+        {
+           //if ((($rec->data['price_brutto_detal']>0)&&($rec->data['base_discount']==0)) && (!$this->checkView("points",$rec))){
+	    if ($this->checkView("price",$rec)) 
+	    print"<font color=red><strike>".$rec->data['price_brutto_detal']."</strike>&nbsp;</font>".$shop->currency->currency."\n";
+	}
+	// rabat;
+	// wyswietalj tylko wtedy kiedy rabat jest wprowadzony
+// 	if ((! empty($rec->data['base_discount']))  && ($rec->data['base_discount']>0) && ($rec->data['base_discount']<99) && (!$this->checkView("points",$rec))) {
+// 	    if ($this->checkView("discount",$rec)) print $lang->cols['discount'].":&nbsp;".$rec->data['base_discount']."%\n";
+// 	}
+    ?>
+    </nobr>
+  </td> 
+                            
+  <td class="row_short_td" align="right" width="50"><?php $this->recInfo($rec->data['id'],$rec);?></td>
+  <td class="row_short_td" align="right" width="50"><?php $this->recHeaderBasket($rec->data['id'],$rec);?></td>       
+  <td class="row_short_td" align="right" width="50"><?php $this->recHeaderWishlist($rec->data['id'],$rec);?></td>      
+</tr>

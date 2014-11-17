@@ -1,0 +1,13 @@
+
+12	Rozmiar	Rodzaj	
+12	S, s.gif	Kaptur, +12	
+12	M, +10, m.gif	Rekawy,+7	
+12	L, +20, l.gif	Kieszenie, +15.2, kieszenie.gif	
+12	XL, +22.2, xl.gif		
+12	XXL, +30.3, xxl.gif		
+14	Procesor	Pamieæ	Dodatki
+14	P||| 700 MHZ, +300.00	64MB, +30.00	Torba, +100.50
+14	PIII 800 MHZ, +400.00	128MB,+50.00	Kaptur, +100.20
+14	PIV 1.6 Ghz,-300.00,p4.jpg	256MB,+100	
+14	P IV 2.0 Ghz, +300, ,p4.jpg		
+14	P||| 750 MHZ, +300.00		

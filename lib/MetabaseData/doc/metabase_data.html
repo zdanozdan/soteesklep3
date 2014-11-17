@@ -1,0 +1,736 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2K.1beta (1.48)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>SOTEeSKLEP MetabaseData &amp; DataForm</TITLE>
+<META NAME="description" CONTENT="SOTEeSKLEP MetabaseData &amp; DataForm">
+<META NAME="keywords" CONTENT="metabase_data">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-2">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2K.1beta">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="metabase_data.css">
+
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<IMG WIDTH="81" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next_inactive"
+ SRC="/usr/share/latex2html/icons/nx_grp_g.png"> 
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="/usr/share/latex2html/icons/up_g.png"> 
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="/usr/share/latex2html/icons/prev_g.png">   
+<BR>
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<P>
+
+<P>
+
+<P>
+<H1 ALIGN="CENTER">SOTEeSKLEP MetabaseData &amp; DataForm</H1>
+<P ALIGN="CENTER"><STRONG>m@sote.pl </STRONG></P>
+Wersja dokumentu: $Id: metabase_data.html,v 1.3 2003/11/16 21:27:29 maroslaw Exp $
+
+<P>
+<BR>
+
+<H2><A NAME="SECTION01000000000000000000">
+Contents</A>
+</H2>
+<!--Table of Contents-->
+
+<UL>
+<LI><A NAME="tex2html20"
+  HREF="metabase_data.html">1 MetabaseData 1.0</A>
+<UL>
+<LI><A NAME="tex2html21"
+  HREF="#SECTION02010000000000000000">1 Wymagania, lokalizacja</A>
+<LI><A NAME="tex2html22"
+  HREF="#SECTION02020000000000000000">2 Opis klasy</A>
+<UL>
+<LI><A NAME="tex2html23"
+  HREF="#SECTION02021000000000000000">2.1 Tworzenie obiektu</A>
+<LI><A NAME="tex2html24"
+  HREF="#SECTION02022000000000000000">2.2 funkcja select()</A>
+<LI><A NAME="tex2html25"
+  HREF="#SECTION02023000000000000000">2.3 funkcja query_select()</A>
+<LI><A NAME="tex2html26"
+  HREF="#SECTION02024000000000000000">2.4 funkcja read()</A>
+<LI><A NAME="tex2html27"
+  HREF="#SECTION02025000000000000000">2.5 funkcja update() </A>
+<LI><A NAME="tex2html28"
+  HREF="#SECTION02026000000000000000">2.6 funkcja insert()</A>
+<LI><A NAME="tex2html29"
+  HREF="#SECTION02027000000000000000">2.7 funkcja delete()</A>
+</UL>
+<LI><A NAME="tex2html30"
+  HREF="#SECTION02030000000000000000">3 Podsumowanie</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html31"
+  HREF="#SECTION03000000000000000000">2 DataForm 1.0</A>
+<UL>
+<LI><A NAME="tex2html32"
+  HREF="#SECTION03010000000000000000">4 Wymagania, lokalizacja</A>
+<LI><A NAME="tex2html33"
+  HREF="#SECTION03020000000000000000">5 Opis klasy</A>
+<UL>
+<LI><A NAME="tex2html34"
+  HREF="#SECTION03021000000000000000">5.1 Tworzenie obiektu</A>
+<LI><A NAME="tex2html35"
+  HREF="#SECTION03022000000000000000">5.2 funkcja db_add_select()</A>
+</UL>
+</UL>
+<BR>
+<LI><A NAME="tex2html36"
+  HREF="#SECTION04000000000000000000">About this document ...</A>
+</UL>
+<!--End of Table of Contents-->
+
+<P>
+
+<H1><A NAME="SECTION02000000000000000000">
+1 MetabaseData 1.0</A>
+</H1>
+
+<P>
+Integralną częścią tej dokumentacji, jest dokumentacja Metabase.&nbsp;
+<BR>
+<P>
+Klasa MetabaseData jest klasą zawierającą funkcje ułatwiające pobieranie
+struktur danych i wykonywania podstawowych operacji bazodanowych,
+w oparciu bibliotekę Metabase. Wykorzystanie MetabaseData skraca czas
+przygotowania aplikacji oraz pozwala na tworzenie bardziej przejrzystego
+kodu. Dodatkowo klasa ta może posłużyć do budowania kolejnych bibliotek
+opierających się na w/w klasie np. do automatycznego budowania formularzy
+na podstawie danych z bazy itp.
+
+<P>
+
+<H1><A NAME="SECTION02010000000000000000">
+1 Wymagania, lokalizacja</A>
+</H1>
+
+<P>
+W SOTEeSKLEP biblioteka znajduje się w lokalizacji: <B>lib/MetabaseData/MetabaseData.php</B>.
+Wywołanie tej klasy ma następującą postać:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>require_once&nbsp;(``MetabaseData/MetabaseData.php'');
+</DD>
+</DL>Wymagana jest klasa obsługi Metabase.
+
+<P>
+
+<H1><A NAME="SECTION02020000000000000000">
+2 Opis klasy</A>
+</H1>
+
+<P>
+
+<H2><A NAME="SECTION02021000000000000000">
+2.1 Tworzenie obiektu</A>
+</H2>
+
+<P>
+Domyślnym obiektem jest obiekt o nazwie: <B>$mdbd</B>
+<BR>
+Tworzenie obiektu ma następującą postać:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>$mdbd&nbsp;=&nbsp;new&nbsp;MetabaseData($db);
+</DD>
+</DL>gdzie <B>$db</B> to obiekt Metabase.
+
+<P>
+
+<H2><A NAME="SECTION02022000000000000000">
+2.2 funkcja select()</A>
+</H2>
+
+<P>
+Jeśli chcemy odczytać dane z bazy danych, możemy użyć funkcji <B>$mdbd-&gt;select()</B>.
+Funkcja ta ma następującą postać:
+
+<P>
+<B>$mdbd-&gt;select($columns,$table,$where,$data,$other)</B>
+
+<P>
+<DL>
+<DT><STRONG>$columns</STRONG></DT>
+<DD>co selectujemy z tabeli np. &#34;id,name&#34;
+</DD>
+<DT><STRONG>$table</STRONG></DT>
+<DD>nazwa tabeli    
+</DD>
+<DT><STRONG>$where</STRONG></DT>
+<DD>opcje WHERE z zapytania SQL np. &#34;id=?, name=?&#34;
+
+<P>
+</DD>
+<DT><STRONG>$data</STRONG></DT>
+<DD>parametry podstawiane do zapytania SQL
+</DD>
+<DT><STRONG>$other</STRONG></DT>
+<DD>pozostała część zapytania SQL np. ``ORDER BY name''
+itp.
+</DD>
+</DL>
+Funkcja zwraca dane odczytane z bazy danych. W zależności od struktury
+danych, zwracany jest ``string'' lub tablica.
+
+<P>
+
+<H3><A NAME="SECTION02022100000000000000">
+2.2.1 Przykład odczytania pola ``name'' z tabeli main</A>
+</H3>
+
+<P>
+Przykład:
+
+<P>
+SQL: <B>SELECT name FROM main WHERE id=101</B>
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>$name=$mdbd-&gt;select(``name'',''main'',''id=?'',array(``101''=&gt;''int''));&nbsp;
+<BR>
+print&nbsp;``name=$name&nbsp;&lt;BR&gt;'';
+</DD>
+</DL>Kolejne parametry odpowiadają kolejnym elementom z zapytania SQL.
+Pole <B>$data</B> zawiera tablicę z wartościami podstawianymi pod
+<B>``?''</B>, ze wskazaniem typu zmiennej. Jeśli niegdzie nie
+podamy parametrów do podstawienia (oznaczonych przez ``?''), to
+parametr <B>$data</B> można pominąć.
+
+<P>
+W wersji 1.0 obsugiwane są następujące typy danych (uwzględniane przy
+podstawianiu parametrów):
+
+<P>
+<DL>
+<DT><STRONG>text</STRONG></DT>
+<DD>dowolny tekst (domyślny)
+</DD>
+<DT><STRONG>int</STRONG></DT>
+<DD>liczba całkowita
+</DD>
+<DT><STRONG>float</STRONG></DT>
+<DD>liczba rzeczywista
+</DD>
+</DL>
+
+<P>
+
+<H3><A NAME="SECTION02022200000000000000">
+2.2.2 Przykład odczytania kilku danych z zapytania</A>
+</H3>
+
+<P>
+Jeśli zapytanie zwraca więcej niż 1 wartość, to funkcja select() zwraca
+tablicę z odczytanymi danymi. Np. jeśli w zapytaniu chcemy odczytać
+kilka danych i kilka wierszy np. dla zapytania:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>SELECT&nbsp;name,producer&nbsp;FROM&nbsp;main&nbsp;WHERE&nbsp;id&gt;1
+</DD>
+</DL>to wywołujemy kod postaci:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>$data=$mdbd-&gt;select(``name,producer'',''main'',''id&gt;1'');&nbsp;
+<BR>
+print&nbsp;``<pre&gt;'';print_r($data);print&nbsp;``</pre&gt;'';
+</DD>
+</DL>Jeśli w wyniku otrzymamy 2 wiersze, to otrzymamy strukturę:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>array(``0''=&gt;array(``name''=&gt;''nazwa&nbsp;1'',&nbsp;
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;``producer''=&gt;''producent&nbsp;1''),&nbsp;
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;``1''=&gt;array(``name''=&gt;''nazwa&nbsp;2'',&nbsp;
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;``producer''=&gt;''producent&nbsp;2'')&nbsp;
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)
+
+<P>
+</DD>
+</DL>Jeśli w wyniku zapytania będzie jeden wiersz, to otrzymamy strukturę:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>array(``name''=&gt;''nazwa&nbsp;1'',&nbsp;
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;``producer''=&gt;''nazwa&nbsp;2''&nbsp;
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)
+</DD>
+</DL>
+<P>
+
+<H3><A NAME="SECTION02022300000000000000">
+2.2.3 Liczba zwróconych wierszy $mdbd-&gt;num_rows</A>
+</H3>
+
+<P>
+Po wywołaniu funkcji select()<A NAME="tex2html1"
+  HREF="#foot79"><SUP>1</SUP></A> uaktualniana jest wartość $mbdb-&gt;num_rows, która zawiera liczbę
+zwróconych wierszy w ostatnim zapytaniu SQL.
+
+<P>
+
+<H2><A NAME="SECTION02023000000000000000">
+2.3 funkcja query_select()</A>
+</H2>
+
+<P>
+Funkcja <B>query_select()</B> służy do wykonania zapytania SELECT
+do bazy danych. Nie zwraca ona bezpośrednio danych, tylko zmienną
+<B>$result</B>, określającą wynik zapytania SQL. Funckję tą możemy
+wykorzystać w sytuacjach, kiedy chcemy odczytać np. tylko wybrane
+wiersze, lub zakres wierszy (np. od 3 do 7) z zapytania SQL. Do odczytawania
+danych ze struktury wskazanej przez <B>query_select()</B> służy
+funkcja <B>read()</B>.
+
+<P>
+Parametry funkcji query_select() są takie same jest dla funkcji select().
+<BR>
+Przykład:
+
+<P>
+SQL: <B>SELECT name,producer FROM main WHERE id&gt;1</B>
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD><FONT SIZE="-1">$result=$mdbd-&gt;query_select(``name,producer'',''main'',''id&gt;1'');</FONT>
+<P>
+
+</DD>
+</DL>
+<P>
+
+<H2><A NAME="SECTION02024000000000000000">
+2.4 funkcja read()</A>
+</H2>
+
+<P>
+Funkcja pozwala na odczytanie danych z wykonanego wcześniej (np. przez
+query_select() ) zapytania SQL. 
+
+<P>
+<B>$mdbd-&gt;read($result,$names,$rows)</B>
+
+<P>
+Parametry:
+
+<P>
+<DL>
+<DT><STRONG>$result</STRONG></DT>
+<DD>wartość zwracana przez $mdbd-&gt;query_select()
+</DD>
+<DT><STRONG>$names</STRONG></DT>
+<DD>tablica z nazwami pól, które odczytujemy np. array(``id'',''name'')
+</DD>
+<DT><STRONG>$rows</STRONG></DT>
+<DD>określenie, które pola odczytujemy np.: 1 lub 1,2 lub 2-5
+</DD>
+</DL>
+Przykład:
+
+<P>
+Zapytanie: <B>SELECT name,producer FROM main WHERE id&gt;1</B>
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>$result=$mdbd-&gt;query_select(``name,producer'',''main'',''id&gt;1'');&nbsp;
+<BR>$data=$mdbd-&gt;read($result,array(``name'',''producer''),''2-3'');
+
+<P>
+print&nbsp;``<pre&gt;'';print_r($data);print&nbsp;``</pre&gt;'';
+</DD>
+</DL>Powyższy przykład spowoduje odczytanie z bazy, z tabeli main, pól
+<B>name,producer</B>, dla których id&gt;1. Z wyniku zapytania zostaną
+odczytane wiersze od 2 do 3. Zmienna <B>$data</B> będzie miała
+postać:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>array(``2''=&gt;array(``name''=&gt;''nazwa&nbsp;1'',&nbsp;
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;``producer''=&gt;''producer&nbsp;1''),&nbsp;
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;``3''=&gt;array(``name''=&gt;''nazwa&nbsp;2'',&nbsp;
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;``producer''=&gt;''producer&nbsp;2'')&nbsp;
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)
+</DD>
+</DL>
+<P>
+
+<H2><A NAME="SECTION02025000000000000000">
+2.5 funkcja update() </A>
+</H2>
+
+<P>
+Funckja <B>update()</B> służy do aktualizacji danych w bazie. Wywołanie:
+
+<P>
+<B>$mdbd-&gt;update($table,$set,$where,$data)</B>
+
+<P>
+Parametry:
+
+<P>
+<DL>
+<DT><STRONG>$table</STRONG></DT>
+<DD>nazwa aktualizowanej tabeli
+</DD>
+<DT><STRONG>$set</STRONG></DT>
+<DD>nwazy modyfikowanych pól z wartosciami (lub określeniem parametru)
+np. name='nazwa 1', producer='producent 1' lub name=?,producer=?
+</DD>
+<DT><STRONG>$where</STRONG></DT>
+<DD>opcje WHERE z zapytania SQL np. &#34;id=?, name=?&#34;
+
+<P>
+</DD>
+<DT><STRONG>$data</STRONG></DT>
+<DD>parametry podstawiane do zapytania SQL
+</DD>
+</DL>
+Przykład:
+
+<P>
+SQL: <B>UPDATE main SET name=?,producer=? WHERE id=?</B>
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>$mdbd-&gt;update(``main'',''name=?,producer=?'',''id=?'',&nbsp;
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;array(``nazwa&nbsp;1''&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;''text'',&nbsp;
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;``producent&nbsp;1''&nbsp;=&gt;&nbsp;''text'',&nbsp;
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;``1''&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;''int''&nbsp;
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)&nbsp;
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</DD>
+</DL>Jeśli podalibyśmy SQL postaci:
+
+<P>
+<B>UPDATE main SET name='nazwa 1,producer='producent 1' WHERE
+id=1</B>
+
+<P>
+to parametr <B>$data</B>, można pominąć, gdyż w SQL nie byłoby
+żadnych parametrów do podstawienia.&nbsp;
+<BR>
+<BR>
+Funkcja zwraca <B>true</B> jeśli dane zostaną poprawnie zaktualizowane
+oraz <B>false</B> w p.w.
+
+<P>
+
+<H2><A NAME="SECTION02026000000000000000">
+2.6 funkcja insert()</A>
+</H2>
+
+<P>
+Funkcja <B>insert()</B> służy do dodawanie wpisów do tabeli. Wywołanie:
+
+<P>
+<B>$mdbd-&gt;insert($table,$columns,$values,$data)</B>
+
+<P>
+Parametry:
+
+<P>
+<DL>
+<DT><STRONG>$table</STRONG></DT>
+<DD>nazwa aktualizowanej tabeli
+</DD>
+<DT><STRONG>$columns</STRONG></DT>
+<DD>pole, do których będziemy przypuisywać wartości np. ``name,producer''
+</DD>
+<DT><STRONG>$values</STRONG></DT>
+<DD>wartości pól np. ``?,?'' lub `` 'nazwa 1','producent
+1' ``
+</DD>
+<DT><STRONG>$data</STRONG></DT>
+<DD>parametry podstawiane do zapytania SQL
+</DD>
+</DL>
+Przykład:
+
+<P>
+SQL: <B>INSERT INTO main SET (name, producer) VALUES (?,?)</B>
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>$mdbd-&gt;insert(``main'',''name,producer'',&nbsp;
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;array(``nazwa1''=&gt;''text'',&nbsp;
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;``producent&nbsp;1''=&gt;''text''&nbsp;
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)&nbsp;
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)
+</DD>
+</DL>Funkcja zwraca <B>true</B> jeśli dane zostaną poprawnie dodane do
+bazy oraz <B>false</B> w p.w.
+
+<P>
+
+<H2><A NAME="SECTION02027000000000000000">
+2.7 funkcja delete()</A>
+</H2>
+
+<P>
+Funkcja <B>delete()</B> służy do usuwania wpisów do tabeli. Wywołanie:
+
+<P>
+<B>$mdbd-&gt;delete($table,$where,$data)</B>
+
+<P>
+Parametry:
+
+<P>
+<DL>
+<DT><STRONG>$table</STRONG></DT>
+<DD>nazwa aktualizowanej tabeli
+</DD>
+<DT><STRONG>$where</STRONG></DT>
+<DD>opcje WHERE z zapytania SQL np. &#34;id=?, name=?&#34;
+
+<P>
+</DD>
+<DT><STRONG>$data</STRONG></DT>
+<DD>parametry podstawiane do zapytania SQL
+</DD>
+</DL>
+Przykład:
+
+<P>
+SQL: <B>DELETE FROM main WHERE id=?</B>
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>$mdbd-&gt;delete(``main'',''id=?'',&nbsp;array(``1''=&gt;''int''))
+</DD>
+</DL>Funkcja zwraca <B>true</B> jeśli dane zostaną poprawnie usunięte
+z bazy oraz <B>false</B> w p.w.
+
+<P>
+
+<H1><A NAME="SECTION02030000000000000000">
+3 Podsumowanie</A>
+</H1>
+
+<P>
+Zalecane jest używanie tej klasy zamiast wprowadzania pełnego kodu
+obsługi Metabase. Klasa ta nie pozwala na dokonywanie dowolnych zapytań
+itp. do bazy danych, ale ujęte są w niej najczęstsze operacje wykonywane
+na bazie danych. W SOTEeSKLEP od wersji 2.6 obiekt tej klasy jest
+automatycznie generowany przy inicjacji bazy danych i jest dostępny
+pod nazwą <B>$mdbd</B>. Wcześniejsze wywołania klasy <B>metabase.inc</B>
+powinny zotsać stopniowo zastąpione przez wywołania odwołujące się
+do klasy <B>MetabaseData</B>. 
+
+<P>
+
+<H1><A NAME="SECTION03000000000000000000">
+2 DataForm 1.0</A>
+</H1>
+
+<P>
+Integralną częścią tej dokumentacji jest opis klasy HTML_Form.
+<BR>
+<P>
+Klasa <B>DataForm</B> jest rozszerzeniem klasy z PEAR <B>HTML_Form</B>.
+Bazuje ona na danych dostarczanych przez funkcje klasy <B>MetabaseData</B>.
+Służy ona do szybkiego budowania elementów formularza bezpośrednio
+z danych pobranych z bazy.
+
+<P>
+
+<H1><A NAME="SECTION03010000000000000000">
+4 Wymagania, lokalizacja</A>
+</H1>
+
+<P>
+Do poprawnego działania DataForm wymagane są biblioteki MetabaseData
+i HTML_Form. Obie są automatycznie załaczane przy wywołaniu DataForm.
+Lokalizacja DataForm w SOTEeSKLEP:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>require_once&nbsp;(``MetabaseData/DataForm.php'');
+</DD>
+</DL>Załączne biblioteki w w/w pliku:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>require_once&nbsp;(``MetabaseData/MetabaseData.php'');&nbsp;
+<BR>
+require_once&nbsp;(``PEAR/HTML/Form.php'');
+</DD>
+</DL>
+<P>
+
+<H1><A NAME="SECTION03020000000000000000">
+5 Opis klasy</A>
+</H1>
+
+<P>
+
+<H2><A NAME="SECTION03021000000000000000">
+5.1 Tworzenie obiektu</A>
+</H2>
+
+<P>
+Domyślnym obiektem jest obiekt o nazwie: <B>$dbform</B>
+<BR>
+Tworzenie obiektu ma następującą postać:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>$dbform&nbsp;=&nbsp;new&nbsp;MetabaseData($mdbd);
+</DD>
+</DL>gdzie <B>$mdbd</B> to obiekt MetabaseData.
+
+<P>
+
+<H2><A NAME="SECTION03022000000000000000">
+5.2 funkcja db_add_select()</A>
+</H2>
+
+<P>
+Funkcja generuje element <B>select</B> formularza na podstawie danych
+pobranych z bazy. Wywołanie:
+
+<P>
+<B>$dbform-&gt;db_add_select(&amp;$data,$name,$title,$default,
+$size,$blank,$multiple,$attribs)</B>
+
+<P>
+Parametry:
+
+<P>
+<DL>
+<DT><STRONG>$data</STRONG></DT>
+<DD>tablica zwrócona przez wywołanie funkcji $mdbd-&gt;select()
+</DD>
+</DL>
+Kolejne dane są odpowiednikami danych funkcji addSelect() z klasy
+HTML_Form.
+
+<P>
+
+<H3><A NAME="SECTION03022100000000000000">
+5.2.1 Przykład wywołania</A>
+</H3>
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>require_once&nbsp;(&#34;MetabaseData/DataForm.php&#34;);&nbsp;&nbsp;
+<BR>$dbform&nbsp;=&nbsp;new&nbsp;DataForm($mdbd);&nbsp;&nbsp;
+<BR>$dbform-&gt;start();&nbsp;
+<BR>$data=$mdbd-&gt;select(&#34;id,name&#34;,&#34;main&#34;);&nbsp;&nbsp;
+<BR>$dbform-&gt;db_add_select($data,&#34;item[select]&#34;,&#34;title&#34;,49);&nbsp;
+<BR>$dbform-&gt;display();&nbsp;&nbsp;
+<BR>$dbform-&gt;end();
+</DD>
+</DL>W wywołaniu <B>$mdbd-&gt;select</B> ważna jest kolejność column w
+1 parametrze. W w/w przykładzie są to: ``id,name''. Pierwsza kolumna
+będzie wartością przekazywaną w formularzu, druga będzie wartością
+wyświetlaną w formularzu.
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>
+</DD>
+</DL>
+<P>
+
+<H1><A NAME="SECTION04000000000000000000">
+About this document ...</A>
+</H1>
+ <STRONG>SOTEeSKLEP MetabaseData &amp; DataForm</STRONG><P>
+This document was generated using the
+<A HREF="http://www-texdev.mpce.mq.edu.au/l2h/docs/manual/"><STRONG>LaTeX</STRONG>2<tt>HTML</tt></A> translator Version 2K.1beta (1.48)
+<P>
+Copyright &#169; 1993, 1994, 1995, 1996,
+<A HREF="http://cbl.leeds.ac.uk/nikos/personal.html">Nikos Drakos</A>, 
+Computer Based Learning Unit, University of Leeds.
+<BR>
+Copyright &#169; 1997, 1998, 1999,
+<A HREF="http://www.maths.mq.edu.au/~ross/">Ross Moore</A>, 
+Mathematics Department, Macquarie University, Sydney.
+<P>
+The command line arguments were: <BR>
+ <STRONG>latex2html</STRONG> <TT>-no_subdir -split 0 -show_section_numbers /tmp/lyx_tmpdir6468KEVxtV/lyx_tmpbuf0/metabase_data.tex</TT>
+<P>
+The translation was initiated by Marek Jakubowicz on 2003-11-16
+<BR><HR><H4>Footnotes</H4>
+<DL>
+<DT><A NAME="foot79">...</A><A NAME="foot79"
+ HREF="metabase_data.html#tex2html1"><SUP>1</SUP></A>
+<DD>lub query_select()
+
+</DL><HR>
+<!--Navigation Panel-->
+<IMG WIDTH="81" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next_inactive"
+ SRC="/usr/share/latex2html/icons/nx_grp_g.png"> 
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="/usr/share/latex2html/icons/up_g.png"> 
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="/usr/share/latex2html/icons/prev_g.png">   
+<BR>
+<!--End of Navigation Panel-->
+<ADDRESS>
+Marek Jakubowicz
+2003-11-16
+</ADDRESS>
+</BODY>
+</HTML>

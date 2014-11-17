@@ -1,0 +1,7 @@
+<?php
+/**
+* @version    $Id: .htaccess,v 2.2 2004/12/20 18:02:48 maroslaw Exp $
+* @package    themes
+*/
+?>
+deny from all

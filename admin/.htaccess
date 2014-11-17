@@ -1,0 +1,28 @@
+php_flag register_globals Off
+php_flag track_vars On
+php_flag magic_quotes_gpc Off
+php_flag session.use_cookies On
+php_flag session.use_trans_sid On
+php_flag file_uploads On
+php_flag session.bug_compat_warn Off
+php_flag max_execution_time 180
+php_flag session.auto_start Off
+
+AuthType Basic
+AuthName SOTEeSKLEP_Auth 
+AuthUserFile /home/mikran/ftp/soteesklep3/config/etc/passwd.www
+
+<Limit GET POST>
+  require valid-user
+</Limit>
+
+Options +FollowSymLinks
+RewriteEngine on 
+
+#kategorie idc
+RewriteRule ^idc/(id_[0-9]+)/([^/]+)/?$ /go/_category/?idc=$1 [L] 
+RewriteRule ^idc/(([0-9]+_[0-9]+)+)/([^/]+)/?$ /go/_category/?idc=$1 [L] 
+#cidc kategorie z rozwinietym menu
+RewriteRule ^cidc/(id_[0-9]+)/([^/]+)/?$ /go/_category/?cidc=$1 [L] 
+RewriteRule ^cidc/(([0-9]+_[0-9]+)+)/([^/]+)/?$ /go/_category/?cidc=$1 [L] 
+ 

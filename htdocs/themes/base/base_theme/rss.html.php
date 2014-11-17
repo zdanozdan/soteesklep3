@@ -1,0 +1,1 @@
+<a style='color: white; font-size: 11px; font-weight: bold; font-family: arial; background-color: black;' href='/plugins/_newsedit/rss.php?lang=<?php echo $config->lang; ?>'>&nbsp;RSS&nbsp;</a>

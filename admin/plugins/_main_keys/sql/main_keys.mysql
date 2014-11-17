@@ -1,0 +1,27 @@
+-- MySQL dump 8.21
+--
+-- Host: localhost    Database: soteesklep2
+---------------------------------------------------------
+-- Server version	3.23.49
+
+--
+-- Table structure for table 'main_keys'
+--
+
+CREATE TABLE main_keys (
+  id mediumint(9) NOT NULL auto_increment,
+  user_id_main varchar(255) default NULL,
+  main_key text,
+  order_id int(11) default '0',
+  PRIMARY KEY  (id),
+  KEY main_user_id_idx (user_id_main),
+  KEY order_id_idx (order_id)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table 'main_keys'
+--
+
+
+INSERT INTO main_keys VALUES (10,'8','Uw%E4dD%7F4s%AC%8C',0);
+

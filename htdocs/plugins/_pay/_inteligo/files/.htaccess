@@ -1,0 +1,7 @@
+AuthType Basic
+AuthName SOTEeSKLEP_Auth 
+AuthUserFile /usr/home/people/virtual/t/telerabat.sote.pl/teleshop/soteesklep2/config/etc/passwd.www
+
+<Limit GET POST>
+  require valid-user
+</Limit>

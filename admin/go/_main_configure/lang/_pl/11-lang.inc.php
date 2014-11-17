@@ -1,0 +1,34 @@
+<?php
+$lang->configure_title="Centrum konfiguracyjne";
+$lang->button_help="Pomoc";
+$lang->welcome_text="Poni¿ej znajduj± siê linki do konfigurowania programu SOTEeSKLEP.";
+$lang->conf_title_modules="Konfiguracja modu³ów";
+$lang->conf_title_partners="Konfiguracja partnerów";
+$lang->conf_title_pay="Konfiguracja systemów p³atno¶ci";
+$lang->conf_title_pay_on="P³atno¶ci on-line";
+$lang->conf_title_pay_off="P³atno¶ci off-line";
+$lang->conf_title_aspect="Konfiguracja edycji wygl±du";
+$lang->configuration="Konfiguracja ogólna";
+$lang->catalog_conf="Konfiguracja trybu <B>katalog</B>";
+$lang->configuration_points="Konfiguracja systemu punktowego";
+$lang->configuration_language="Konfiguracja wersji jêzykowych";
+$lang->configuration_onet="Konfiguracja pasa¿u Onet";
+$lang->configuration_wp="Konfiguracja pasa¿u WP";
+$lang->configuration_interia="Konfiguracja pasa¿u Interia";
+$lang->configuration_newsletter="Konfiguracja newsletter";
+$lang->configuration_newsedit="Konfiguracja newsedit";
+$lang->configuration_search="Konfiguracja wyszukiwania";
+$lang->configuration_polcard="Konfiguracja - Polcard";
+$lang->configuration_cardpay="Konfiguracja - P³atno¶ci kart±";
+$lang->configuration_przelewy24="Konfiguracja - Przelewy24.pl";
+$lang->configuration_paypal="Konfiguracja - PayPal";
+$lang->configuration_platnosciPL="Konfiguracja - P³atno¶ciPL";
+$lang->configuration_allpay="Konfiguracja - Allpay";
+$lang->configuration_themes="Zarz±dzanie tematami";
+$lang->configuration_category="Edycja w³a¶ciwo¶ci kategorii (menu)";
+$lang->configuration_domains="Zarz±dzanie domenami";
+$lang->configuration_country="Konfiguracja krajow dostawy";
+$lang->configuration_ecard="Konfiguracja - eCard";
+$lang->configuration_ceneo="Konfiguracja Ceneo";
+$lang->configuration_allegro="Konfiguracja Allegro";
+?>

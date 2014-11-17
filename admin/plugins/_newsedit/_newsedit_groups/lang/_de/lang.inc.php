@@ -1,0 +1,10 @@
+<?php
+$lang->newsedit_groups_menu=array(
+                );
+$lang->newsedit_groups_cols_list=array(
+                );
+$lang->newsedit_groups_cols=array(
+                );
+$lang->newsedit_groups_form_errors=array(
+                );
+?>
