@@ -25,9 +25,9 @@ if ($shop->admin) {
     $crypt_db->secure_key=md5($config->salt.$__pin);
     $config->dbuser=$crypt_db->admin_user();
     $config->dbpass=$crypt_db->admin_password();
-    
+
     // sprawdz czy wprowadzono poprawny login i haslo
-    include_once ("$DOCUMENT_ROOT/include/test_auth.inc.php");  
+    //include_once ("$DOCUMENT_ROOT/include/test_auth.inc.php");  
 } else {
     // nobody
     $config->dbuser=$crypt_db->nobody_user();
@@ -35,12 +35,6 @@ if ($shop->admin) {
 }
 $config->dbhost=$crypt_db->host();
 
-
-//$config->dbhost="http://127.0.0.1";
-//$config->dbuser = "root";
-//print $config->dbpass;
-//print $crypt_db->dbname();
-//exit();
 
 $error=MetabaseSetupDatabaseObject(array(
                                          "Host"=>$config->dbhost,

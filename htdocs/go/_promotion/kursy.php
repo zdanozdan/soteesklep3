@@ -6,12 +6,10 @@
 * @package    promotion
 */
 $global_database=true;
-$DOCUMENT_ROOT=$HTTP_SERVER_VARS['DOCUMENT_ROOT'];
+$DOCUMENT_ROOT=$_SERVER['DOCUMENT_ROOT'];
 require_once ("../../../include/head.inc");
 
 $theme->head();
-
-?>
 
 <center>
 <table width="770" cellspacing="0" cellpadding="0" border="0" align="center">

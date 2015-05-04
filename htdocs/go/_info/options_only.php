@@ -8,7 +8,7 @@
 * @package    info
  */
 $global_database=true;
-$DOCUMENT_ROOT=$HTTP_SERVER_VARS['DOCUMENT_ROOT'];
+//$DOCUMENT_ROOT=$HTTP_SERVER_VARS['DOCUMENT_ROOT'];
 require_once ("../../../include/head.inc");
 require_once ("include/image.inc");
 require_once ("include/description.inc");
@@ -76,11 +76,11 @@ include_once("./include/query_rec.inc.php");
 include_once ("include/xml_options.inc");
 
 // naglowek
-$theme->head();
+//$theme->head();
 
-$theme->page_open("left","record_info_options_only","right","","","","page_open_2");
+$theme->page_open("left","record_info_options_only","right","","","","page_open");
 
 // stopka
-$theme->foot();
+//$theme->foot();
 include_once ("include/foot.inc");
 ?>

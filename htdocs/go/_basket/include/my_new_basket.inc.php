@@ -160,6 +160,7 @@ class My_New_Basket extends MyBasket {
 			'options'=>$options,
 			'basket'=>$ext_basket,
 			);
+
 			// podmieniam i zapamiêtuje requesty
 			$this->_switch_REQUEST($items);
 

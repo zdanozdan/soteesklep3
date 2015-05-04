@@ -25,26 +25,36 @@ Header unset cache-Control:
 Header append cache-Control: "no-cache, must-revalidate"
 </FilesMatch>
 
+#languages
+#product page
+RewriteRule ^(en|pl)/id([0-9]+)/([^/]+)/?$ /go/_info/?id=$2 [L] 
+
 RewriteRule ^inne/id([0-9]+)/([^/]+)/?$ /go/_info/?id=$1&item=1#menu [L] 
 RewriteRule ^recenzje/id([0-9]+)/([^/]+)/?$ /go/_info/reviews.php?id=$1&item=4#menu [L] 
 RewriteRule ^id([0-9]+)/([^/]+)/?$ /go/_info/?id=$1 [L] 
 #kategorie idc
 RewriteRule ^idc/(id_[0-9]+)/([^/]+)/page/([0-9]+)/?$ /go/_category/?idc=$1&page=$3 [L] 
+RewriteRule ^(pl|en)/idc/(id_[0-9]+)/([^/]+)/page/([0-9]+)/?$ /go/_category/?idc=$2&page=$4 [L] 
 RewriteRule ^idc/(id_[0-9]+)/([^/]+)/?$ /go/_category/?idc=$1 [L] 
+RewriteRule ^(pl|en)/idc/(id_[0-9]+)/([^/]+)/?$ /go/_category/?idc=$2 [L] 
 RewriteRule ^idc/(([0-9]+_[0-9]+)+)/([^/]+)/page/([0-9]+)/?$ /go/_category/?idc=$1&page=$4 [L] 
+RewriteRule ^(pl|en)/idc/(([0-9]+_[0-9]+)+)/([^/]+)/page/([0-9]+)/?$ /go/_category/?idc=$2&page=$5 [L] 
 RewriteRule ^idc/(([0-9]+_[0-9]+)+)/([^/]+)/?$ /go/_category/?idc=$1 [L] 
-#cidc kategorie z rozwinietym menu
-RewriteRule ^cidc/(id_[0-9]+)/([^/]+)/page/([0-9]+)/?$ /go/_category/?cidc=$1&page=$3 [L] 
-RewriteRule ^cidc/(id_[0-9]+)/([^/]+)/?$ /go/_category/?cidc=$1 [L] 
-RewriteRule ^cidc/(([0-9]+_[0-9]+)+)/([^/]+)/page/([0-9]+)/?$ /go/_category/?cidc=$1&page=$4 [L]  
-RewriteRule ^cidc/(([0-9]+_[0-9]+)+)/([^/]+)/?$ /go/_category/?cidc=$1 [L] 
+RewriteRule ^(pl|en)/idc/(([0-9]+_[0-9]+)+)/([^/]+)/?$ /go/_category/?idc=$2 [L] 
 
-#katalog PDF
-RewriteRule ^katalog-mikran-do-pobrania$ /go/_info/katalog.php [L]
-RewriteRule ^katalog-mikran-do-pobrania/page/([0-9]+)/?$ /go/_info/katalog.php?page=$1 [L]
+#cidc kategorie z rozwinietym menu - nie uzywamy juz
+#RewriteRule ^cidc/(id_[0-9]+)/([^/]+)/page/([0-9]+)/?$ /go/_category/?cidc=$1&page=$3 [L] 
+#RewriteRule ^cidc/(id_[0-9]+)/([^/]+)/?$ /go/_category/?cidc=$1 [L] 
+#RewriteRule ^cidc/(([0-9]+_[0-9]+)+)/([^/]+)/page/([0-9]+)/?$ /go/_category/?cidc=$1&page=$4 [L]  
+#RewriteRule ^cidc/(([0-9]+_[0-9]+)+)/([^/]+)/?$ /go/_category/?cidc=$1 [L] 
+
+#katalog PDF - nie uzywamy
+#RewriteRule ^katalog-mikran-do-pobrania$ /go/_info/katalog.php [L]
+#RewriteRule ^katalog-mikran-do-pobrania/page/([0-9]+)/?$ /go/_info/katalog.php?page=$1 [L]
 
 #mapa
 RewriteRule ^mapa-strony /go/_sitemap/ [L]
+RewriteRule ^sitemap /go/_sitemap/ [L]
 
 #ksiazka adresowa
 #RewriteRule ^ksiazka-adresowa /go/_users/address_book.php [L]
@@ -63,6 +73,10 @@ RewriteRule ^koszyk-start$ /go/_basket/index.php?step=1 [L]
 RewriteRule ^koszyk-dane$ /go/_basket/index.php?step=2 [L]
 RewriteRule ^koszyk-dane/?([^/]+)$ /go/_basket/index.php?$1 [L]
 RewriteRule ^koszyk-gotowe$ /go/_basket/register3.php [L]
+
+#Formularz kontaktowy
+RewriteRule ^contact/form$ /custom/index.php [L]
+
 
 #
 # promocja dospereveo

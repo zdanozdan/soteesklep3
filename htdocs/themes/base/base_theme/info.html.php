@@ -2,14 +2,7 @@
 <?php
 /**
 * Szablon PHP wygl�du rekordu w pe�nej prezentacji produktu - info.
-*
-* @author  m@sote.pl
-* @version $Id: info.html.php,v 1.18 2008/11/12 10:32:52 tomasz Exp $
-* @package    themes
-* @subpackage base_theme
 */
-
-// XHTML Id: info.html.php,v 2.12 2003/10/15 12:20:10 maroslaw Exp
 
 global $config, $prefix,$wp_config;
 global $description;
@@ -17,6 +10,7 @@ global $available;
 global $DOCUMENT_ROOT;
 global $shop;
 global $theme;
+
 
 
 // odczytaj plugins
@@ -38,15 +32,14 @@ include_once ("plugins/_breadcrumbs/lang/_$config->lang/lang.inc.php");
 ?> 
 <center>
 
-  <div class="head_category">
+  <div class="head_category_old_mikran">
   <h2>
   <?php
    $bd = new BreadCrumbs();
    $cat_string = $lang->current_location . ":&nbsp&nbsp" . $bd->getCategories($rec);
-   echo $cat_string;
+//echo $cat_string;
   ?>
-      <?php //print "> <a href=\"/go/_info/?id=" . $rec->data['id']. "\">" . $rec->data['name']. "</a>";?>
-      <?php print ">" . $this->get_rewrite_anchor($rec->data['id'],$rec->data['name']) . $rec->data['name']. "</a>";?>
+<?php //print ">" . $this->get_rewrite_anchor($rec->data['id'],$rec->data['name']) . $rec->data['name']. "</a>";?>
   </h2>
   </div>
  
@@ -65,7 +58,7 @@ include_once ("plugins/_breadcrumbs/lang/_$config->lang/lang.inc.php");
   </a>
   </h1>
   </td><td style="text-align:right;color:#808080;">
-   <?php print "[kod mikran: " ?><a title="<?php print $title_tag ?>" href="<?php print '/go/_search/full_search.php?search_item_id='.$rec->data['id']?>" > <?php print $rec->data['id']; ?></a>]
+   <?php print "[".$lang->mikran_code.": " ?><a title="<?php print $title_tag ?>" href="<?php print '/go/_search/full_search.php?search_item_id='.$rec->data['id']?>" > <?php print $rec->data['id']; ?></a>]
   </td></tr>
   </table>
   </div>
@@ -96,19 +89,26 @@ include_once ("plugins/_breadcrumbs/lang/_$config->lang/lang.inc.php");
         <?php //print "[kod mikran: " . $rec->data['id']."]"; ?>
         </div>
 	<!-- start zdjecie produktu: -->
-	<div style="text-align:center;">
-        <?php $image->show_with_alt_tag($rec->data['photo'],"no",$rec->data['name'] . " ( " .$bd->getCategoriesSimple($rec) . " )");?>
-        </div>
         <?php 
-           if ($image->check_max_Photo($rec->data['photo']) == true)
-           {
-               print "<div style=\"text-align: center;\">";
-               $image->_show_max_Photo($rec->data['photo'],$lang->desc_max_photo);
-               print "<br><br>";
-               print "</div>";
-           }
-           
-        ?>
+      //if ($image->check_max_Photo($rec->data['photo']) == true)
+      //   {
+      //       print "<div style=\"text-align: center;\">";
+      //       $image->_show_max_Photo($rec->data['photo'],$lang->desc_max_photo);
+      //       print "<br><br>";
+      //       print "</div>";
+      //   }           
+      ?>
+      <?php if ($image->check_max_Photo($rec->data['photo']) == true): ?>
+      <div style="text-align: center">
+      <a data-toggle="modal" href="#imageModal">
+      <?php $image->show_with_alt_tag($rec->data['photo'],"no",$rec->data['name'] . " ( " .$bd->getCategoriesSimple($rec) . " )");?>
+      </a>
+      </div>
+      <div style="text-align: center">
+      <a data-toggle="modal" href="#imageModal"><i class="icon-zoom-in"></i><?php print $lang->desc_max_photo ?></a>
+      </div>
+      <?php endif ?>
+
         <!-- end zdjecie produktu:-->
            
 	<!-- start Flash: -->              
@@ -231,7 +231,7 @@ include_once ("plugins/_breadcrumbs/lang/_$config->lang/lang.inc.php");
 	<?php if ($this->checkView("price",$rec)): ?>
 	<?php if ($rec->data['base_discount']>0 && $rec->data['base_discount']<99) : ?>
 
-   <span style="font: bold 12px Tahoma;color:#808080;"><?php printf("Naliczono rabat internetowy <span style='color:red;font-size:14px'> %d%% </span> od ceny detalicznej.",$rec->data['base_discount']) ?></span>
+	    <span style="font: bold 12px Tahoma;color:#808080;"><?php print $lang->discount_1;printf("<span style='color:red;font-size:14px'> %d%% </span>",$rec->data['base_discount']);print " ".$lang->discount_2; ?></span>
 <br/>
          <?php endif ?>
 	 <?php endif ?>
@@ -457,7 +457,7 @@ include_once ("plugins/_breadcrumbs/lang/_$config->lang/lang.inc.php");
 
         <div style="text-align:center;color:#808080;">
         <p>
-        <?php print "Data ostatniej aktualizacji:&nbsp&nbsp " . $rec->data['date_update']; ?>
+        <?php print $lang->last_update.":&nbsp&nbsp " . $rec->data['date_update']; ?>
         </div>
         </p>
 
@@ -498,8 +498,8 @@ include_once ("plugins/_breadcrumbs/lang/_$config->lang/lang.inc.php");
 	          //print "<a href=\"http://www.sklep.mikran.pl/id".$rec->data['id']."/".$encoded."\"  class=\"twitter-share-button\" data-count=\"yes\" data-via=\"mikranpl\">Tweet</a>";
                   //print "<br/><br/>";
 
-                  print "<a style=\"color: #FF6000;\" href=\"http://www.blog.mikran.pl\">Czytaj na blog.mikran.pl</a>";
-                  print "<sup style=\"color: red;\">Nowosc !</sup>";
+		 //print "<a style=\"color: #FF6000;\" href=\"http://www.blog.mikran.pl\">Czytaj na blog.mikran.pl</a>";
+                 // print "<sup style=\"color: red;\">Nowosc !</sup>";
               } // end plugin cd:
               ?>
               
@@ -551,7 +551,7 @@ if (in_array("reviews",$config->plugins))
       switch ($__item){
           case 1:
           //$bar_title=$lang->in_category;          
-	  $bar_title=$lang->kupa_kupb;
+	  $bar_title=$lang->ranking_title;
           break;
           case 2:
           $bar_title=$lang->accessories;
@@ -564,7 +564,7 @@ if (in_array("reviews",$config->plugins))
           break;
           default:
           //$bar_title=$lang->in_category;
-	  $bar_title=$lang->kupa_kupb;
+	  $bar_title=$lang->ranking_title;
       }
 //	echo '<div class="block_1">';
 	echo '<div class="head_1">';
@@ -600,6 +600,20 @@ if (in_array("reviews",$config->plugins))
 }
 // end plugin cd:
 ?>
+
+<div id="imageModal" style="max-width:<?php print $image->_get_max_width($rec->data['photo']); ?>px" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
+   <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+    <h5 id="imageModalLabel"><?php print $rec->data['name'];?></h5>
+   </div>
+   <div class="modal-body">
+   <img style="max-height:480px" id="modalphoto" src="<?php print $image->_get_max_href($rec->data['photo']); ?>">
+   </div>
+   <div class="modal-footer">
+     <p class="text-left"><?php print $bd->getCategories($rec); ?> </p>
+     <button class="btn" data-dismiss="modal" aria-hidden="true">Zamknij</button>
+   </div>
+</div>
 
 <!-- end dodatkowe menu na dole: -->
 

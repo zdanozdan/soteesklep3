@@ -14,7 +14,7 @@
 
 $global_database=true;
 $global_secure_test=true;
-$DOCUMENT_ROOT=$HTTP_SERVER_VARS['DOCUMENT_ROOT'];
+$DOCUMENT_ROOT=$_SERVER['DOCUMENT_ROOT'];
 require_once ("../../../../../include/head.inc");
 
 if ($shop->admin) {
@@ -73,7 +73,7 @@ if ($prepared_query) {
 $template_info=$mdbd->select("template_info","newsedit_groups","id=?",
 array($rec->data['id_newsedit_groups']=>"int","LIMIT 1"));
 
-$theme->head();
+//$theme->head();
 
 // naglowek
 $theme->theme_file("page_open_1_head.html.php");
@@ -87,7 +87,7 @@ if (! empty($template_info)) {
 }
 
 $theme->theme_file("page_open_1_foot.html.php");
-$theme->foot();
+//$theme->foot();
 
-include_once ("include/foot.inc");
+//include_once ("include/foot.inc");
 ?>

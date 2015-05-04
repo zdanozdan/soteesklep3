@@ -9,7 +9,7 @@
 
 $global_database=true;
 $global_secure_test=true; 
-$DOCUMENT_ROOT=$HTTP_SERVER_VARS['DOCUMENT_ROOT'];
+$DOCUMENT_ROOT=$_SERVER['DOCUMENT_ROOT'];
 require_once ("../../../include/head.inc");
 
 // sprawdz, czy klient jest zalogowany, jesli nie to wyswietl formularz logowania
@@ -19,7 +19,7 @@ if (empty($_SESSION['global_id_user'])) {
 }
 
 // naglowek
-$theme->head();
+//$theme->head();
 $theme->page_open_head("page_open_1_head");
 
 include_once ("./include/menu.inc.php");

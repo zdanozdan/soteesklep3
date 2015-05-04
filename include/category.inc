@@ -14,65 +14,244 @@ global $_REQUEST;
 global $__producer_filter;
 global $shop;
 
-require_once ("lib/Menu/Menu.inc");
+//require_once ("lib/Menu/Menu.inc");
 
 // klasa do encodingu urla
 include_once ("include/encodeurl.inc");
 
-// odczytaj konfiguracje(dane) wszystkich kategorii i podkategorii
-// dane, te sa zapisywane w aktualizacji w postaci tablicy w pliku PHP
-// dzieki temu, nie trzeba dokonywac zapytania do bazy danych o kategorie
-
-// odczytaj kategorie dla danego producenta
-if (ereg("^[0-9]+$",@$_REQUEST['producer_filter'])) {
-    $__producer_filter=$_REQUEST['producer_filter'];
-    $sess->unregister("__producer_filter");
-} elseif (ereg("^[0-9]+$",@$_SESSION['__producer_filter'])) {
-    $__producer_filter=$_SESSION['__producer_filter'];
-} else {
-    $__producer_filter=0;
-}
-
-if (! empty($__producer_filter)) {
-    $file="$DOCUMENT_ROOT/../config/tmp/producers/$__producer_filter"."_category.php";
-    $file_include="config/tmp/producers/$__producer_filter"."_category.php";
-    // jesli nie ma kategorii dla producenta to odzytaj glowne kategorie
-    if ((! file_exists($file)) && (! $shop->home)) {
-        $file="$DOCUMENT_ROOT/../config/tmp/category.php";
-        $file_include="config/tmp/category.php";
-    } else {
-        $sess->register("__producer_filter",$__producer_filter);
-    }
-} else {
-    $sess->register("__producer_filter",$__producer_filter);
-    $file="$DOCUMENT_ROOT/../config/tmp/category.php";
-    $file_include="config/tmp/category.php";
-}
-
-
-if ((file_exists($file)) || ($shop->home)) {
-    include_once($file_include);
-}
-
-if (empty($category)) {
-    // odczytaj gloalna wartosc - ponad klasa $theme
-    // jesli wczesniej plik caregory.php zostal zalaczony, to nie jest on tu domylsnie widoczny
-    if (! empty($GLOBALS['category'])) {
-        $category=$GLOBALS['category'];
-    } else $category=array();
-}
-
-// Patch for PHP5
-//
-//$__global_category_array = $category;
-//if(!empty($__global_category_array)) {
-//    $sess->register("__global_category_array", $__global_category_array);
-//}
-
-
 // inkluduj klase obslugi funkcji jezykowych
 global $langfunctions;
 require_once("include/lang_functions.inc");
+
+class NavbarCategory {
+
+  var $category = Array();
+
+  function read_idc()
+  {
+    //1. read from session
+    if (!empty($_SESSION["current_idc"]))
+      $idc = $_SESSION["current_idc"];
+
+    //2. read from product category is product cart is shown
+    $idc = $this->get_product_category();
+
+    //3. read from category tree when tree is clicked
+    if (!empty($_REQUEST['idc'])) 
+      {
+	$idc=$_REQUEST['idc'];
+      }
+    if ((empty($_REQUEST['idc'])) && (! empty($_REQUEST['cidc']))) 
+      {
+	$idc=$_REQUEST['cidc'];
+      }
+
+    global $sess;
+    $sess->register("current_idc",$idc);
+
+    return $idc;
+  }
+
+  function init() 
+  {
+    global $sess;
+    global $DOCUMENT_ROOT;
+
+    // odczytaj kategorie dla danego producenta
+    if (ereg("^[0-9]+$",@$_REQUEST['producer_filter'])) {
+      $__producer_filter=$_REQUEST['producer_filter'];
+      $sess->unregister("__producer_filter");
+    } elseif (ereg("^[0-9]+$",@$_SESSION['__producer_filter'])) {
+      $__producer_filter=$_SESSION['__producer_filter'];
+    } else {
+      $__producer_filter=0;
+    }
+
+    if (! empty($__producer_filter)) {
+      $file="$DOCUMENT_ROOT/../config/tmp/producers/$__producer_filter"."_category.php";
+      $file_include="config/tmp/producers/$__producer_filter"."_category.php";
+      // jesli nie ma kategorii dla producenta to odzytaj glowne kategorie
+      if ((! file_exists($file)) && (! $shop->home)) {
+        $file="$DOCUMENT_ROOT/../config/tmp/category.php";
+        $file_include="config/tmp/category.php";
+      } else {
+        $sess->register("__producer_filter",$__producer_filter);
+      }
+    } else {
+      $sess->register("__producer_filter",$__producer_filter);
+      $file="$DOCUMENT_ROOT/../config/tmp/category.php";
+      $file_include="config/tmp/category.php";
+    }
+    
+    if ((file_exists($file)) || ($shop->home)) {
+      include_once($file_include);
+    }
+
+    if (empty($category)) {
+      // odczytaj gloalna wartosc - ponad klasa $theme
+      // jesli wczesniej plik caregory.php zostal zalaczony, to nie jest on tu domylsnie widoczny
+      if (! empty($GLOBALS['category'])) {
+        $category=$GLOBALS['category'];
+      } else $category=array();
+    }
+
+    $this->category = $category;
+  }
+
+  function get_product_breadcrumb()
+  {
+    global $rec;
+    global $config;
+    $enc = new EncodeUrl;
+
+    if ($rec->data['id'] > 0)
+      {
+	$rewrite = $enc->encode_url_category($rec->data['name']);
+	$name = $rec->data['name'];
+	return array('name'=>$name,'href'=>'/'.$config->lang.'/id'.$rec->data['id'].'/'.$rewrite);
+      }
+  }
+
+  function breadcrumbs()
+  {
+    $this->get_breadcrumbs($this->category);
+    $product_bc = $this->get_product_breadcrumb();
+    if($product_bc)
+      $this->breadcrumbs['product'] = $product_bc;
+
+    return $this->breadcrumbs;
+  }
+
+  function get_breadcrumbs($category)
+  {
+    global $config;
+    $enc = new EncodeUrl;
+
+    foreach($category as $key=>$val)
+      {
+	$id=$key;
+	$name=$val['name'];
+	if (strlen($name) > 0)
+	  {	    
+	    $elements = $val['elements'];
+	    foreach ($elements as $key=>$item) 
+	      {
+		if ($this->is_visible($id))
+		 {
+		   $rewrite_name = $enc->encode_url_category($name);
+		   $url_cat="/$config->lang/idc/$id/$rewrite_name#$id";
+		   $name=LangFunctions::f_translate($name);
+		   $this->breadcrumbs[$id]=array('name'=>$name,'id'=>$id,'href'=>$url_cat);
+		   $this->get_breadcrumbs($item);
+		 }
+	      }
+	  }
+      }
+  }
+
+  function get_product_category()
+  {
+    global $rec;   
+    //sprawdzamy czy istnieje id
+    if ($rec->data['id'] > 0)
+      {
+	if ($rec->data['id_category1'] > 0 && strlen($rec->data['category1']) > 0)
+	  {
+	    $idc = "id_" . $rec->data['id_category1'];	    
+	    if ($rec->data['id_category2'] > 0 && strlen($rec->data['category2']) > 0)
+	      {
+		$idc = $idc .'_'. $rec->data['id_category2'];
+		if ($rec->data['id_category3'] > 0 && strlen($rec->data['category3']) > 0)
+		  {
+		    $idc = $idc .'_'. $rec->data['id_category3'];
+		    if ($rec->data['id_category4'] > 0 && strlen($rec->data['category4']) > 0)
+		      {
+			$idc = $idc .'_'. $rec->data['id_category4'];
+			if ($rec->data['id_category5'] > 0 && strlen($rec->data['category5']) > 0)
+			  {
+			    $idc = $idc .'_'. $rec->data['id_category5'];
+			  }                 
+		      }                 
+		  }                 
+	      }                 
+	  }
+      }
+
+    return $idc;
+  }
+
+  function is_visible($id)
+  {
+    //pojawi sie w request jest klik byl na menu. Jesli nie to trzeba odczytac z sesji lub z biezacego produktu
+    $idc = $this->read_idc();
+    //teraz reszta id jesli istnieje z pominieciem tego ktory juz byl dodany
+    //$idc_array=explode("_",$idc);
+
+    //check id format: id_xx - need to remove 'id_'
+    if (substr($id,0,3) == 'id_')
+      $id = substr($id,3,strlen($id));
+
+    if (substr($idc,0,3) == 'id_')
+      $idc = substr($idc,3,strlen($idc));
+
+    //print $id.':'.$idc;
+    return strncmp($idc,$id,strlen($id)) == 0 ? True : False;
+  }
+
+  function menu()
+  {
+    $idc = $this->read_idc();
+    $this->build_menu($this->category,$idc);
+  }
+
+  function build_menu($category,$idc)
+  {
+    global $config;
+    $enc = new EncodeUrl;
+
+    foreach($category as $key=>$val)
+      {
+	$id=$key;
+	$name=$val['name'];
+	//	print "<li>".var_dump($name)."</li>";
+	if (strlen($name) > 0)
+	  {
+            $rewrite_name = $enc->encode_url_category($name);
+            $url_cat="/$config->lang/idc/$id/$rewrite_name#$id";
+	    $name=LangFunctions::f_translate($name);
+	    $a="";$icon="icon-chevron-right";$s="float:right;opacity:.25";
+	    //check if product page is shown - if so also mark category
+	    $pc = $this->get_product_category();
+	    if (substr($pc,0,3) == 'id_')
+	      $pc = substr($pc,3,strlen($pc));
+
+	    if ($id == $idc || strcmp($id,$pc) == 0) 
+	      {
+		$a="active";
+		$icon = "icon-ok";
+		$s="float:right;";
+	      }
+
+	    print '<li class="'.$a.'"><a id="'.$id.'"href='.$url_cat.'>'.$name.'<i class="'.$icon.'" style="'.$s.'"></i></a></li>';
+
+	    //$retval = array('id'=>$id,'url'=>'url_cat',$name=>'name','open'=>'none');
+
+	    $visible = $this->is_visible($id);
+
+	    $elements = $val['elements'];
+	    foreach ($elements as $key=>$item) 
+	    {
+	      if ($visible == True)
+	      	{
+		  print '<ul class="navsub">';
+		  $this->build_menu($item,$idc);
+		  print "</ul>";
+		}
+	    }
+	  }
+      }
+  }
+}
 
 class Category {
     var $prefix_url="/go/_category/";
@@ -304,6 +483,10 @@ class Category {
 
 } // end class Category
 
-$categ = new Category;
-$categ->read($category,$null_obj="");
+//$categ = new Category;
+//$categ->read($category,$null_obj="");
+
+//$navbar_cat = new NavbarCategory;
+//$navbar_cat->init($category);
+
 ?>

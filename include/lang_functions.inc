@@ -53,6 +53,8 @@ class LangFunctions extends Lang {
     * @param string $wordbase slowo bazowe
     */
     function f_translate($wordbase) {
+      //print $wordbase;
+      //return "123";
         global $dictionary;
         global $config;
         $wordbase=trim($wordbase);

@@ -24,6 +24,7 @@ global $allpay_config;
 @include_once ("config/auto_config/allpay_config.inc.php");
 
 $pay_method=@unserialize($_SESSION['global_delivery']['pay']);
+//print_r($pay_method);
 
 if(empty($pay_method)) {
 	$pay_method=$config->pay_method_active;
@@ -55,23 +56,19 @@ if (!empty($_SESSION['ajax_pay_number']))
 
 ?> 
 
-<p> 
 <div>
-<table width="100%" style="text-align:left;">
-<tr><td id="bold">
-<?php print $lang->choose_payment_method; ?>:
-</td></tr>
-<td id="wp" style="font-size:0px; visibility:hidden;">
-<?php print $lang->wrong_payment_method; ?>!
-</td></tr>
-<td id="wp1" style="font-size:0px; visibility:hidden;">
-<?php print $lang->wrong_payment_method_help; ?>
-</td></tr>
-</table>
+<div class="alert alert-info text-left"><?php print $lang->choose_payment_method; ?>!:</div>
+<div id="wp" class="alert alert-error" style="font-size:0px; display:none;">
+  <?php print $lang->wrong_payment_method; ?>!
+</div>
+<div id="wp1" style="font-size:0px; display:none;">
+  <?php print $lang->wrong_payment_method_help; ?>
+</div>
+
 <center>
-  <table class="payment" align="center" width="100%">    
+  <table class="table table-bordered table-hover table-payment">    
     <tr>
-      <td class="payment_head" align="center" colspan="3"><b><?php print $lang->payment_method_table_title; ?></b></td>
+      <td class="payment_head_old" align="center" colspan="3"><b><?php print $lang->payment_method_table_title; ?></b></td>
     </tr>
     <?php
     // czy aktywna p³atno¶æ przelewem z BZWBK24 ? (nie on-line, zwyk³y przelew)
@@ -81,17 +78,17 @@ if (!empty($_SESSION['ajax_pay_number']))
 	print "<script>changeSelection(\"sel_1\");</script>";
     ?> 
     <tr>
-      <td class="payment_itext" style="text-align:center;">    
-        <input style=\"border-width:0px\" onClick='changeSelection("sel_1");xmlhttpGet("/go/_basket/sess_register.php?req_name=ajax_pay_number&req_value=8","")' <?php if($ajax_pay_number == "8") print $ck; ?> type=radio name=group_1 value=submit_bzwbk24>
+      <td class="payment_itext_old">    
+        <input style=\"border-width:0px\" onClick='changeSelection("sel_1");xmlhttpGet("/go/_basket/sess_register.php?req_name=ajax_pay_number&req_value=8","")' <?php if($ajax_pay_number == "8") print $ck; ?> type="radio" name="group_1 value=submit_bzwbk24">
       </td>
-     <td class="payment_itext" align="center">
+     <td class="payment_itext_old" align="center">
          <?php 
            print"<img src=\"";
            $this->img("bzwbk24.gif");
            print "\">";
          ?>
      </td>
-     <td id="sel_1" class="payment_itext" align="center" <?php if($ajax_pay_number == "8") print $style ?> >
+     <td id="sel_1" class="payment_itext_old" align="center" <?php if($ajax_pay_number == "8") print $style ?> >
         <?php 
            print "<p id=\"bold\">".$lang->payment_names['bzwbk24']."</p>";
            print $lang->payment_description['bzwbk24'];
@@ -110,17 +107,17 @@ if (!empty($_SESSION['ajax_pay_number']))
 	print "<script>changeSelection(\"sel_2\");</script>";
     ?> 
     <tr>
-      <td class="payment_itext" style="text-align:center;">    
-          <input style=\"border-width:0px\" onClick='changeSelection("sel_2"); xmlhttpGet("/go/_basket/sess_register.php?req_name=ajax_pay_number&req_value=11","")' <?php if($ajax_pay_number == "11") print $ck ?> type=radio name=group_1 value=submit_transfer>
+      <td class="payment_itext_old" style="text-align:center;">    
+          <input style="border-width:0px" onClick='changeSelection("sel_2"); xmlhttpGet("/go/_basket/sess_register.php?req_name=ajax_pay_number&req_value=11","")' <?php if($ajax_pay_number == "11") print $ck ?> type=radio name=group_1 value=submit_transfer>
       </td>
-     <td class="payment_itext" align="center">
+     <td class="payment_itext_old" align="center">
          <?php 
            print"<img src=\"";
            $this->img("przelew.gif");
            print "\">";
          ?>
      </td>
-     <td id="sel_2" class="payment_itext" align="center" <?php if($ajax_pay_number == "11") print $style ?> >
+     <td id="sel_2" class="payment_itext_old" align="center" <?php if($ajax_pay_number == "11") print $style ?> >
         <?php 
              print "<p id=\"bold\">".$lang->payment_names['przelew']."</p>";
              print $lang->payment_description['przelew'];
@@ -139,17 +136,17 @@ if (!empty($_SESSION['ajax_pay_number']))
 	print "<script>changeSelection(\"sel_3\");</script>";
     ?> 
     <tr>
-     <td class="payment_itext" style="text-align:center;"> 
-      <input style=\"border-width:0px\" onClick='changeSelection("sel_3"); xmlhttpGet("/go/_basket/sess_register.php?req_name=ajax_pay_number&req_value=81","")' <?php if($ajax_pay_number == "81") print $ck?> type=radio name=group_1 value=submit_cash>
+     <td class="payment_itext_old" style="text-align:center;"> 
+      <input style="border-width:0px" onClick='changeSelection("sel_3"); xmlhttpGet("/go/_basket/sess_register.php?req_name=ajax_pay_number&req_value=81","")' <?php if($ajax_pay_number == "81") print $ck?> type=radio name=group_1 value=submit_cash>
      </td>
-     <td class="payment_itext" align="center">
+     <td class="payment_itext_old" align="center">
          <?php 
            print"<img src=\"";
            $this->img("money.gif");
            print "\">";
          ?>
      </td>
-      <td id="sel_3" class="payment_itext" align="center" <?php if($ajax_pay_number == "81") print $style ?> > 
+      <td id="sel_3" class="payment_itext_old" align="center" <?php if($ajax_pay_number == "81") print $style ?> > 
         <?php 
             print "<p id=\"bold\">".$lang->payment_names['cash']."</p>";
             print $lang->payment_description['cash'];
@@ -167,17 +164,17 @@ if (!empty($_SESSION['ajax_pay_number']))
 	print "<script>changeSelection(\"sel_4\");</script>";
     ?> 
     <tr>
-     <td class="payment_itext" style="text-align:center;"> 
-       <input style=\"border-width:0px\" onClick='changeSelection("sel_4");xmlhttpGet("/go/_basket/sess_register.php?req_name=ajax_pay_number&req_value=1","")' <?php if($ajax_pay_number == "1") print $ck ?> type=radio name=group_1 value=submit_post>
+     <td class="payment_itext_old" style="text-align:center;"> 
+       <input style="border-width:0px" onClick='changeSelection("sel_4");xmlhttpGet("/go/_basket/sess_register.php?req_name=ajax_pay_number&req_value=1","")' <?php if($ajax_pay_number == "1") print $ck ?> type=radio name=group_1 value=submit_post>
      </td>
-     <td class="payment_itext" align="center">
+     <td class="payment_itext_old" align="center">
          <?php 
            print"<img src=\"";
            $this->img("priorytet.gif");
            print "\">";
          ?>
      </td>
-      <td id="sel_4" class="payment_itext" align="center" <?php if($ajax_pay_number == "1") print $style ?> > 
+      <td id="sel_4" class="payment_itext_old" align="center" <?php if($ajax_pay_number == "1") print $style ?> > 
         <?php 
           print "<p id=\"bold\">" . $lang->payment_names['pobranie'] . "</p>";
           print $lang->payment_description['pobranie'];
@@ -229,18 +226,18 @@ if (!empty($_SESSION['ajax_pay_number']))
 	  print "<script>changeSelection(\"sel_5\");</script>";
 
          print "<tr>\n";
-         print "<td class=\"payment_itext\" style=\"text-align:center;\">";
+         print "<td class=\"payment_itext_old\" style=\"text-align:center;\">";
          print "<input style=\"border-width:0px\" onClick='changeSelection(\"sel_5\");xmlhttpGet(\"/go/_basket/sess_register.php?req_name=ajax_pay_number&req_value=12\",\"\")'";
 	   if($ajax_pay_number == "12") 
 	     print $ck;
 	 print "type=radio name=group_1 value=submit_przelewy24>";
          print "</td>";
-         print "<td class=\"payment_itext\" align=\"center\">";
+         print "<td class=\"payment_itext_old\" align=\"center\">";
          print"<img src=\"";
          $this->img("przelewy24_logo.gif");
          print "\"></td>";
 
-         print "<td id=\"sel_5\" class=\"payment_itext\" align=\"center\"";
+         print "<td id=\"sel_5\" class=\"payment_itext_old\" align=\"center\"";
 	 if($ajax_pay_number == "12") 
 	     print $style;
 	 print ">";
@@ -280,13 +277,13 @@ if (!empty($_SESSION['ajax_pay_number']))
 	  print "<script>changeSelection(\"sel_6\");</script>";
 
           print "<tr>\n";
-          print "<td class=\"payment_itext\" style=\"text-align:center;\">";
+          print "<td class=\"payment_itext_old\" style=\"text-align:center;\">";
           print "<input style=\"border-width:0px\" onClick='changeSelection(\"sel_6\");xmlhttpGet(\"/go/_basket/sess_register.php?req_name=ajax_pay_number&req_value=20\",\"\")'";
 	  if($ajax_pay_number == "20") 
 	    print $ck;
 	  print "type=radio name=group_1 value=submit_platnoscipl>";
           print "</td>";
-          print "<td class=\"payment_itext\" align=\"center\">";
+          print "<td class=\"payment_itext_old\" align=\"center\">";
           print"<img src=\"";
           $this->img("visa_master.gif");
           print "\"><br>";
@@ -294,7 +291,7 @@ if (!empty($_SESSION['ajax_pay_number']))
           $this->img("platnoscipl_logo.gif");
           print "\"></td>";
 
-          print "<td id=\"sel_6\" class=\"payment_itext\" align=\"center\"";
+          print "<td id=\"sel_6\" class=\"payment_itext_old\" align=\"center\"";
 	  if($ajax_pay_number == "20") 
 	    print $style;
 	  print ">";
@@ -383,20 +380,7 @@ if (!empty($_SESSION['ajax_pay_number']))
 /* Wy¶wietl informacje o wearto¶ci zamówienia itp. */
 //include_once("basket_amount.html.php");
 ?>
-<p>
-<table align="center" cellpadding="0" cellspacing="0" border="0" width="100%">
-  <tr>
-    <td align="right" ></td>
-    <td align="right" style="font: bold 13px Tahoma;color:#808080"><?php print $lang->second_step; ?></td>
-  </tr>
-  <tr>
-  <td></td>
-    <td align="right" >
-      <input id="payment" type="submit" name="submit_proceed" value="<?php print $lang->basket_take_order_payment ;?>">
-      <input type="hidden" name=current_step value=2>
-    <br><br>
-    </td>
-  </tr>
-</table>
-<br />
+<p class="pull-right">
+<input id="payment2" class="btn btn-warning" type="submit" name="submit_proceed" value='<?php print $lang->second_step; ?>'
+<input type="hidden" name="current_step value=2">
 </p>

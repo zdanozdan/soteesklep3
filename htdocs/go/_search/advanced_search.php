@@ -5,7 +5,7 @@ global $config;
 
 
 
-$DOCUMENT_ROOT=$HTTP_SERVER_VARS['DOCUMENT_ROOT'];
+$DOCUMENT_ROOT=$_SERVER['DOCUMENT_ROOT'];
 require_once ("../../../include/head.inc");
 /**
 * klasa obslugujaca sprawdzanie poprawnosci danych z formularzy
@@ -227,13 +227,13 @@ if(@$_REQUEST['send_form']==1){
     }
 } else {
     // naglowek
-    $theme->head();
+  //$theme->head();
     $theme->page_open_head("page_open_2_head");
     include_once("./include/prepare_javascript.inc.php");
     include_once("./html/adv_search_form.html.php");       
     // stopka
-    $theme->page_open_foot("page_open_1_foot");
-    $theme->foot();
+    $theme->page_open_foot("page_open_2_foot");
+    //$theme->foot();
 }
 include_once ("include/foot.inc");
 ?>

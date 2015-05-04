@@ -14,14 +14,14 @@
 
 $global_database=false;
 $global_secure_test=true; 
-$DOCUMENT_ROOT=$HTTP_SERVER_VARS['DOCUMENT_ROOT'];
+$DOCUMENT_ROOT=$_SERVER['DOCUMENT_ROOT'];
 require_once ("../../../include/head.inc");
 
 $val = true;
 $sess->register("head_display",$val);
 
 // naglowek
-$theme->head();
+//$theme->head();
 $theme->page_open_head("page_open_1_head");
 
 $theme->bar($lang->users_remind_title);

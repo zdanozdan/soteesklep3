@@ -478,7 +478,7 @@ class Theme {
 
         global $DOCUMENT_ROOT;
         $file=$page_file.".html.php";
-        print "before:".$page_file;
+        //print "before:".$page_file;
         include ("$DOCUMENT_ROOT/themes/include/theme_file.inc.php");
         //print "after";
 
@@ -638,6 +638,7 @@ class Theme {
 
     function display3steps($step)
     {
+      global $lang;
        $bigger = "<td style=\"font:bold 15px Tahoma;text-align:left;color:#FF0000\">";
        $normal = "<td>";
        print "<div align=\"left\">";
@@ -646,13 +647,15 @@ class Theme {
           print $bigger;
        else
           print $normal;
-       print "Krok 1 z 2 (Wybierz sposób dostawy towaru oraz p³atno¶ci)";
+       //print "Krok 1 z 2 (Wybierz sposób dostawy towaru oraz p³atno¶ci)";
+       print $lang->basket_step_one;
        print "</tr></td><tr>";
        if ($step == 2) 
           print $bigger;
        else
           print $normal;
-       print "Krok 2 z 2 (Wprowad¼ dane do wysy³ki lub zaloguj siê, odbierz maila z potwierdzeniem)";
+       //print "Krok 2 z 2 (Wprowad¼ dane do wysy³ki lub zaloguj siê, odbierz maila z potwierdzeniem)";
+       print $lang->basket_step_two;
        print "</tr></td></table>";
 //        if ($step == 3) 
 //           print $bigger;
@@ -699,7 +702,7 @@ class Theme {
     * Elementy pojawiajace sie nad lista produktow. Np. wybor listy skroconej rozszezonej itp.
     */
     function top_dbedit() {
-        require_once("include/record_row_links.inc");
+      require_once("include/record_row_links.inc");
 
         global $DOCUMENT_ROOT;
         $file="list/list_top.html.php";
@@ -882,10 +885,11 @@ class Theme {
 
     function get_rewrite_anchor($id, $name, $title)
     {
+      global $config;
        $urlcheck = new EncodeUrl;
        $encoded = $urlcheck->encode_url_category($name);
 
-       $url = "<a href=\"/id".$id."/".$encoded."\"" . " title=\"$title\">";
+       $url = "<a href=\"/$config->lang/id".$id."/".$encoded."\"" . " title=\"$title\">";
        
        return $url;
     }
@@ -1229,7 +1233,7 @@ class Theme {
     *
     * @author krzys@sote.pl
     */
-         function print_page($url) {
+    function print_page($url) {
         global $config, $prefix;
         print "<a href=$url onclick=\"window.open('', 'window_popup', 'width=590, height=450, rezisable=1, scrollbars=1, toolbar=0, status=0');\" target='window_popup'>";
         global $lang;
@@ -1614,24 +1618,14 @@ class Theme {
         if ($view=="vertical") $br="<BR>";
         else $br="";
 
-/*        print "<div align=\"left\">\n";*/
-      print "<fieldset>";
+	print "<fieldset>";
         print "<legend>Wpisz nazwe szukanego produktu lub kod mikran</legend>";
         print "  <form action=\"$config->url_prefix/go/_search/full_search.php\" method=\"get\" name=\"SearchForm\">\n";
         print "    <input id=\"box\" type=\"text\" value=\"$query\" name=\"search_query_words\" size=\"15\">\n";
         print "    <input type=\"submit\" value=\"$lang->search\">$br\n";
-        /*
-        print "    <input type=\"checkbox\" name=\"search_category\"    value=\"1\">$lang->search_category $br";
-        print "    <input type=\"checkbox\" name=\"search_description\" value=\"1\">$lang->search_description";
-        print "    <select name=\"search_category\">";
-        print "      <option name=\"product\">".$lang->search_category['products']."</option>\n";
-        print "      <option name=\"product_desc\">".$lang->search_category['products_desc']."</option>\n";
-        print "      <option name=\"all\">".$lang->search_category['all']."</option>\n";
-        print "    </select>";
-        */
         print "  </form>\n";
         print "<a href='/go/_search/advanced_search.php'>".@$lang->search_advanced."</a>";   
-        /*print "</div>\n";*/
+
     } // end search_form()
 
     /**
@@ -2334,6 +2328,28 @@ class Theme {
         }
     }
 
+    function get_lang_img()
+    {
+      global $config, $config_flags, $DOCUMENT_ROOT;
+      include_once ("$DOCUMENT_ROOT/themes/base/base_theme/_flags/config_flags.inc.php");
+
+      $lang = (empty($_SESSION['global_lang_id'])) ? '0' : $_SESSION['global_lang_id'];
+
+      $lang_name = $config->langs_names[$lang];
+      echo "<img src='"; $this->img("_flags/" . $config_flags->files[$config->langs_symbols[$lang]]); echo "' alt='$lang_name'>";
+    }
+
+    function lang_list()
+    {
+      global $config, $config_flags, $DOCUMENT_ROOT;
+      include_once ("$DOCUMENT_ROOT/themes/base/base_theme/_flags/config_flags.inc.php");
+
+      $lang_name = $config->langs_names[0];
+      echo "<li><a href='/go/_lang/?lang_id=0'><img src='"; $this->img("_flags/" . $config_flags->files[$config->langs_symbols[0]]); echo "' alt='$lang_name'></a></li>";
+      $lang_name = $config->langs_names[1];
+      echo "<li><a href='/go/_lang/?lang_id=1'><img src='"; $this->img("_flags/" . $config_flags->files[$config->langs_symbols[1]]); echo "' alt='$lang_name'></a></li>";
+    }
+
     /**
     * Wyï¿½wietl flagi jï¿½zykowe
     *
@@ -2347,6 +2363,12 @@ class Theme {
             if($config->langs_active[$i])
             $lang_count++;
         }
+
+	$lang_name = $config->langs_names[0];
+	echo "<li><a href='/go/_lang/?lang_id=0'><img src='"; $this->img("_flags/" . $config_flags->files[$config->langs_symbols[0]]); echo "' alt='$lang_name'></a></li>";
+	$lang_name = $config->langs_names[1];
+	echo "<li><a href='/go/_lang/?lang_id=1'><img src='"; $this->img("_flags/" . $config_flags->files[$config->langs_symbols[1]]); echo "' alt='$lang_name'></a></li>";
+
         if($lang_count > 1) {
             for($i = 0; $i < count($config->langs_symbols); $i++) {
                 if($config->langs_active[$i]) {

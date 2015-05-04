@@ -55,7 +55,7 @@ class RecordRow {
             $theme->record_row_short($rec);
         } else {
             // pelna prezentacja reordu
-            $theme->record_row($rec);
+	  $theme->record_row($rec);
         }
         
         $time->stop("<font color=green>record_row.inc $i</font>");

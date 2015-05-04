@@ -3,18 +3,22 @@
 
 class MyConfig extends AutoConfig{
 	var $db=array(
-                'nobody_dbuser'=>"%EF%7B%C2%22%16%CBy%85",
+		 'nobody_dbuser'=>"%EF%7B%C2%22%16%CBy%85", //produkcja
+		      //'nobody_dbuser'=>"%EF%7B%C2%22%16%CBy%86",     //
                 'nobody_dbpassword'=>"%F8v%C8%3E%12%CE%17%86l",
-                'admin_dbuser'=>"%23%80%28%95%16%A59%FE",
+                'admin_dbuser'=>"%23%80%28%95%16%A59%FE", //produkcja
+		//'admin_dbuser'=>"%23%80%28%95%16%A59%FD",   //testowy 2
                 'admin_dbpassword'=>"4%8D%22%89%12%A0W%FD%2A",
                 'dbhost'=>"%F1c%C5%7E%1A%CCM%C6%3E%B8k%D9%7F%06%BB%25%83%0E6u%D7%5E%9F%2B",
-                'dbname'=>"%EF%7B%C2%22%16%CBy%85",
+                'dbname'=>"%EF%7B%C2%22%16%CBy%85", //produkcja
+		//'dbname'=>"%EF%7B%C2%22%16%CBy%86", //testowy 2
                 );
 	var $ftp=array(
                 'ftp_host'=>"soteadmin.mikran.nazwa.pl",
                 'ftp_user'=>"mikran",
                 'ftp_password'=>"%14%AD%22%89%12%A0W%FD%2A",
-                'ftp_dir'=>"/soteesklep3",
+                //'ftp_dir'=>"/soteesklep3", //produkcja
+		'ftp_dir'=>"/soteesklep3_test/soteesklep3",
                 );
 	var $salt="f37e02d876032f4335ceb2c97a4b831c";
 	var $md5_pin="6c35083f355f10ab32ebed269a58169e";
@@ -38,15 +42,15 @@ class MyConfig extends AutoConfig{
                 );
 	var $currency_data=array(
                 '1'=>"1",
-                '2'=>"4.12",
-                '5'=>"0.1157",
-                '3'=>"3.22",
+                '2'=>"1",
+                '5'=>"1",
+                '3'=>"1",
                 );
 	var $currency_name=array(
                 '1'=>"PLN",
-                '2'=>"EUR",
-                '5'=>"RUB",
-                '3'=>"USD",
+                '2'=>"PLN",
+                '5'=>"PLN",
+                '3'=>"PLN",
                 );
 	var $category=array(
                 'type'=>"standard",
@@ -130,7 +134,7 @@ class MyConfig extends AutoConfig{
                 '2'=>"1",
                 '21'=>"1",
                 '5'=>"1",
-                '8'=>"1",
+                '8'=>"0",
                 '81'=>"1",
                 );
 	var $random_on_page=array(
@@ -220,7 +224,7 @@ class MyConfig extends AutoConfig{
                 );
 	var $langs_active=array(
                 '0'=>"1",
-                '1'=>"0",
+                '1'=>"1",
                 '2'=>"0",
                 '3'=>"0",
                 '4'=>"0",

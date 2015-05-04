@@ -12,6 +12,7 @@
 // odczytaj uprawnienia wymagane do wywoalania danej czesci programu, sprawdz czy uzytkownik
 // ma prawa do dostepu do danej funkcji
 
+
 // zaladuj dodatkowe biblioteki, skrypty, itp.
 require_once ("include/check_perm.inc.php");
 @include_once(".perm.php"); // $__perm_require

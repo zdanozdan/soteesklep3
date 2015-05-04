@@ -9,7 +9,7 @@
  */
 $global_database=true;
 $global_secure_test=true;
-$DOCUMENT_ROOT=$HTTP_SERVER_VARS['DOCUMENT_ROOT'];
+$DOCUMENT_ROOT=$_SERVER['DOCUMENT_ROOT'];
 include_once ("../../../include/head.inc");
 // dostepnosc towaru (funkcja wyswietlajaca nformacje o dosteonosci)
 require_once ("include/available.inc");
@@ -43,6 +43,13 @@ if (! empty($_REQUEST['page'])) {
     $page=$_REQUEST['page'];
 }  
 
+/////////////!!!!!!!!!!!!!!!!!!!!!!!!!
+//OSX: use REQUEST_URI
+//Production use SCRIPT_URL
+
+//$path = $_SERVER['SCRIPT_URL'];
+$path = $_SERVER['REQUEST_URI'];
+
 //Sprawdzamy czy nazwa linka jest zgodna z biezaca nazwa kategorii
 $cat_name = "";
 // Nastepnie sprawdzamy czy jest wywo³anie wewnêtrzne
@@ -69,7 +76,7 @@ if (ereg("([0-9]+)$",$idc, $match))
       {
          // produkt odczytany poprawnie
          $cat_name=$db->fetchResult($retval,0,"category$results");
-         
+
          $enc = new EncodeUrl;
          $cat_name = $enc->encode_url_category($cat_name);
       }
@@ -85,27 +92,26 @@ else
    $idc_name="cidc";
 }
 
-   
 // Najpierw sprawdzamy czy jest to stary format zapytania
 // tzn. /go/_category/
-if (ereg("^/go/_category/$",$_SERVER['SCRIPT_URL']))
+if (ereg("^/go/_category/",$path))
 {
-   if (!ereg("producer_id", $_SERVER['REQUEST_URI']) &&
-       !ereg("record_row", $_SERVER['REQUEST_URI']) && 
-       !ereg("order", $_SERVER['REQUEST_URI']) )
+   if (!ereg("producer_id", $path) &&
+       !ereg("record_row", $path) && 
+       !ereg("order", $path ))
     //   !ereg("page", $_SERVER['REQUEST_URI']) )
    {
         //$url_cat="/$idc_name/$idc/$cat_name";
 
-        if(preg_match('/page=([2-9]+)/',$_SERVER['REQUEST_URI'],$matches))
+        if(preg_match('/page=([2-9]+)/',$path,$matches))
 	{
-		$url_cat="/$idc_name/$idc/$cat_name/page/$matches[1]";
+		$url_cat="/$config->lang/$idc_name/$idc/$cat_name/page/$matches[1]";
 	}
 	else
 	{
-      		$url_cat="/$idc_name/$idc/$cat_name";
+      		$url_cat="/$config->lang/$idc_name/$idc/$cat_name";
 	}
-      
+
       Header( "HTTP/1.1 301 Moved Permanently" );
       Header( "Location: $url_cat" );
    }
@@ -114,15 +120,15 @@ else
 {
    // Sprawdzamy czy podana nazwa kategorii jest prawidlowa
    // jesli nie jest robimy redirecta do prawidlowej nazwy
-   if ($page > 1 && preg_match("/\/$cat_name\/page\/$page$/",$_SERVER['SCRIPT_URL']) == false)
+  if ($page > 1 && preg_match("/\/$cat_name\/page\/$page$/",$path) == false)
    {
-	$url_cat="/$idc_name/$idc/$cat_name/page/$page";
+	$url_cat="/$config->lang/$idc_name/$idc/$cat_name/page/$page";
         Header( "HTTP/1.1 301 Moved Permanently" );
         Header( "Location: $url_cat" );
    }
-   if (($page == 0 || $page == 1) && preg_match("/\/$cat_name$/",$_SERVER['SCRIPT_URL']) == false)
+   if (($page == 0 || $page == 1) && preg_match("/\/$cat_name$/",$path) == false)
    {
-      $url_cat="/$idc_name/$idc/$cat_name";
+      $url_cat="/$config->lang/$idc_name/$idc/$cat_name";
       Header( "HTTP/1.1 301 Moved Permanently" );
       Header( "Location: $url_cat" );
    }
@@ -199,11 +205,46 @@ if($page > 0) $config->google['title'] .= ", wyniki ze strony: $page";
 $config->google['description'] = "$cat_lang: $global_category_path";
 if($page > 0) $config->google['description'] .= ". Wyniki ze strony $page";
 $config->google['keywords'] = "$global_category_path";
-$theme->head();
+//$theme->head();
+
+
+//Sprawdzamy czy lang pasuje. 
+//Jesli config->lang = en/de/es itd to przekierowujemy do /en/ czyli prependujemy nazwe langa
+//die('123');
+$regex = "^/([a-z]{1,2})/idc/";
+if (ereg($regex,$path,$regs))
+  {
+    $url_lang = $regs[1];
+    if ($config->lang_active[$url_lang])
+      {
+	if($config->lang != $url_lang)
+	  {
+	    $_SESSION["global_lang"] = $url_lang;	
+	    $_SESSION["global_lang_id"] = array_search($url_lang, $config->langs_symbols);
+	    $config->lang=$url_lang;
+	    $config->lang_id=array_search($url_lang, $config->langs_symbols);
+
+	    if ($page > 1)
+	      $url_cat="/$config->lang/$idc_name/$idc/$cat_name/page/$page";
+	    else
+	      $url_cat="/$config->lang/$idc_name/$idc/$cat_name";
+
+	    Header( "HTTP/1.1 301 Moved Permanently" );
+	    Header( "Location: $url_cat" );
+	  }
+      }
+  }
+else
+  {
+    $url_cat = '/'.$config->lang.$path;
+    //print $url_cat;
+    Header( "HTTP/1.1 301 Moved Permanently" );
+    Header( "Location: $url_cat" );
+  }
 
 $theme->page_open_object("show",$dbedit,"page_open");
 
 // stopka
-$theme->foot();
-include_once ("include/foot.inc");
+//$theme->foot();
+//include_once ("include/foot.inc");
 ?>

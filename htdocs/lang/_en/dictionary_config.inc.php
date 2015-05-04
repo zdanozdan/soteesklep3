@@ -15,6 +15,8 @@ class DictionaryConfig_en {
                 'jest'=>"available",
                 'Wybierz wersjê'=>"Choose version",
                 'oczekujemy dostawy'=>"waiting for delivery",
+		'Boczne'=>'EN BOCZNE',
+		'Zêby'=>'Acrylic teeth',
                 );
 
 } // end class DictionaryConfig_en

@@ -64,18 +64,18 @@ if ($order_send->send())
     $sess->register("global_lock_register",$global_lock_register);
 
     // naglowek
-    $theme->head();
+    //$theme->head();
     $theme->page_open_head("page_open_1_head");
 
     $theme->bar($lang->register_send_title);
-    $theme->theme_file("send_confirm_summary.html.php");
+    //$theme->theme_file("send_confirm_summary.html.php");
     // wyswietl informacje o wyslaniu zamowienia
     $theme->send_confirm();
 } 
 else 
 {
     // naglowek
-    $theme->head();
+    //$theme->head();
     $theme->page_open_head("page_open_1_head");
     $theme->bar($lang->register_send_title);
     $theme->send_error();
@@ -84,6 +84,6 @@ else
 $theme->page_open_foot("page_open_1_foot");
 
 // stopka
-$theme->foot();
-include_once ("include/foot.inc");
+//$theme->foot();
+//include_once ("include/foot.inc");
 ?>

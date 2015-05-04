@@ -1,33 +1,24 @@
-<!-- login_form.html.php --><?php
-/**
-* @version    $Id: login_form.html.php,v 1.4 2007/12/01 10:57:48 tomasz Exp $
-* @package    themes
-* @subpackage base_theme
-*/
-?>
-
- <table cellpadding="0" cellspacing="3" border="0" align="center" width="100%">
- <tr> 
-        <td align="center">
-
-    
-    <div id="login_form_left">
-    <form action=<?php print $this->login_action ?> method=post>
-  <input type=hidden name=type value=login>
-  <input type=hidden name=form[check_login] value=true>
+<!-- login_form.html.php -->
+<table>
+<tr> 
+<td align="center">
+   <div id="login_form_left">
+   <form action=<?php print $this->login_action ?> method="post">
+   <input type="hidden" name="type" value="login">
+   <input type="hidden" name="form[check_login]" value="true">
    <?php 
    if ($this->bad_login == true)
        print "<span style=\"font: 12px Tahoma;color:#FF0000\">".$lang->users_login_order_error."</span>";
    else
        print $lang->users_login_name;
    ?>
-   <table cellpadding="0" cellspacing="3" border="0" align="center" width="100%">
+   <table>
       <tr> 
         <td style="text-align: right;"><B><nobr>
           <?php print $lang->users_login_email; ?>
           :</nobr></B></td>
         <td>
-          <input type=text size=20 name=form[login]>
+          <input type="text" size="20" name="form[login]">
         </td>
       </tr>
       <tr> 
@@ -35,13 +26,13 @@
           <?php print $lang->users_password;?>
           :</nobr></B></td>
         <td> 
-          <input type=password size=20 name=form[password]>
+          <input type="password" size="20" name="form[password]">
           </td>
           
       </tr>
-
       </table>
-          <input type=submit value='<?php print $lang->users_log_in; ?>'>
+      <input class="btn btn-primary" type="submit" value='<?php print $lang->users_log_in; ?>'>
+
       </form>
     </div>
     

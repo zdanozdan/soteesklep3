@@ -3,6 +3,9 @@ require_once("include/cookie.inc");
 
 require_once("./include/my_new_basket.inc.php");
 require_once("./include/points_buy.inc.php");
+// klasa do encodingu urla
+include_once ("include/encodeurl.inc");
+
 /**
  * Klasa koszyka oraz przechowalni produktów
  * Zapis do bazy danych, odtwarzanie na podstawie ciastka oraz sesji
@@ -957,11 +960,12 @@ class My_Ext_Basket extends My_New_Basket {
 
             if ($type=="normal")
             {
+	      print "<table class='table table-bordered table-mikran'>";
                if (count($this->items) > 0)
                {
-                  print "<span id=\"header_4\">";
-                  print  "<table border=\"0\" cellspacing=\"2\" cellpadding=\"2\" align=\"center\" width=\"100%\">\n";
-                  $this->basket_thLimited($this->display,$this->_display_above);
+		 //print "<span id=\"header_4\">";
+		 //print  "<table border=\"0\" cellspacing=\"2\" cellpadding=\"2\" align=\"center\" width=\"100%\">\n";
+                 $this->basket_thLimited($this->display,$this->_display_above);
                   
                   /* uaktualnij warto¶c zakupów i dodatkowe dane prodyuktów */
                   $this->calc();
@@ -972,16 +976,17 @@ class My_Ext_Basket extends My_New_Basket {
                      $this->_rowLimited($id,$item);
                   }
                   
-                  echo "<tr><td class=\"summary_small\">".$lang->shopping_amount."</td><td></td><td></td><td></td><td></td><td class=\"red_summary\">".$theme->price($this->amount)."</td><td class=\"red_summary\">".$shop->currency->currency."</td><td></td></tr>";
-                  print "</table>";
-                  print "</span>";
+                  //echo "<tr><td class=\"summary_small\">".$lang->shopping_amount."</td><td></td><td></td><td></td><td></td><td class=\"red_summary\">".$theme->price($this->amount)."</td><td class=\"red_summary\">".$shop->currency->currency."</td><td></td></tr>";
+                  //print "</table>";
+                  //print "</span>";
                }
                else
                {
-                  print "<table width=\"100%\" class=\"block_1_basket\"><tr><td>";
+		 //print "<table width=\"100%\" class=\"block_1_basket\"><tr><td>";
                   $this->showEmptyBasket();
-                  print "</table>";
+                  //print "</table>";
                }
+	       print "</table>";
             }
          }
 
@@ -995,89 +1000,64 @@ class My_Ext_Basket extends My_New_Basket {
     * \@global object $basket        obiekt klasy Basket
     * \@global object $delivery_obj  obiekt z klasy Delivery
     */
-	function showBasketForm() {
-		global $theme;
-		global $lang;
-		global $delivery_obj;
-		global $global_basket_calc_button;
-		global $config;
-		global $shop;
+      function showBasketForm() {
+	global $theme;
+	global $lang;
+	global $delivery_obj;
+	global $global_basket_calc_button;
+	global $config;
+	global $shop;
 
-		// je¶li koszyk jest pusty to poka¿ odpowiedni komunikat
-		if ($this->_display_above) {
-			$formname="basketForm";
-		} else {
-			$formname="wishlistForm";
-			if ($this->display!="form") {
-				return;
-			}
-		}
-		if (empty($this->items)) 
-                {
-                   if ($this->_display_above) 
-                   {
-                      if ($this->_error) 
-                      {
-                         $theme->bar($lang->$formname);
-                         $this->_show_error();
-                         return;
-                      }
+	// je¶li koszyk jest pusty to poka¿ odpowiedni komunikat
+	if ($this->_display_above) {
+	  $formname="basketForm";
+	} else {
+	  $formname="wishlistForm";
+	  if ($this->display!="form") {
+	    return;
+	  }
+	}
+	if (empty($this->items)) 
+	  {
+	    if ($this->_display_above) 
+	      {
+		if ($this->_error) 
+		  {
+		    $theme->bar($lang->$formname);
+		    $this->_show_error();
+		    return;
+		  }
 
-                      $theme->basket_empty();
-                      //$theme->file("basket_up_empty.html");
-                      print "<table width=\"100%\" class=\"block_1_basket\"><tr><td>";
-                      $this->showEmptyBasket();
-                      print "</table>";
-                   } 
-                   else {
-                      if ($this->_error) {
-                         $theme->bar($lang->$formname);
-                         $this->_show_error();
-                         return;
-                      }
+		$theme->basket_empty();
+		//$theme->file("basket_up_empty.html");
+		print "<table width=\"100%\" class=\"block_1_basket\"><tr><td>";
+		$this->showEmptyBasket();
+		print "</table>";
+	      } 
+	    else {
+	      if ($this->_error) {
+		$theme->bar($lang->$formname);
+		$this->_show_error();
+		return;
+	      }
 
-//                       global $submit_type;
-//                       if (!empty($submit_type)) 
-//                       {
-//                          global $sess;
-//                          $sid=$sess->param."=".$sess->id;
-//                          print "
-// 				<script language=\"JavaScript\">\n
-// 				window.location.href='/go/_basket/?$sid';
-// 				</script>
-// 				";
-//                       }
-                      $theme->wishlist_empty();
-                      $theme->file("wishlist_up_empty.html");
-                   }
-                   return;
-		}
-                //		$theme->bar($lang->$formname);
+	      $theme->wishlist_empty();
+	      $theme->file("wishlist_up_empty.html");
+	    }
+	    return;
+	  }
 
-                // Nie wiadomo o co chodzi z tymi b³êdami.
-		//if ($this->_show_error()) {
-		//	return;
-		//}
+	if (!empty($_SESSION['current_step']))
+	  $step = $_SESSION['current_step'];
+	else
+	  $step = 1;
+	
+	if ($this->_display_above)
+	  $theme->display3steps($step);
 
-                if (!empty($_SESSION['current_step']))
-                   $step = $_SESSION['current_step'];
-                else
-                   $step = 1;
-
-                if ($this->_display_above)
-                   $theme->display3steps($step);
+	//print "</div>";
                 
-		print "<table cellspacing=\"0\" cellpadding=\"0\" border=\"0\">\n";
-		print "  <tr>\n";
-		print "    <td>\n";
-		// pokaz kategorie dodawanego produktu - linki do ketegorii
-		$this->add_category_links();
-		print "<td>\n";
-		print "  </tr>\n";
-		print "</table>\n";
-		print "</div>\n";
-		//		}
-		print "<div align=left>";
+	print "<div>";
 		if ($this->display=='form') {
 			if ($this->_display_above) {
                            //$theme->theme_file("basket_up.html.php");
@@ -1086,12 +1066,12 @@ class My_Ext_Basket extends My_New_Basket {
 			}
 		}
 
-                $last_id_link = "<a href=/?id=GT" . $this->items[$this->_count]['ID'].">".$lang->basket_order_continue2."</a>";
-                print "</br><table width=\"100%\"><tr><td align=\"right\" style=\"font-size:12px\">";
-                //print_r($this->items[$this->_count]);
-                print $last_id_link;
-                print "</td></tr></table>";
+                $last_id_link = "<a href=/id" . $this->items[$this->_count]['ID']."/redirectname>".$lang->basket_order_continue2."</a>";
 		
+		print "<ul class='nav nav-pills'>";
+		print "<li class='pull-right'>";
+                print $last_id_link;
+		print "</li></ul>";
 		
 		if ($this->mode!="points") {
                    //print "<br>".$lang->basket_currency.": ".$shop->currency->currency;
@@ -1123,9 +1103,8 @@ class My_Ext_Basket extends My_New_Basket {
 
                 print "<span id=\"ajax_basket\">";
                 print "<span id=\"header_4\">";
-		print  "<table border=\"0\" cellspacing=\"2\" cellpadding=\"2\" align=\"center\" width=\"100%\">\n";
+		print  "<table class='table table-bordered table-mikran'>";
 		$this->basket_thLimited($this->display,$this->_display_above);
-		//$this->basket_th($this->display,$this->_display_above);
 
 		/* uaktualnij warto¶c zakupów i dodatkowe dane prodyuktów */
 		$this->calc();
@@ -1133,14 +1112,7 @@ class My_Ext_Basket extends My_New_Basket {
 		// wy¶wietl pozycje z koszyka w wierszach
 		reset($this->items);
 		foreach ($this->items as $id=>$item) {
-			$this->_rowLimited($id,$item);
-
-			//TZ wiosenne promocje 2012
-                        //if($item['ID'] == '9446')
-			//{
-			//	$delivery_obj->set_spring_promo(9446);
-				//echo  "wiosenna promocja !";
-			//}
+		  $this->_rowLimited($id,$item);
 		}
                 //podsumowanie warto¶ci produktów koszyka
 // 		global $shop;
@@ -1148,16 +1120,16 @@ class My_Ext_Basket extends My_New_Basket {
                 $st = "style=\"font:bold 14px Tahoma;text-align:center;color:#FF0000\"";
                 if ($this->display=="form")
                 {
-                   echo "<tr><td class=\"summary_small\">".$lang->shopping_amount."</td><td></td><td></td><td></td><td></td><td class=\"red_summary\" $st>".$theme->price($this->amount)."</td><td class=\"red_summary\">".$shop->currency->currency."</td><td></td></tr>";
+		  echo "<tr><td class=\"summary_small\">".$lang->shopping_amount."</td><td></td><td></td><td></td><td></td><td class=\"red_summary\" $st>".$theme->price($this->amount)."</td><td class=\"red_summary\">".$shop->currency->currency."</td></tr>";
                 }
                 else
                 {
                    $price_netto = $theme->price($delivery_obj->delivery_cost/(1 + $delivery_obj->vat/100));
                    $price_brutto = $theme->price($delivery_obj->delivery_cost);
-                   echo "<tr align=\"center\" bgcolor=" . @$config->theme_config['colors']['basket_td']."><td align=\"right\">Koszt przesy³ki: "."(".$delivery_obj->delivery_name.")"."</td><td>".$price_netto."</td><td>".$delivery_obj->vat."</td><td>".$price_brutto."</td><td>1</td><td>".$price_brutto."</td></tr>";
+                   echo "<tr align=\"center\" bgcolor=" . @$config->theme_config['colors']['basket_td']."><td align=\"right\">".$lang->basket_delivery_cost.": "."(".$delivery_obj->delivery_name.")"."</td><td>".$price_netto."</td><td>".$delivery_obj->vat."</td><td>".$price_brutto."</td><td>1</td><td>".$price_brutto."</td></tr>";
 
                    $total = $theme->price($this->amount + $delivery_obj->delivery_cost);
-                   echo "<tr $st align=\"center\"><td align=\"right\">Razem do zap³aty:</td><td></td><td></td><td></td><td></td><td $st>".$total." ".$shop->currency->currency."</td><td></td></tr>";
+                   echo "<tr $st align=\"center\"><td align=\"right\">".$lang->basket_total_order_amount.":"."</td><td></td><td></td><td></td><td></td><td $st>".$total." ".$shop->currency->currency."</td></tr>";
                 }
 
 		print "</table>";
@@ -1168,37 +1140,46 @@ class My_Ext_Basket extends My_New_Basket {
                 {
                    $p_num = $_SESSION['ajax_pay_number'];
 
-                   echo "<table width=100%><tr bgcolor=" . @$config->theme_config['colors']['basket_td']."><td style=\"font:14px Tahoma;text-align:left\" >P³atno¶æ</td><tr><td style=\"font:bold 14px Tahoma;text-align:left\">".$lang->pay_method[$p_num]."</tr></td><tr><td style=\"text-align:left\">".$lang->payment_description_by_id[$p_num]."</td></tr></table>";
+		   //print "<p style=\"font:14px Tahoma\">P³atno¶æ:</p>";
+		   print "<div class=\"alert alert-info text-left\">";
+		   print "<p class='red-money'>";
+		   print $lang->payment_method_table_title.": ".$lang->pay_method[$p_num];
+		   print "</p>";
+		   print $lang->payment_description_by_id[$p_num];
+                   echo "<p style=\"font-size:12px;text-align:right\"><a href=\"/koszyk-start\"> << ".$lang->basket_change_message."</a></p>";
+		   print "</div>";
 
-                   echo "<table width=100%><tr><td align=\"right\" style=\"font-size:12px\"><a href=\"/koszyk-start\"><< Zmieñ zawarto¶æ koszyka lub sposób p³atno¶ci</a></td></tr></table>";
+		   print "<div class=\"alert alert-info text-left\">";
+		   print "<p class='red-money'>";
+		   print $lang->basket_delivery_country.": ". $lang->country[$_SESSION['global_country_delivery']];
+		   print "</p>";
+		   print "</div>";
                 }
 
 		if (($this->display=="form") && ($this->_display_above) && ($this->mode=='standard')) {
 			// pokaz: suma zamowienia, podsumuj wprowadzone zmiany, zaplac, powrot
-			//$delivery_obj->show_country();
 
-			print "<div align=left>";
-                        $theme->print_page("/go/_basket/print.php");
+                        //$theme->print_page("/go/_basket/print.php");
 
                         //print "<table><tr><td class=\"payment_itext\">
-                        print "<span style=\"font-size:12px\"><br>";
+                        print "<div class=\"alert alert-info text-left\"><br>";
                         print $lang->order_disclaimer['3'];
                         print "<a href=/go/_files/?file=terms.html>";
                         print "&nbsp ";
                         print $lang->order_disclaimer['5'];
                         print "</a>";
-                        print "</span>";
-
-			$delivery_obj->show();
 			print "</div>";
+
+			$delivery_obj->show_country();
+			$delivery_obj->show();
 
 			$this->order_amount=$this->amount+$delivery_obj->delivery_cost;
 
                         print "<span id=\"order_step_one\">";
                         $theme->show_order_step_one($theme->price($this->amount),
-                                                    $theme->price($this->order_amount),
-                                                    $delivery_obj->delivery_name,
-                                                    $delivery_obj->delivery_cost);
+			                         $theme->price($this->order_amount),
+			                         $delivery_obj->delivery_name,
+			                         $delivery_obj->delivery_cost);
                         print "</span>";
 
 			print "</form>\n";
@@ -1210,8 +1191,8 @@ class My_Ext_Basket extends My_New_Basket {
 				$theme->showPromotions();
 			}
 		} else if (($this->display=="form") && ($this->mode=='points')) {
-                   //$delivery_obj->show_country();
-			print "<div align=left>";
+			print "<div>";
+			$delivery_obj->show_country();
 			$delivery_obj->show();
 			print "</div>";
 			$theme->basket_points_submit($theme->price($this->amount),
@@ -1245,7 +1226,15 @@ class My_Ext_Basket extends My_New_Basket {
 		// przet³umacz nazwê
 		$name=$item['data']['lang_names'][$config->lang_id];
 		$user_id=$this->_get_user_id($item['ID']);
-		$namelink="<a href=\"/?id=$user_id\">$name</a>";
+		$item_id = $item['ID'];
+
+		$enc = new EncodeUrl;
+		$rewrite_name = $enc->encode_url_category($name);
+		$new_url = '/'.$config->lang."/id".$item_id."/$rewrite_name";
+
+		$namelink="<a href=\"$new_url\">$name</a>";
+
+		//$namelink="<a href=\"/?id=$user_id\">$name</a>";
 		$points_value=$item['points_value'];
 		if ($this->mode!="points" && $config->basket_wishlist['prod_ext_info']==1) {
 			$namelink.="<br>".$lang->basket_products_extra['user_id'].": $user_id, ".$lang->basket_products_extra['points_value'].": $points_value";
@@ -1318,11 +1307,11 @@ class My_Ext_Basket extends My_New_Basket {
 			if ($this->mode!='points') {
 				// nie wy¶wietlaj opcji przeniesienia produktu je¿eli jest on zaznaczony jako niedostêpny
 				if ((@$this->items[$id]['unavail']!=1) && $compatible_target) {
-					print "<td align=\"center\"><input class=\"border0\" type=\"checkbox\" id=\"move\" name=\"move[$id]\" ></td>\n";
+					print "<td><input class=\"border0\" type=\"checkbox\" id=\"move\" name=\"move[$id]\" ></td>\n";
 				} else print "<td></td>";
 				//onClick=\"this.form.submit();
 			}
-			print "<td align=\"center\"><input class=\"border0\" type=\"checkbox\" id=\"del\" name=\"del[$id]\" ></td>\n";
+			print "<td><input class=\"border0\" type=\"checkbox\" id=\"del\" name=\"del[$id]\" ></td>\n";
 
 		}
 		print "</tr>\n";
@@ -1730,54 +1719,77 @@ class My_Ext_Basket extends My_New_Basket {
                       print "<input name=\"formName\" id=\"formName\" value=\"$formname\" type=hidden>\n";
                    }
 
-                   print "<table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">";
+                   //print "<table class=\"table table-bordered\">";
+		   //print "<tr><th>xxxxxxxx</th></tr>";
 		
                    $show_basket = $_SESSION['show_basket'];
                    if (empty($show_basket))
                       $show_basket = "collapse";
 
                    if ($show_basket == "collapse")
-                      $show_basket_msg = "Zwiñ koszyk";
+		     $show_basket_msg = $lang->collapse_basket;//"Zwiñ koszyk";
                    else
-                      $show_basket_msg = "Rozwiñ koszyk";
+		     $show_basket_msg = $lang->expand_basket;//"Rozwiñ koszyk";
 
-                   print "<tr><td>";
-                   print "<table width=\"100%\" cellspacing=\"1\" cellpadding=\"1\" border=\"0\">";
-                   print "<tr><td style=\"text-align:left\"><span style=\"cursor:pointer;color:#FF6000\" onclick='this.style.cursor=\"wait\";xmlhttpGet(\"/go/_basket/ajax_basket.php?action=show_basket&value=$show_basket\",\"ajax_basket\")'>".$show_basket_msg.$img_expand_collapse."</span></td>";
-                   print "<td>";
+		   print "<ul class=\"nav nav-pills basket-pills\">";
+		   print "<li style=\"cursor:pointer;color:#FF6000;padding:7px\" onclick='this.style.cursor=\"wait\";xmlhttpGet(\"/go/_basket/ajax_basket.php?action=show_basket&value=$show_basket\",\"ajax_basket\")'><i class=\"icon-list\"></i> $show_basket_msg.$img_expand_collapse</li>";
+		   //print "<li><button class='btn btn-primary btn-mini' type='button' onclick='this.style.cursor=\"wait\";xmlhttpGet(\"/go/_basket/ajax_basket.php?action=show_basket&value=$show_basket\",\"ajax_basket\")'><i class=\"icon-list icon-white\"></i> $show_basket_msg</button></li>";
                    if ($global_wishlist_count > 0)
-                   {
-                      print "<a href=\"/przechowalnia\">".$lang->head_wishlist_number."&nbsp;"."</a><nobr>".$global_wishlist_count."</nobr>&nbsp&nbsp";
-                      print "<a href=\"/przechowalnia\">".$img_wishlist."</a>";
-                   }
-                   print "</td>";
+		     {
+		       print "<li><a href=\"/przechowalnia\">".$img_wishlist."</a></li>";
+		       print "<li><a href=\"/przechowalnia\">".$lang->head_wishlist_number.$global_wishlist_count."</a></li>";
+		     }
 
-                   $st_coll = "style=\"font:bold 12px Tahoma;text-align:center;color:#FF0000\"";
-                   if ($show_basket == "expand")
+		   if ($show_basket == "expand")
                    {
                       $this->calc();
-                      print "<td><span id=\"header_4\"><table border=\"0\"><tr>";
-                      print "<td class=\"summary_small_center\"><a href=\"/koszyk-start\">".$lang->head_products_count_number."</a>".$global_basket_count."</td>";
-                      print "</tr><tr>";
-                      print "<td class=\"red_summary_small\"><a href=\"/koszyk-start\">".$lang->head_in_basket."</a>".$theme->price($this->amount)." ".$shop->currency->currency."</td>";
-                      print "</table>";
-                      print "</span>";
-                   }
+		      print "<li>";
+		      print "<ul class='nav nav-stacked'>";
+                      print "<li><a href=\"/koszyk-start\">".$lang->head_products_count_number.$global_basket_count."</a></li>";
+                      print "<li><a href=\"/koszyk-start\">".$lang->head_in_basket.$theme->price($this->amount)." ".$shop->currency->currency."</a></li>";
+		      print "</ul>";
+		      print "<li>";
+		   }		      
 
-                   print "<td width=\"30%\"><table><tr><td><a href=\"/koszyk-start/\">".$img_basket."</td></a>";
-                   print "<td><table border=\"0\"><tr><td>";
-                   print "<a href=\"/koszyk-start\"><blink>".$lang->head_products_new."</blink></a>";
-                   print "</td><tr><tr><td>";
-                   print "<a href=\"/koszyk-start\">".$lang->head_products_show."</a>";
-                   print "</td></tr></table></td></tr></table>";
-                   print "</td></table></tr>";
+                   //print "<tr><td>";
+                   //print "<table width=\"100%\" cellspacing=\"1\" cellpadding=\"1\" border=\"0\">";
+                   //print "<tr><td style=\"text-align:left\"><span style=\"cursor:pointer;color:#FF6000\" onclick='this.style.cursor=\"wait\";xmlhttpGet(\"/go/_basket/ajax_basket.php?action=show_basket&value=$show_basket\",\"ajax_basket\")'>".$show_basket_msg.$img_expand_collapse."</span></td>";
+                   //print "<td>";
+                   //if ($global_wishlist_count > 0)
+                   //{
+		   //  print "<a href=\"/przechowalnia\">".$lang->head_wishlist_number."&nbsp;"."</a><nobr>".$global_wishlist_count."</nobr>&nbsp&nbsp";
+		   //  print "<a href=\"/przechowalnia\">".$img_wishlist."</a>";
+                   //}
+                   //print "</td>";
+
+                   //$st_coll = "style=\"font:bold 12px Tahoma;text-align:center;color:#FF0000\"";
+                   //if ($show_basket == "expand")
+		   // {
+		   //  $this->calc();
+		   //  print "<td><span id=\"header_4\"><table border=\"0\"><tr>";
+		   //  print "<td class=\"summary_small_center\"><a href=\"/koszyk-start\">".$lang->head_products_count_number."</a>".$global_basket_count."</td>";
+		   //  print "</tr><tr>";
+		   //  print "<td class=\"red_summary_small\"><a href=\"/koszyk-start\">".$lang->head_in_basket."</a>".$theme->price($this->amount)." ".$shop->currency->currency."</td>";
+		   // print "</table>";
+		   //  print "</span>";
+		   // }
+
+		   //print "<li class='pull-right'><button class='btn btn-primary' type='button'><a href=\"/koszyk-start/\">".$img_basket."</button></a></li>";
+                   print "<li class='pull-right'><a href=\"/koszyk-start\"><span class='btn btn-warning'>".$lang->head_products_show."</span></a></li>";
+		   print "</ul>";
+
+		     //print "<td width=\"30%\"><table><tr><td><a href=\"/koszyk-start/\">".$img_basket."</td></a>";
+		     //print "<td><table border=\"0\"><tr><td>";
+		     //print "<a href=\"/koszyk-start\"><blink>".$lang->head_products_new."</blink></a>";
+		     //print "</td><tr><tr><td>";
+		     //print "<a href=\"/koszyk-start\">".$lang->head_products_show."</a>";
+		     //print "</td></tr></table></td></tr></table>";
+		     //print "</td></table></tr>";
 
                    if ($show_basket == "collapse")
                    {
-                      print "<tr><td>";
-                      print  "<table border=\"0\" cellspacing=\"1\" cellpadding=\"1\" align=\"center\" width=\"100%\">\n";
+                      print  "<table class='table table-bordered table-mikran'>";
                       $this->basket_thLimited($this->display,$this->_display_above);
-                      //$this->basket_th($this->display,$this->_display_above);
                       
                       /* uaktualnij warto¶c zakupów i dodatkowe dane prodyuktów */
                       //$this->calc();
@@ -1785,18 +1797,31 @@ class My_Ext_Basket extends My_New_Basket {
                       // wy¶wietl pozycje z koszyka w wierszach
                       reset($this->items);
                       foreach ($this->items as $id=>$item) {
-                         $this->_rowLimited($id,$item,"head");
+			$this->_rowLimited($id,$item,"head");
                       }
 
-                      $st = "style=\"font:bold 14px Tahoma;text-align:center;color:#FF0000\"";
-                      echo "<tr><td class=\"summary_small\">".$lang->basket_summary."</td><td></td><td></td><td></td><td class=\"summary_small_center\">Produktów: ".$global_basket_count."</td><td align=\"center\" class=\"red_summary\">".$theme->price($this->amount)."</td><td $st>".$shop->currency->currency."</td><td></td></tr>";
-                      // }
+		      print "<tr>";
+		      print "<td colspan='4'><span>$lang->basket_summary</span></td>";
+		      echo "<td>".$lang->num_of_products.": "."<span>".$global_basket_count."</span></td><td><span class='red-money'>".$theme->price($this->amount)."</span></td><td><span class='red-money'>".$shop->currency->currency."</span></td>";
+		      print "</tr>";
+
                       print "</table>\n";
-                      print "</tr></td>";
                    }
 
-                   $st = "style=\"font:bold 11px Tahoma;text-align:left;\"";
-                   print "<tr><td style=\"text-align:left\"><div class=\"tools\"><span $st>Ostatnio dodane: </span>".$this->items[$this->_count]['name']."</div></tr></td>";
+		   print "<hr class='tight'>";
+		   print "<p class='text-left'>";
+		   print $lang->last_added . ": ";//"Ostatnio dodane: ";
+		   $item_id = $item['ID'];
+		   $name = $this->items[$this->_count]['data']['lang_names'][$config->lang_id];
+
+		   $enc = new EncodeUrl;
+		   $rewrite_name = $enc->encode_url_category($name);
+
+		   print "<a style='padding:3px;' href='/$config->lang/id$item_id/$rewrite_name'>".$name."</a>";
+		   print "</p>";
+
+                   //$st = "style=\"font:bold 11px Tahoma;text-align:left;\"";
+                   //print "<tr><td style=\"text-align:left\"><div class=\"tools\"><span $st>Ostatnio dodane: </span>".$this->items[$this->_count]['name']."</div></tr></td>";
                    print "</form>\n";                  
                 }
                 else
@@ -1816,8 +1841,7 @@ class My_Ext_Basket extends My_New_Basket {
             print "</span>";
             
             return $this->amount;
-         } // end showBasketForm()
-
+         }
 
       function showEmptyBasket()
          {
@@ -1863,18 +1887,29 @@ class My_Ext_Basket extends My_New_Basket {
 
 		// przet³umacz nazwê
 		$name=$item['data']['lang_names'][$config->lang_id];
+		//		print_r($item);
 		$user_id=$this->_get_user_id($item['ID']);
-		$namelink="<a href=\"/?id=$user_id\">$name</a>";
+		$item_id = $item['ID'];
+
+		$enc = new EncodeUrl;
+		$rewrite_name = $enc->encode_url_category($name);
+		$new_url = '/'.$config->lang."/id".$item_id."/$rewrite_name";
+
+		$namelink="<a href=\"$new_url\">$name</a>";
+
 		$points_value=$item['points_value'];
-		if ($this->mode!="points" && $config->basket_wishlist['prod_ext_info']==1) {
-			$namelink.="<br>".$lang->basket_products_extra['user_id'].": $user_id, ".$lang->basket_products_extra['points_value'].": $points_value";
-		}
+		if ($this->mode!="points" && $config->basket_wishlist['prod_ext_info']==1) 
+		  {
+		    $namelink.="<br>".$lang->basket_products_extra['user_id'].": $user_id, ".$lang->basket_products_extra['points_value'].": $points_value";
+		  }
 		print "<tr bgcolor=" . @$config->theme_config['colors']['basket_td'] . ">\n";
-		print "<td style=\"text-align:left\"><span id=\"name_$id\">".$namelink;
+		//print "<tr>";
+		print "<td><span id=\"name_$id\">".$namelink;
 		if (! empty($item['data']['options'])) {
 			$options=$item['data']['options'];
 			$this->_showOptions($options,"html");
 		}
+
 
 		print "</span></td>\n";
 
@@ -1889,20 +1924,9 @@ class My_Ext_Basket extends My_New_Basket {
 		}
 		// end waluty:
 		if ($this->mode!='points') {
-			//TZ
-			//EURO 2012 promo
-			if($this->euro_2012_modify_row == true and $item['ID'] == '9574')
-			{
-			print "<td style=\"color:red\" align=\"center\">GRATIS ! (o warto¶ci ".$item2['price_netto'].")</td>\n";			
-			print "<td align=\"center\">".$item['data']['vat']."</td>\n";
-			print "<td style=\"color:red\" align=\"center\">GRATIS ! (o warto¶ci ".$item2['price']."</td>\n";
-			}
-			else
-			{
-			print "<td align=\"center\">".$item2['price_netto']."</td>\n";
-			print "<td align=\"center\">".$item['data']['vat']."</td>\n";
-			print "<td align=\"center\">".$item2['price']."</td>\n";
-}
+			print "<td>".$item2['price_netto']."</td>";
+			print "<td>".$item['data']['vat']."</td>";
+			print "<td>".$item2['price']."</td>";
 		}
 
 		if ($this->display=="form") 
@@ -1912,10 +1936,10 @@ class My_Ext_Basket extends My_New_Basket {
                       $da = $_SESSION['disable_ajax'];
                       if ($da == "true")
                       {
-                         print "<td  align=\"center\"><nobr><span id=\"calculate_$id\"><input onkeypress='return event.keyCode!=13' class=\"input\" type=\"text\" size=\"4\" maxsize=\"6\" name=\"num_$id\" value=\"".$item['num']."\">";
-                         print "&nbsp";
+                         print "<td><span id=\"calculate_$id\"><input onkeypress='return event.keyCode!=13' class=\"input\" type=\"text\" maxsize=\"6\" name=\"num_$id\" value=\"".$item['num']."\">";
 
-                         print "<input class=\"input\" type=\"button\" onclick='basketDeliveryUpdate(\"/go/_basket/ajax_basket.php?action=update&type=$type&disable_ajax=$da\",\"$id\", document.forms[\"$formname\"].num_$id, \"ajax_basket\");' value='$lang->basket_num_change'>";			
+			 //print "<button class='btn btn-info btn-small' type='button' onclick='basketUpdate(\"/go/_basket/ajax_basket.php?action=update&type=$type\",\"$id\", document.forms[\"$formname\"].num_$id, \"ajax_basket\");'><i class='icon-refresh'></i> $lang->basket_num_change</button>";
+                         print "<input class=\"btn btn-info btn-small\" type=\"button\" onclick='basketDeliveryUpdate(\"/go/_basket/ajax_basket.php?action=update&type=$type&disable_ajax=$da\",\"$id\", document.forms[\"$formname\"].num_$id, \"ajax_basket\");' value='$lang->basket_num_change'>";
 
                          print "</span></td>\n";
                       }
@@ -1924,7 +1948,8 @@ class My_Ext_Basket extends My_New_Basket {
                          print "<td  align=\"center\"><nobr><span id=\"calculate_$id\"><input onkeypress='return event.keyCode!=13' class=\"input\" type=\"text\" size=\"4\" maxsize=\"6\" name=\"num_$id\" value=\"".$item['num']."\">";
                          print "&nbsp";
 
-                         print "<input class=\"input\" type=\"button\" onclick='basketUpdate(\"/go/_basket/ajax_basket.php?action=update&type=$type\",\"$id\", document.forms[\"$formname\"].num_$id, \"ajax_basket\");' value='$lang->basket_num_change'>";			
+                         print "<input class=\"btn btn-info btn-small\" type=\"button\" onclick='basketUpdate(\"/go/_basket/ajax_basket.php?action=update&type=$type\",\"$id\", document.forms[\"$formname\"].num_$id, \"ajax_basket\");' value='$lang->basket_num_change'>";			
+			 //print "<button class='btn btn-info btn-small' type='button' onclick='basketUpdate(\"/go/_basket/ajax_basket.php?action=update&type=$type\",\"$id\", document.forms[\"$formname\"].num_$id, \"ajax_basket\");'><i class='icon-refresh'></i> $lang->basket_num_change</button>";
                          
                          print "</span></td>\n";
                       }
@@ -1938,25 +1963,10 @@ class My_Ext_Basket extends My_New_Basket {
                    }
 			
 		} else {
-			print "<td align=\"center\">".$item['num']."</td>\n";
+			print "<td>".$item['num']."</td>";
 		}
 		if ($this->mode!='points') {
-			if($this->euro_2012_modify_row == true and $item['ID'] == '9574')
-			{
-			  if($item2['sum_brutto'] > $item2['price_brutto'])
-			  {
-				print "<td align=\"center\"><span id=\"sum_brutto_$id\">".($item2['sum_brutto']-$item2['price_brutto'])."</br>\n";
-				print "<span style=\"color:red\" align=\"center\">GRATIS ! (o warto¶ci ".$item2['price_brutto'].")</span></td>\n";	
-			  }
-			  else
-			  {
-				print "<td><span style=\"color:red\" align=\"center\">GRATIS ! (o warto¶ci ".$item2['price_brutto'].")</span></td>\n";	
-                          }
-			}
-			else
-			{
-			  print "<td align=\"center\"><span id=\"sum_brutto_$id\">".$item2['sum_brutto']."</span></td>\n";
-			}
+		  print "<td><span id=\"sum_brutto_$id\">".$item2['sum_brutto']."</span></td>\n";
 		}
 		// je¿eli tryb punktów to poka¿ te dane
 		//if ($this->mode=='points') {
@@ -1978,22 +1988,22 @@ class My_Ext_Basket extends My_New_Basket {
                       {
                          // w trybie punktowym nie mo¿na przenosiæ
                          // nie wy¶wietlaj opcji przeniesienia produktu je¿eli jest on zaznaczony jako niedostêpny
-                         if ((@$this->items[$id]['unavail']!=1) && $compatible_target) {
-                            print "<td align=\"center\"><input class=\"border0\" type=\"submit\" id=\"move\" name=\"move[$id]\" value=\"przenie¶\"\"></td>\n";
-                         } else print "<td></td>";
-                         print "<td align=\"center\"><input class=\"border0\" type=\"submit\" id=\"del\" name=\"del[$id]\" value=\"$lang->delete\"></td>\n";
+                         if ((@$this->items[$id]['unavail']!=1) && $compatible_target) 
+			   {
+			     print "<td><button class=\"btn btn-small\" type=\"submit\" id=\"move\" name=\"move[$id]\">".$lang->move."</button></td>\n";
+			   } 
+			 else print "<td></td>";
+                         print "<td><button class=\"btn btn-small\" type=\"submit\" id=\"del\" name=\"del[$id]\"><i class='icon-remove'></i></button></td>";
                       }
                    }
                    if ($this->_display_above == true) 
                    {
-                      print "<td align=\"center\"><span id=\"delete_$id\">";
-                      print "<input class=\"input\" type=\"button\" onclick='basketDelete(\"/go/_basket/ajax_basket.php?action=delete&type=$type\",\"$id\",\"ajax_basket\");' value='$lang->delete'>";
-                      print "</span></td>\n";
+                      print "<td><span id=\"delete_$id\">";
+                      print "<button class=\"btn btn-small\" type=\"button\" onclick='basketDelete(\"/go/_basket/ajax_basket.php?action=delete&type=$type\",\"$id\",\"ajax_basket\");'><i class='icon-remove'></i></button>";
+                      print "</span></td>";
                    }
-
 		}
-		print "</tr>\n";
-		return;
+		print "</tr>";
 	} // end _row()
 
       /*

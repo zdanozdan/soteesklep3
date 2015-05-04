@@ -15,14 +15,14 @@ $__page="newsedit";
 
 $global_database=true;
 $global_secure_test=true;
-$DOCUMENT_ROOT=$HTTP_SERVER_VARS['DOCUMENT_ROOT'];
+$DOCUMENT_ROOT=$_SERVER['DOCUMENT_ROOT'];
 include_once ("../../../include/head.inc");
 
 // naglowek
-$theme->head();
+//$theme->head();
 
 $theme->page_open("left","mainNews","right");
 
-$theme->foot();
-include_once ("include/foot.inc");
+//$theme->foot();
+//include_once ("include/foot.inc");
 ?>

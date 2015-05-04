@@ -18,14 +18,13 @@
 
 $global_database=true;
 $global_secure_test=true;
-$DOCUMENT_ROOT=$HTTP_SERVER_VARS['DOCUMENT_ROOT'];
+$DOCUMENT_ROOT=$_SERVER['DOCUMENT_ROOT'];
 require_once ("../../../include/head.inc");
 
 if (! empty($_SESSION['global_id_user'])) {
     include_once ("./index.php");
     exit;
 }
-
 
 // klasa obslugujaca sprawdzanie poprawnosci formularzy HTML
 include_once ("include/form_check.inc");
@@ -53,10 +52,10 @@ if ($type=="login") {
     // logowanie
     
 	// naglowek
-	$theme->head();
-	$theme->page_open_head("page_open_1_head");
+  //$theme->head();
+  	$theme->page_open_head("page_open_1_head");
 	
-    require_once("./include/login.inc.php");
+	//require_once("./include/login.inc.php");
     $login = new LoginUsers;
     if ($login->login($form['login'],$form['password'])) {
         $global_login=$form['login']; // nazwa zalogowanego uzytkownika
@@ -107,23 +106,23 @@ if ($type=="login") {
             $global_prv_key=md5($config->salt);
 	        $sess->register("global_prv_key",$global_prv_key);        
 			// naglowek
-			$theme->head();
+		//$theme->head();
 			$theme->page_open_head("page_open_1_head");
             include_once("register1.php");
             exit;
         }
         else {
-			$theme->head();
+	  //$theme->head();
     		$theme->page_open_head("page_open_1_head");
         }
     } else {
 		// naglowek
-		$theme->head();
+      //$theme->head();
 		$theme->page_open_head("page_open_1_head");
     }
 } else {
 	// naglowek
-	$theme->head();
+	//$theme->head();
 	$theme->page_open_head("page_open_1_head");
 } 
 

@@ -1,4 +1,11 @@
 <?php
+$lang->basket_num_change="calculate";
+$lang->second_step="Go to step 2, enter delivery data";
+$lang->third_step="Go to step 3 of 3";
+$lang->order_now="Order now";
+$lang->choose_payment_method="Choose payment method";
+$lang->wrong_payment_method="You did not choose payment method";
+$lang->wrong_payment_method_help="(Mark checkbox on the left. Row will be highlighted in red)";
 $lang->encoding="ISO-8859-1";
 $lang->shop="SOTESHOP";
 $lang->date="Date";
@@ -21,7 +28,8 @@ $lang->choose_producer="Categories";
 $lang->page="Page";
 $lang->records="Records";
 $lang->empty_list_message="No records";
-$lang->first="beginning";
+$lang->first="first";
+$lang->last="last";
 $lang->more="More";
 $lang->head_help="Help";
 $lang->head_contact="Contact";
@@ -31,27 +39,41 @@ $lang->head_login_register="Login, register";
 $lang->head_my_account="My account";
 $lang->head_terms="Terms";
 $lang->head_soteshop="SOTEeSHOP 2";
-$lang->head_in_basket="Value";
+$lang->head_in_basket="Value: ";
 $lang->head_products_count="Number of products";
+$lang->head_products_count_number="Products in basket: ";
 $lang->head_shop="Shop";
 $lang->head_search="SEARCH";
 $lang->head_promotions="Promotions";
 $lang->head_news="News";
+$lang->head_products_show="Checkout";
+$lang->step_one_of_two="Step 1 of 2";
 $lang->head_about_company="about  the company";
 $lang->head_users_online="online users";
 $lang->head_register="Register now!";
 $lang->head_simple_title="Shop";
+$lang->head_saleoff="Sell out";
 $lang->google=array(
                 'title'=>"Internet shop",
                 'keywords'=>"Internet shop",
                 'description'=>"Internet shop",
                 );
+$lang->foot_gallery="Gallery";
 $lang->foot_main_page="Home";
 $lang->foot_promotions="Promotions";
 $lang->foot_news="News";
 $lang->foot_about="About the company";
 $lang->foot_terms="Terms";
 $lang->foot_basket_state="View basket";
+$lang->basket_step_one="Step 1 of 2 (Choose payment and delivery method)";
+$lang->basket_step_two="Step 2 of 2 (Enter delivery data or log in, receive confirmation email)";
+$lang->foot_privacy="Privacy policy";
+$lang->foot_howtobuy="How to buy ?";
+$lang->foot_payanddeliver="Payment and delivery";
+$lang->foot_payments="Payment";
+$lang->foot_delivery="Delivery";
+$lang->foot_discount="Discount";
+$lang->foot_basket_state="Basket contents";
 $lang->foot_help="Help";
 $lang->foot_soft="Powered by SOTESHOP ";
 $lang->main_recommend="We recommend";
@@ -120,11 +142,15 @@ $lang->users_reminder="Reminder";
 $lang->basket_delivery_name_unknown="Unknown";
 $lang->basket_delivery_cost="Delivery cost";
 $lang->basket_delivery_name="Supplier";
+$lang->basket_delivery_header="Choose delivery method";
+$lang->basket_order_continue2="<< Continue shopping";
+$lang->basket_delivery_method="Delivery method";
 $lang->basket_order_amount_name="Total amount to pay";
 $lang->basket_bar_title="Shopping basket' s contents";
 $lang->basket_order_continue="Continue shopping";
 $lang->basket_txt_title="Shopping basket's contents";
 $lang->basket_amount_name="shopping value";
+$lang->basket_summary="Summary: ";
 $lang->basket_elements=array(
                 'name'=>"name",
                 'user_id'=>"ID",
@@ -137,6 +163,50 @@ $lang->basket_elements=array(
                 'name_unavailable'=>"Check product availability",
                 'points_value'=>"points",
                 );
+
+$lang->payment_names=array(
+   'przelew'=>"Transfer",
+   'bzwbk24'=>"BZWBK24.",
+   'pobranie'=>"Cash on delivery",
+   'przelewy24'=>"Przelewy24.pl.",
+   'platnoscipl'=>"Platnosci.pl.",
+   'cash'=>"Cash or card on delivery.",
+   );
+
+
+$lang->payment_description=array(
+   'przelew'=>"Electronic direct money transfer to our bank account.",
+   'bzwbk24'=>"bzwbk24.pl money transfer.",
+   'pobranie'=>"Cash on delivery.",
+   'przelewy24'=>"przelewy24.pl electronic direct money transfer",
+   'platnoscipl'=>"platnosci.pl electronic direct money transfer",
+   'cash'=>"Cash on delivery or direct cash payment at Mikran premises",
+   );
+
+$lang->order_disclaimer=array(
+   '0'=>"Click this button to finish your order. ",
+   '1'=>"You will not be able to make any further changes !",
+   '2'=>"Make sure now that order content, delivery address, invoice data, payment and delivery method are correct .",
+   '3'=>"Have doubts ? Remember that you can return ordered goods within 14 days.",
+   '4'=>"I declare that I have read mikran.pl terms and conditions",
+   '5'=>"mikran.pl terms and conditions",
+   );
+
+$lang->payment_description_by_id=array(
+				       //'11'=>"Electronic direct money transfer to our bank account. Wybieraj±c t± metode p³atno¶ci p³acisz przelewem ze swojego konta internetowego w dowolnym banku, bezpo¶rednio w oddziale banku lub Przesy³kê wy¶lemy dopiero wtedy gdy pieni±dze wp³yn± na nasze konto (zazwyczaj 1-2 dni). Wys³anie przesy³ki potwierdzimy w osobnym mailu.",
+				       //   '8'=>"Wybieraj±c t± metodê p³atno¶ci p³acisz przelewem ze swojego konta w Banku Zachodnim WBK. W ten sposób bêdziemy widzieæ przedp³atê na naszym koncie ju¿ po kilku minuatch i bêdziemy mogli natychmiast wys³aæ towar. Wys³anie przesy³ki potwierdzimy w osobnym mailu.",
+				       //'1'=>"Wybieraj±c t± metode p³atno¶ci regulujesz nale¿n± kwotê listonoszowi lub kurierowi w momencie odbierania przesy³ki. Wys³anie przesy³ki potwierdzimy w osobnym mailu.",
+				       //'12'=>"Wybieraj±c t± metode p³acisz szybkim przelewu w systemie przelewy24.pl. Lista obs³ugiwanych banków na stronie przelewy24.pl",
+				       //'20'=>"Wybieraj±c t± metode p³acisz szybkim przelewu w systemie platnosci.pl. Lista obs³ugiwanych banków na stronie platnosci.pl",
+				       //'81'=>"Wybieraj±c t± metodê p³atno¶ci p³acisz gotówk± lub kart± przy odbiorze towaru w siedzibie firmy Mikran. Powiadomimy Ciê w osobnym mailu jak przesy³ka bêdzie gotowa do odbioru.",
+
+   '11'=>"Electronic direct money transfer to our bank account. Order will be sent after we receive payment in our bank account. You will receive delivery confirmation as separate email message.",
+   '1'=>"Cash on delivery. You will receive delivery confirmation as separate email message.",
+   //'12'=>"Wybieraj±c t± metode p³acisz szybkim przelewu w systemie przelewy24.pl. Lista obs³ugiwanych banków na stronie przelewy24.pl",
+   //'20'=>"Wybieraj±c t± metode p³acisz szybkim przelewu w systemie platnosci.pl. Lista obs³ugiwanych banków na stronie platnosci.pl",
+   '81'=>"Cash directly during visit in Mikran. You will receive confirmation when your order is ready to pick up as separate email message.",
+   );
+
 $lang->order_points_update="Purchase for points";
 $lang->basket_photo_description="<B> ordered product's description (additional information):</b>";
 $lang->basket_upload="Attach a file";
@@ -161,6 +231,7 @@ $lang->trans_amount="Amount";
 $lang->trans_stat="Status";
 $lang->trans_pay_conf="Paid";
 $lang->trans_payment="Payment";
+$lang->payment_method_table_title = "Payment method";
 $lang->trans_ask4trans="Ask a shopkeeper";
 $lang->basket_th_product_name="product name";
 $lang->basket_th_netto="netto";
@@ -250,6 +321,7 @@ $lang->search_empty_query="wrong searching string. Enter the name of the product
 $lang->search_empty_title="Search";
 $lang->search_category="search in the category";
 $lang->search_advanced="Advanced search";
+$lang->search_title = "Product name or mikran product number";
 $lang->delivery_name="Supplier";
 $lang->delivery_name_unknown="Unknown";
 $lang->order_amount_name="Total amount to pay";
@@ -741,6 +813,8 @@ $lang->tooltip=array (
 					'basket_head'=>'Basket',
 					'info'=>'Full description');
 $lang->head_wishlist="Whishlist";
+$lang->head_wishlist_number="Products in wishlist: ";
+$lang->head_products_show="Checkout";
 $lang->points_action="Action";
 $lang->points_time="Time of implementation";
 $lang->points_id_product="product ID";
@@ -770,4 +844,65 @@ $lang->info_for_client="Information on this transaction from the shopkeeper";
 $lang->info_bad_value="You can pay by SMS only if the sum to be paid is 1. 22, 2. 44, 3. 66, 6. 10, 7. 32, 10. 98 PLN. Change the products in your basket or use one of the below payment systems.";
 $lang->info_no_sms="Products from the below table cannot be purchased by SMS payment. Remove these products from the basket and try once again or use one of the below payment systems. You can pay by SMS only if all products in your basket can be paid by SMS and the sum to be paid is 1. 22, 2. 44, 3. 66, 6. 10, 7. 32, 10. 98 PLN";
 $lang->order_id="Order number";
+
+//Opisy wyswietlane bezposrednio przy ikonkach
+$lang->icons_description=array(
+   'description'=>"Full<br>description",
+   'basket'=>"Add to<br>basket",
+   'wishlist'=>"Add to<br>wishlist",
+   'basket_br1'=>"Add to",
+   'basket_br2'=>"basket",
+   'wishlist'=>"Add to<br>wishlist",
+   'wishlist_br1'=>"Add to",
+   'wishlist_br2'=>"wishlist",
+   );
+
+$lang->training="Training";
+$lang->download_files="Download";
+$lang->sitemap="Sitemap";
+$lang->last_added="Last added";
+$lang->expand_basket="Expand basket";
+$lang->collapse_basket="Collapse basket";
+$lang->move="move";
+$lang->num_of_products="Products";
+$lang->contact_form="Contact form";
+$lang->contact_header="Please fill the form fields below";
+$lang->contact_name="Name";
+$lang->contact_company="Company";
+$lang->contact_body="Message";
+$lang->contact_error="Wrong email address";
+$lang->contact_subject="Message from contact form at mikran.pl";
+$lang->contact_customer="Customer";
+$lang->contact_success="Message has been sent. Thank you !";
+$lang->contact_send_error="Error ! Unable to send a message. Try again later.";
+$lang->mikran_code="Mikran code";
+$lang->last_update="Last update";
+$lang->discount_1="Internet discount added";
+$lang->discount_2="from retail price";
+$lang->basket_change_message="Change basket contents or payment method";
+$lang->koszyk_faktura="Enter invoice/delivery details here. If delivery addres is different than invoice please use checkbox below. Required fields are marked bold.";
+$lang->koszyk_dane_delivery="If we should send delivery to addres different than ivoice addres check 'no' and fill the form with delivery addres.";
+$lang->delivery_disclaimer="After you press 'Order now' button please wait for proforma invoice with payment information. VAT tax will be set to 0% if we ship outside European Union or you have valid EU VAT number";
+$lang->delivery_eksport="Please wait for email with proforma invoice you should receive shortly as separate email. You will receive amount to pay in Euro and also account number. VAT tax will be set to 0% if we ship outside European Union or you have valid EU VAT number ";
+$lang->payment_transfer_name="Recipient name";
+$lang->payment_transfer_account_no="Account number";
+$lang->payment_transfer_amount="Amount";
+$lang->payment_post_amount="Total amount to pay";
+$lang->payment_transfer_due="Title";
+$lang->payment_transfer_due_title="Order from mikran.pl no";
+
+$lang->mikran_account_number="61 1050 1520 1000 0090 3041 8041";
+$lang->mikran_sc = "Mikran sp z.o.o sp.k, Wojskowa 3 / L4, 60-792 Poznañ";
+$lang->mikran_sc_full = "Mikran sp z.o.o sp.k, Wojskowa 3/L4 60-792 Poznañ";
+$lang->mikran_sc_full_country = "Mikran sp z.o.o sp.k, Wojskowa 3/L4, 60-792 Poznañ POLAND";
+$lang->mikran_shop = "mikran.pl - shop";
+
+$lang->cash_post_payment_info="You will be updated by email as we process your order. You can also check the status ('My account' -> 'Transactions')"; 
+
+$lang->post_payment_info="You will be updated by email as we process your order. You can also check the status ('My account' -> 'Transactions'). Please prepare cash to pay for courier."; 
+
+$lang->cash_payment_info=" You will be updated by email as we process your order. You can also check the status ('My account' -> 'Transactions'). Please prepare cash or credid card to make payment."; 
+
+$lang->empty_query_start="No results found for ";
+$lang->empty_query_end="Try to change search phrase or try to browse category tree on the left";
 ?>

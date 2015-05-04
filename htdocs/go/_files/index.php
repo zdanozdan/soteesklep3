@@ -8,12 +8,12 @@
 */
 
 $global_database=true;
-$DOCUMENT_ROOT=$HTTP_SERVER_VARS['DOCUMENT_ROOT'];
+$DOCUMENT_ROOT=$_SERVER['DOCUMENT_ROOT'];
 /* Nag³ówek skryptu */
 include_once ("../../../include/head.inc");
 
 // naglowek
-$theme->head();
+//$theme->head();
 
 /**
 * Wy¶iwetlanie odpowiedniego pliku HTML
@@ -37,7 +37,7 @@ class File {
         global $theme;
         global $logs;
         global $DOCUMENT_ROOT;
-        
+
         // odczytaj przekazany(e) parametr(y)
         $file="";
         if (! empty($_REQUEST["file"])) {
@@ -68,9 +68,9 @@ class File {
 } // end class File
 
 // wyswietl HTML w glownym oknie
-$theme->page_open("left","show_file","right","","File","","page_open_2");
+$theme->page_open("left","show_file","right","","File","","page_open");
 
 // stopka
-$theme->foot();
-include_once ("include/foot.inc");
+//$theme->foot();
+//include_once ("include/foot.inc");
 ?>

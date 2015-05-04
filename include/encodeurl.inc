@@ -23,9 +23,9 @@ class EncodeUrl {
          $retval = trim($retval);
          $retval = ereg_replace("[ ]+","-",$retval);
          
-	$retval = urlencode(strtr($retval,"¡ÆÊ£ÑÓ¦¯¬±æê³ñó¶¿¼","ACELNOSZZacelnoszz"));
+	 $retval = urlencode(strtr($retval,"¡ÆÊ£ÑÓ¦¯¬±æê³ñó¶¿¼","ACELNOSZZacelnoszz"));
 
-	 //$retval = mb_convert_encoding($retval, "UTF-8","ISO-8859-2");
+	 $retval = mb_convert_encoding($retval, "UTF-8","ISO-8859-2");
          
          return $retval;
       }	

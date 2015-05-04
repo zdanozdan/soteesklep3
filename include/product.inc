@@ -124,7 +124,7 @@ class Product {
         $this->rec->data['user_id']=$db->FetchResult($this->result,$this->i,"user_id");
         $this->rec->data['name']=$db->FetchResult($this->result,$this->i,"name_L" . $config->lang_id);
         if (empty($this->rec->data['name'])) {
-            $this->rec->data['name']=$db->FetchResult($this->result,$this->i,"name_L1");
+            $this->rec->data['name']=$db->FetchResult($this->result,$this->i,"name_L0");
         }
         $this->rec->data['id_producer']=$db->FetchResult($this->result,$this->i,"id_producer");
         $this->rec->data['producer']=$db->FetchResult($this->result,$this->i,"producer");
@@ -231,7 +231,13 @@ class Product {
         
         // opisy
         $this->rec->data['xml_description']=$db->FetchResult($this->result,$this->i,"xml_description_L" . $config->lang_id);
+        if (empty($this->rec->data['xml_description'])) {
+            $this->rec->data['xml_description']=$db->FetchResult($this->result,$this->i,"xml_description_L0");
+	}
         $this->rec->data['xml_short_description']=$db->FetchResult($this->result,$this->i,"xml_short_description_L" . $config->lang_id);
+	if (empty($this->rec->data['xml_short_description'])) {
+            $this->rec->data['xml_short_description']=$db->FetchResult($this->result,$this->i,"xml_short_description_L0");
+	}
         
         return;
     } // end _getDescription()

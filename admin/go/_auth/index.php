@@ -39,12 +39,12 @@ if (! empty($_POST['pin'])) {
         $sess->unregister("__devel");  
     }
     $__pin=$_POST['pin'];
-
     $md5_pin=md5($__pin);
+    //print $md5_pin;
+    //print $config->md5_pin;
     
     if ((! empty($md5_pin)) && ($md5_pin==$config->md5_pin) && ($license->check_date()) && ($license->check($config->license['nr']))) {
         $sess->register("__pin",$__pin);
-        
         // sprawdz czy jest dostep do bazy danych
         $global_database=true;
         require ("include/head.inc");

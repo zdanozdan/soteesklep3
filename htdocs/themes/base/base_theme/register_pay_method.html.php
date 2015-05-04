@@ -83,7 +83,7 @@ if ($global_delivery['cost']=="0.00" && @$_SESSION['global_basket_data']['mode']
 // }
 ?> 
 
-<p> 
+<p>
 <div>
 <table width="100%" style="text-align:left;">
 <tr><td id="bold">

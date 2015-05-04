@@ -1,0 +1,79 @@
+.search-block { 
+    text-align: center;
+    width: 80%;
+    margin: 0 auto;
+}
+
+.search-block input { 
+    width:500px;
+}
+
+.navsub li {
+    padding-right:12px;
+    padding-top:3px;
+}
+
+.navsub li a:hover {
+    text-decoration: none;
+}
+
+.navsub li:hover {
+    background-color: #eee;
+}
+
+.pagination-mikran {
+    margin: 10px 0 0 0;
+}
+.pagination-mikran ul>li>a, .pagination-mikran ul>li>span {
+    padding: 4px 7px;
+}
+
+.table-mikran th, .table-mikran td {
+    padding: 4px;
+}
+
+.table-mikran td {
+    font: 13px Tahoma;
+}
+
+.table-mikran input {
+    margin:0px;
+    padding: 2px 2px;
+    width:75px;
+}
+
+.basket-pills, .tight {
+    margin:0px;
+    padding:0px;
+}
+
+.nav-basket-badge {
+    font: normal 15px Tahoma;
+    padding: 4px 4px;
+}
+
+.red-money {
+    font: bold 15px Tahoma;
+    color: red;
+}
+
+.orderform input {
+    width:auto;
+    margin-bottom:0px;
+}
+
+#.level_2 {
+#    margin-left:30px;
+#}
+
+#.level_3 {
+#    margin-left:60px;
+#}
+
+#.level_4 {
+#    margin-left:90px;
+#}
+
+#.level_5 {
+#    margin-left:120px;
+#}

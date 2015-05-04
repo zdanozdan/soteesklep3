@@ -9,7 +9,7 @@
 
 $global_database=true;
 $global_secure_test=true;
-$DOCUMENT_ROOT=$HTTP_SERVER_VARS['DOCUMENT_ROOT'];
+$DOCUMENT_ROOT=$_SERVER['DOCUMENT_ROOT'];
 include_once ("../../../include/head.inc");
 
 // wyloguj uzytkownika
@@ -17,7 +17,7 @@ require_once("./include/logout.inc.php");
 $logout->logout_all();
 
 // naglowek
-$theme->head();
+//$theme->head();
 $theme->page_open_head("page_open_1_head");
 $theme->bar($lang->bar_title['users']);
 

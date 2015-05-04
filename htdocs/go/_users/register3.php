@@ -15,7 +15,7 @@ $global_database=true;
 $global_secure_test=true;
 global $DOCUMENT_ROOT;
 if (empty($DOCUMENT_ROOT)) {
-    $DOCUMENT_ROOT=$HTTP_SERVER_VARS['DOCUMENT_ROOT'];
+    $DOCUMENT_ROOT=$_SERVER['DOCUMENT_ROOT'];
 }
 require_once ("../../../include/head.inc");
 require_once ("include/upper_lower_name.inc");
@@ -41,7 +41,7 @@ if (empty($form_cor)) $form_cor=array();
 // end 2003.02.06
 
 // naglowek
-$theme->head();
+//$theme->head();
 $theme->page_open_head("page_open_1_head");
 include_once("include/menu.inc.php");
 

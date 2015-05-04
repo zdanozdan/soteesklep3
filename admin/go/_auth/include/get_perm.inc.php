@@ -14,6 +14,7 @@
 * @package    auth
  */
 
+
 if (@$__secure_test!=true) die ("Bledne wywolanie");
 $__perm=array();
 
@@ -28,7 +29,8 @@ $id_admin_users_type='';
 $query="SELECT id,id_admin_users_type,login FROM admin_users WHERE login=? AND active=1";
 $prepared_query=$db->PrepareQuery($query);
 if ($prepared_query) {
-    $db->QuerySetText($prepared_query,1,$_SERVER['REMOTE_USER']);
+  $db->QuerySetText($prepared_query,1,$_SERVER['REMOTE_USER']);
+  //$db->QuerySetText($prepared_query,1,'mikran_1');
     $result=$db->ExecuteQuery($prepared_query);
     if ($result!=0) {
         $num_rows=$db->NumberOfRows($result);
@@ -41,6 +43,7 @@ if ($prepared_query) {
         }         
     } else die ($db->Error());
 } else die ($db->Error());
+
 
 // jesli uzytkwonik jest w bazie to odczytaj uprawnienia dla zdefiniowanej dla tego uzytkownika grupy
 if (! empty($id_admin_users_type)) {
@@ -55,10 +58,10 @@ if (! empty($id_admin_users_type)) {
                 // odczytaj uprawnienia grupy wg. listy uprawnien z pliku config/auto_config/perm_config.inc.php
                 include_once ("config/auto_config/perm_config.inc.php"); // return $coffig->admin_perm
                 foreach ($config->admin_perm as $perm) {
-                    $p_perm=$db->FetchResult($result,0,"p_$perm");
-                    if ($p_perm==1) {
-                        array_push($__perm,"$perm");
-                    }
+		  $p_perm=$db->FetchResult($result,0,"p_$perm");
+		   if ($p_perm==1) {
+		     array_push($__perm,"$perm");
+		   }
                 } // end foreach
             } 
         } else die ($db->Error());

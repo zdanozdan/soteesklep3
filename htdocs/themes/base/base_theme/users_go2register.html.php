@@ -16,7 +16,7 @@
       <td align="center">
          <br>
         <form action="/go/_basket/index.php?step=2" method="post">
-          <input type="submit" value="<?php print $lang->users_take_order;?>">
+          <input type="submit" class="btn btn-primary" value="<?php print $lang->users_take_order;?>">
         </form>
       </td>
     </tr>

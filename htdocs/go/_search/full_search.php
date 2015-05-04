@@ -12,11 +12,8 @@
 
 $global_database=true;
 $global_secure_test=true;
-$DOCUMENT_ROOT=$HTTP_SERVER_VARS['DOCUMENT_ROOT'];
+$DOCUMENT_ROOT=$_SERVER['DOCUMENT_ROOT'];
 require_once ("../../../include/head.inc");
-
-// naglowek
-$theme->head();
 
 $query_words="";
 
@@ -51,8 +48,10 @@ if ((strlen($query_words)<2) || empty($query_words)) {
               lower(category4) like lower('%$query_words%') OR
               lower(category5) like lower('%$query_words%') OR
               lower(producer)  like lower('%$query_words%') OR
+              lower(name_L0)      like lower('%$query_words%') OR
               lower(name_L$lang_id)      like lower('%$query_words%') OR
               lower(user_id)   like lower('%$query_words%') OR
+              lower(xml_description_L0) like lower('%$query_words%') OR
               lower(xml_description_L$lang_id) like lower('%$query_words%') OR";
 }
 
@@ -113,12 +112,15 @@ $dbedit->title=$lang->bar_title['search'].": $query_words";
 // funkcja prezentujaca wynik zapytania w glownym oknie strony 
 include_once ("include/dbedit_list.inc");
 
+// naglowek
+//$theme->head();
+
 // jesli nie ma wynikow to wywolaj skrypt
 $__new_search_action="index.php";
 $theme->page_open_object("show",$dbedit,"page_open");
 
 // stopka
-$theme->foot();
+//$theme->foot();
 
-include_once ("include/foot.inc");
+//include_once ("include/foot.inc");
 ?>

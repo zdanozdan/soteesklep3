@@ -10,23 +10,6 @@
 */
 ?>
 <div id="block_top_list">
-<!--
-<?php
-// ----- start producer -----
-if ((in_array("producer_list",$config->plugins)) && ($config->cd!=1)) {
-    global $producer_list;
-    if (method_exists($producer_list,"show")) {    
-        print "  <table border=\"0\" cellpadding=\"0\" cellspacing=\0\" width=\"100%\"><tr>";
-        echo   '<td colspan="2" align="left"><b>'.$lang->producers.':</b>&nbsp;&nbsp;';
-        $producer_list->show();
-        print "</td>";
-        print "  </tr></table><hr/>";
-    }
-}
-// ----- end producer -----
-?>
--->
-
 
 <table border="0" cellpadding="0" cellspacing="0" width="100%" height="30px">
 <?php

@@ -11,22 +11,6 @@
 
 global $sess;
 global $global_register_user_form;
-//print "<pre>";
-//if(empty($_SESSION['form_cor']['name'])){
-//print "Adres OK";
-//}
-//print "</pre>";
-
-//print "SESS:" .$_SESSION['corr_addr'];
-//print "SESS:" .$_SESSION['form_cor']['name'];
-
-/* if ((empty($_POST['corr_addr']) and empty($_SESSION['corr_addr'])) and empty($_SESSION['form_cor']['name'])) { */
-/*     $corr_addr_yes="checked"; */
-/*     $corr_addr_no=""; */
-/* } else { */
-/*     $corr_addr_no="checked"; */
-/*     $corr_addr_yes=""; */
-/* } */
 
 if (empty($_POST['corr_addr']) and empty($_SESSION['corr_addr']))
 {
@@ -45,20 +29,20 @@ if (empty($_POST['corr_addr']) and empty($_SESSION['corr_addr']))
 //}
 ?>
 <center>
-<table width="770" cellspacing="0" cellpadding="0" border="0" align="center">
+<table>
   <tr> 
-    <td width="770" valign="top" align="center">
+    <td>
 <?php $this->bar($lang->bar_title['register_billing']); ?>
 <div class="block_1">
 <table width="100%">
 <tr>
 <td valign="top"><br><?php $this->order_login_form();?></td>
 <td>
-<form action="<?php print $this->action;?>" method="post">
+<form action="<?php print $this->action;?>" method="post" class="orderform">
   <input type="hidden" name="form[check]" value="true">
   <center>
     <a name="forms"></a>
-    <table border="0" cellspacing="0" cellpadding="3" align="center" width="450">
+    <table width="550px">
 <!--
       <tr> 
         <td  style="text-align:left;font-size:12px;color:#696969" colspan="3"> 
@@ -68,7 +52,7 @@ if (empty($_POST['corr_addr']) and empty($_SESSION['corr_addr']))
       </tr>
 -->
       <tr>
-       <td  style="text-align:center;font-size:14px;color:red" colspan="3"> 
+       <td class="alert alert-error" style="font-size:14px;color:red" colspan="3"> 
           <?php print $lang->koszyk_faktura;?>
          <br />
         </td>
@@ -181,7 +165,7 @@ if (empty($_POST['corr_addr']) and empty($_SESSION['corr_addr']))
       <td colspan=3 style="padding-top:5px;padding-bottom:5px;"><img src="<?php $this->img('_img/mask.gif');?>"></td>
       </tr>
 <tr> 
-        <td  style="text-align:center;font-size:14px;color:red" colspan="3"> 
+        <td  class="alert alert-error center-text" style="font-size:14px;color:red" colspan="3"> 
           <?php print $lang->koszyk_dane_delivery;?>
          </td><br />
         </td>
@@ -297,11 +281,16 @@ else
    $s_val = $lang->pay_method_submit_name[$p_num];
 }
 ?>
-   <input type="hidden" name=payment value=<?php print $s_val ?> >
+   <input type="hidden" name="payment" value=<?php print $s_val ?> >
    <br>
    <table width="100%" class="payment">
    <tr><td class="payment_head" align="center"><?php print $lang->order_now; ?></td></tr>
       <tr><td class="payment_itext">
+  <?php if ($_SESSION['global_country_delivery'] != 'PL'): ?> 
+  <div class="alert alert-warning"><h4>Eksport VAT</h4><?php print $lang->delivery_disclaimer; ?>.</div>
+       <hr/>
+   <?php endif; ?>
+  <div class="alert alert-warning">
       <span style="font-size:12px">
       <?php print $lang->order_disclaimer['0']; ?>
       <span id="bold">
@@ -309,16 +298,19 @@ else
       </span>
       <?php print $lang->order_disclaimer['2']; ?>
       </span>
+</div>
       </td></tr>
       <td class="payment_itext" style="text-align:center"> 
-      <?php print "<input id=\"payment\" type=submit value=\"$lang->order_now\";>"; ?>
+      <?php print "<input class='btn btn-warning' id=\"__payment\" type=submit value=\"$lang->order_now\";>"; ?>
       </td></tr></table>
-    <span style="font-size:12px">
+  <span style="font-size:12px">
+  <br>
+  <div class="alert alert-info">
 <?php
-         print "<br>";
-         print $lang->order_disclaimer['3'];
-         print "<a href=/go/_files/?file=terms.html> ". $lang->order_disclaimer['5'] . "</a>";
+  print $lang->order_disclaimer['3'];
+  print "<a href=/go/_files/?file=terms.html> ". $lang->order_disclaimer['5'] . "</a>";
 ?>
+</div>
 </form>
 </center>
 </div>

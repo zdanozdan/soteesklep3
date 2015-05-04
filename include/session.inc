@@ -55,10 +55,10 @@ if (@$config->google_active!=1) {
             global $_SESSION;
             global $$var;
 
-            $$var=&$value;
-            //session_unregister($var);
-            //session_register($var);
+	    //print session_save_path();
+	    //die();
 
+            $$var=&$value;
             // udostepniej zmienna w pzrestrzeni zmeinnych sesji zaraz po zapisaniu
             // (domyslnie zmienna ta pojawia sie tam dopiero po kolejnym wywolaniu striny)
             $_SESSION[$var]=$value;

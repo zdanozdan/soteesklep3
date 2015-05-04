@@ -16,7 +16,7 @@ global $global_register_user_form;
 //if (@$global_register_user_form!="false") {
 //}
 ?>
-<form action="<?php print $this->action;?>" method="post">
+<form class="orderform" action="<?php print $this->action;?>" method="post">
   <input type="hidden" name="form[check]" value="true">
 <div class="block_1">
   <center>
@@ -72,7 +72,6 @@ global $global_register_user_form;
           <?php $this->form_error('city'); ?>
         </td>
       </tr>
-<!--
       <tr> 
         <td align="right"><b> 
           <?php print $lang->form_name['country'];?>
@@ -95,7 +94,6 @@ global $global_register_user_form;
           <?php $this->form_error('country'); ?>
         </td>
       </tr>
--->
       <tr> 
         <td align="right"><b> 
           <?php print $lang->form_name['phone'];?></b>:</td>
@@ -148,7 +146,7 @@ global $global_register_user_form;
         <td>&nbsp;</td>
         <td>&nbsp;</td>
         <td align="left"> 
-          <input type="submit" value="<?php print $lang->next;?>">
+          <input type="submit" class="btn btn-primary" value="<?php print $lang->next;?>">
         </td>
       </tr>
     </table>

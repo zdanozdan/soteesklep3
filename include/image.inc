@@ -211,9 +211,9 @@ class Image {
                 // do wielkosci zdjecia okno
                 if (($_allow_scale==true) && ($zoom_up==true)) {
                     
-                	print "<a id=\"photolink\" href=\"".$this->http_prefix.$this->photo_dir.$prefix.$photo."\" ";
-                    $this->onclick($width_orig+25,$height_orig+25,"photo");
-                    print " target=\"photo\" alt=\"\">";
+		  //print "<a id=\"photolink\" href=\"".$this->http_prefix.$this->photo_dir.$prefix.$photo."\" ";
+		  // $this->onclick($width_orig+25,$height_orig+25,"photo");
+		  // print " target=\"photo\" alt=\"\">";
                 }
             }
             
@@ -261,7 +261,25 @@ class Image {
         
         return;
     } // end _showPhoto()
-       
+
+    function _get_max_href($photo) {
+      global $DOCUMENT_ROOT;        
+      $max_file=$DOCUMENT_ROOT."/../htdocs/photo/"."max_".$photo;
+      if (file_exists($max_file)) {
+	return $this->http_prefix.$this->photo_dir."max_".$photo;
+      }
+      return "";
+    }
+
+    function _get_max_width($photo) {
+      global $DOCUMENT_ROOT;        
+      $max_file=$DOCUMENT_ROOT."/../htdocs/photo/"."max_".$photo;
+      if (file_exists($max_file)) {
+	$big_size=GetImageSize($max_file);
+	return $big_size[0];
+      }
+      return 0;
+    }
     
     /**
     * Wyswietl zdjecie produktu duze (max_photo) jesli istnieje.

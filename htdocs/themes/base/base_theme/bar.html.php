@@ -9,8 +9,4 @@
 * @package    themes
 * @subpackage base_theme
 */
-
-echo '<div class="head_1">';
-echo $text;
-echo '</div>';
 ?>

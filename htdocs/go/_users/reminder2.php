@@ -12,7 +12,7 @@
 $global_database=true;
 $global_secure_test=true;
 
-$DOCUMENT_ROOT=$HTTP_SERVER_VARS['DOCUMENT_ROOT'];
+$DOCUMENT_ROOT=$_SERVER['DOCUMENT_ROOT'];
 include_once ("../../../include/head.inc");
 if(!empty($_REQUEST['reminder'])) $data=$_REQUEST['reminder']; 
 else {
@@ -26,7 +26,7 @@ $theme->user_reminder=&$user_reminder;
 
 // naglowek
 if(empty($__open_head)){
-  $theme->head();
+  //$theme->head();
   $theme->page_open_head("page_open_1_head");
 }
 

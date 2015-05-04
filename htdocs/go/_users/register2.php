@@ -11,7 +11,7 @@
 // musi byc zaladowana przed otworzeniem sesji!
 global $DOCUMENT_ROOT;
 if (empty($DOCUMENT_ROOT)) {
-    $DOCUMENT_ROOT=$HTTP_SERVER_VARS['DOCUMENT_ROOT'];
+    $DOCUMENT_ROOT=$_SERVER['DOCUMENT_ROOT'];
 }
 
 $global_database=true;
@@ -20,7 +20,7 @@ include_once ("../../../include/head.inc");
 
 if(empty($head_open)){
     // naglowek
-    $theme->head();
+  //$theme->head();
     $theme->page_open_head("page_open_1_head");
 }
 

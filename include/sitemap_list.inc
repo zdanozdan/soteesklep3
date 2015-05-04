@@ -73,7 +73,12 @@ class DBSiteMapList extends DBEdit {
                // lista rekordow
                for ($i=0; $i<$this->num_rows; $i++) 
                {
-                  $name = $db->FetchResult($result,$i,"name_L0");
+		 global $config;
+		 $name=$db->FetchResult($result,$i,"name_L" . $config->lang_id);
+		 if (empty($name)) {
+		   $name=$db->FetchResult($result,$i,"name_L0");
+		 }
+		 //$name = $db->FetchResult($result,$i,"name_L0");
                   $id1 = $db->FetchResult($result,$i,"id_category1");
                   $id2 = $db->FetchResult($result,$i,"id_category2");
                   $id3 = $db->FetchResult($result,$i,"id_category3");
@@ -195,11 +200,11 @@ class DBSiteMapList extends DBEdit {
 
     function display()
     {
+       global $config;
        $level = 0;
        $cat_id = "";
        $column = true;
        $count=0;
-       echo "<td valign=\"top\">";
        foreach ($this->cat_list as $key => $value) 
        {                  
           ++$count;
@@ -231,15 +236,18 @@ class DBSiteMapList extends DBEdit {
 
                 $href="/idc/$cat_id/$rewrite_name";
 
-                if ($count >= 1070 && $column==true)
-                {
-                   $column = false;
-                   echo("</td><td valign=\"top\">");
-                }
+                //if ($count >= 1070 && $column==true)
+		// {
+                //   $column = false;
+                //   echo("</li><li>");
+		// }
 
-                for ($i=1; $i<=$level; $i++)
-                   echo "&nbsp &nbsp ";
-                echo "<span id=\"l$level\"><a href=\"$href\">$final</a></span><br>";
+                //for ($i=1; $i<=$level; $i++)
+		//  echo "&nbsp &nbsp ";
+		if(trim($final))
+		  {
+		    echo "<li class=\"level_$level\"><a href=\"$href\">$final</a></li>";
+		  }
              }
           }
           if (ereg(":id=([0-9]*)",$value,$regs)) 
@@ -252,15 +260,14 @@ class DBSiteMapList extends DBEdit {
              $enc = new EncodeUrl;
              $encoded = $enc->encode_url_category($final);
 
-             $href = "<a href=\"/id".$regs[1]."/".$encoded."\"" . " title=\"$title\">";
+             $href = "<a href=\"/".$config->lang."/id".$regs[1]."/".$encoded."\"" . " title=\"$title\">";
        
-             for ($i=1; $i<=$level; $i++)
-                echo "&nbsp &nbsp ";
-             echo " &nbsp ";
-             echo $href . "$final</a><br>";
+             //for ($i=1; $i<=$level; $i++)
+	     //  echo "&nbsp &nbsp ";
+             //echo " &nbsp ";
+             echo "<li class=\"level_$level\">".$href . "$final</a></li>";
           } 
        }
-       echo "</td>";
     }
 
     /**

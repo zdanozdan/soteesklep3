@@ -42,7 +42,7 @@
             </tr>
             <tr> 
               <td>&nbsp;</td>
-              <td style="text-align:left"><input type="submit" value="<?php print $lang->users_continue;?>"></td>
+              <td style="text-align:left"><input class="btn btn-primary" type="submit" value="<?php print $lang->users_continue;?>"></td>
             </tr>
           </table>
         </td>

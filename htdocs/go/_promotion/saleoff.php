@@ -7,7 +7,7 @@
 * @package    promotion
 */
 $global_database=true;
-$DOCUMENT_ROOT=$HTTP_SERVER_VARS['DOCUMENT_ROOT'];
+$DOCUMENT_ROOT=$_SERVER['DOCUMENT_ROOT'];
 require_once ("../../../include/head.inc");
 /*
 $column="";
@@ -25,7 +25,7 @@ $column=ereg_replace(";","\;",$column);
 */
 
 // naglowek
-$theme->head();
+//$theme->head();
 
 // zapytamie o produkty w promocji, nowowsci itp
 $sql = "SELECT * FROM main WHERE sms='1'";
@@ -41,6 +41,6 @@ $dbedit->title=$lang->bar_title[$column];
 $theme->page_open_object("show",$dbedit,"page_open");
 
 // stopka
-$theme->foot();
-include_once ("include/foot.inc");
+//$theme->foot();
+//include_once ("include/foot.inc");
 ?>

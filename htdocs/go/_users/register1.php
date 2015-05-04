@@ -15,7 +15,7 @@ $global_database=true;
 $global_secure_test=true;
 global $DOCUMENT_ROOT;
 if (empty($DOCUMENT_ROOT)) {
-    $DOCUMENT_ROOT=$HTTP_SERVER_VARS['DOCUMENT_ROOT'];
+    $DOCUMENT_ROOT=$_SERVER['DOCUMENT_ROOT'];
 }
 include_once ("../../../include/head.inc");
 // nie pokazuj okna logowania przy danych billingowych, przy rejestracji nowego usera
@@ -23,7 +23,7 @@ $global_register_user_form="false";
 
 if(empty($head_open)){
     // naglowek
-    $theme->head();
+  //$theme->head();
     $theme->page_open_head("page_open_1_head");
 }
 

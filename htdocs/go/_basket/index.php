@@ -21,7 +21,7 @@ $__basket_add_lock=true;
 
 $global_database=true;
 $global_secure_test=true;
-$DOCUMENT_ROOT=$HTTP_SERVER_VARS['DOCUMENT_ROOT'];
+$DOCUMENT_ROOT=$_SERVER['DOCUMENT_ROOT'];
 /**
 * Nag³ówek skryptu
 */
@@ -457,7 +457,7 @@ else
       }
    }
    
-   $theme->head();
+   //$theme->head();
   
    if ($display_step==2)
    {
@@ -466,17 +466,18 @@ else
 
       $theme->action="/koszyk-dane/action=form_check#forms"; 
       $my_basket->display="text";    // bez elementow formularza
-      $theme->page_open_object("show_form",$my_basket,"page_open_1");
+      $theme->page_open_object("show_form",$my_basket,"page_open_simple_step_2");
       $theme->show_order_step_two($form,$form_check);
+      $theme->foot();
    }
    else
    {
       //W zaleznosci od kroku wyswietlany odpowiedni napis
-      $theme->page_open_object("show_form",$my_basket,"page_open_2");
+     $theme->page_open_object("show_form",$my_basket,"page_open_2");
    }
    
    $sess->unregister("disable_ajax");
-   $theme->foot();
-   include_once ("include/foot.inc");
+   //$theme->foot();
+   //include_once ("include/foot.inc");
 }
 ?>

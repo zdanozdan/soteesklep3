@@ -15,6 +15,12 @@
 // }
 ?>
 
+<?php if($_SESSION['global_country_delivery'] != 'PL'): ?>
+    <div class="alert alert-warning">
+	<?php print $lang->delivery_eksport ?>
+    </div>
+<?php else: ?>
+
 <br>
 <center>
 <table width="70%">
@@ -111,7 +117,8 @@
 </tr>
 </table>
 </center> 
-
+<?php endif; ?>
+<?php print $lang->register_send_confirm_ok; ?>
 </center>
 
 

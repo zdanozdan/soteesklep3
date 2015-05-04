@@ -7,7 +7,7 @@
 * @package    sitemap
 */
 $global_database=true;
-$DOCUMENT_ROOT=$HTTP_SERVER_VARS['DOCUMENT_ROOT'];
+$DOCUMENT_ROOT=$_SERVER['DOCUMENT_ROOT'];
 require_once ("../../../include/head.inc");
 
 if ( ereg("^/go/_sitemap/$",$_SERVER['SCRIPT_URL']) || 
@@ -18,7 +18,7 @@ if ( ereg("^/go/_sitemap/$",$_SERVER['SCRIPT_URL']) ||
 }
 
 // naglowek
-$theme->head();
+//$theme->head();
 
 // zapytamie o produkty w promocji, nowowsci itp
 $sql = "SELECT * FROM main where active = '1'";
@@ -35,6 +35,6 @@ $sitemap->title='Mapa strony';
 $theme->page_open_object("show",$sitemap,"page_open_sitemap");
 
 // stopka
-$theme->foot();
-include_once ("include/foot.inc");
+//$theme->foot();
+//include_once ("include/foot.inc");
 ?>

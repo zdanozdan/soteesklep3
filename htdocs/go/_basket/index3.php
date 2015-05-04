@@ -20,7 +20,7 @@ $__basket_add_lock=true;
 
 $global_database=true;
 $global_secure_test=true;
-$DOCUMENT_ROOT=$HTTP_SERVER_VARS['DOCUMENT_ROOT'];
+$DOCUMENT_ROOT=$_SERVER['DOCUMENT_ROOT'];
 /**
 * Nag³ówek skryptu
 */
@@ -183,7 +183,7 @@ $basket->calc_delivery();
 * w nag³ówku.
 */
 // naglowek
-$theme->head();
+//$theme->head();
 
 $global_basket_calc_button=true; // pokaz przycisk podsumuj pod zawartoscia koszyka
 $theme->page_open_object("show_form",$my_wishlist,"page_open_2");
@@ -199,7 +199,7 @@ $sess->register("global_lock_register",$global_lock_register);
 $sess->register("global_lock_send",$global_lock_register);
 /*
 */// stopka
-$theme->foot();
-include_once ("include/foot.inc");
+//$theme->foot();
+//include_once ("include/foot.inc");
 
 ?>

@@ -17,25 +17,30 @@
 // musi byc zaladowana przed otworzeniem sesji!
 global $DOCUMENT_ROOT;
 if (empty($DOCUMENT_ROOT)) {
-	$DOCUMENT_ROOT=$HTTP_SERVER_VARS['DOCUMENT_ROOT'];
+  $DOCUMENT_ROOT=$_SERVER['DOCUMENT_ROOT'];
 }
 
 $global_database=true;
 $global_secure_test=true;
 require_once ("../../../include/head.inc");
 
+//TEST
+//$theme->head();
+//$theme->theme_file("send_confirm_summary.html.php");
+//$theme->page_open_head("page_open_1_head");
+
 $shop->basket();
 if ($shop->basket->isEmpty()) 
 {
-   $theme->go2main();
-   exit;
+  $theme->go2main();
+  exit;
 }
 
 // sprawdz, czy wczesniej wywolano strone z formularzem zmowienia
 if (my(@$_SESSION['global_lock_register'])!=true) {
 	// wyswietl strone z linkiem do glownej strony
-   $theme->go2main();
-   exit;
+  $theme->go2main();
+  exit;
 }
 
 if (! empty($_SESSION['global_basket_data'])) {
@@ -45,8 +50,6 @@ if (! empty($_SESSION['global_basket_data'])) {
  	$my_basket=&$basket;
  	$my_basket->display="text";
 }
-
-
 
 // odczytaj dane z sesji z wczesniej wypelnionych formularzy
 if (! empty($_SESSION['form'])) {
@@ -175,6 +178,7 @@ chdir("$DOCUMENT_ROOT/go/_register/");
       //exit;
    }
 
+
    // czy wybrano platnosc przelewem?
    //if (! empty($_POST['submit_transfer'])) 
    if ($value == "submit_transfer")
@@ -258,6 +262,8 @@ chdir("$DOCUMENT_ROOT/go/_register/");
       require_once("$DOCUMENT_ROOT/go/_register/_post/index.php");
       //exit;
    }
+
+
 
 print "<form style=\"display:none;\" name=\"utmform\">";
 print "<textarea id=\"utmtrans\">\n";

@@ -26,7 +26,7 @@ class DBEdit {
     var $page_var="page";                // zmienna GET - przekazanie numeru strony
     var $first="First";                  // oznaczenie linku po pierwszej strony
     var $next="&raquo;";                 // oznaczenie linku do natêpnych produktów
-    var $prev="&raquo;";                 // oznaczenie linku do poprzednich produktów
+    var $prev="&laquo;";                 // oznaczenie linku do poprzednich produktów
     var $font="<font>";                  // font, wg, którego bêd± przedstrawiane linki
     var $dbobj="db";                     // nazwa zmiennej - obiekt Metabase
     var $id_var="id";                    // zmienna GET okreslajaca id recordu
@@ -80,6 +80,7 @@ class DBEdit {
         $this->lang_page=$lang->page;
         $this->lang_records=$lang->records;
         $this->first=$lang->first;
+	$this->last=$lang->last;
 
         return;
     } // end DBEdit()
@@ -260,40 +261,65 @@ class DBEdit {
         if ($record_to>$this->records) $record_to=$this->records;
         $record_from++;
 
-        $o.="$this->lang_page: $this->page $this->lang_records: $record_from - $record_to ($this->records)<BR>\n";
+        //$o.="$this->lang_page: $this->page $this->lang_records: $record_from - $record_to ($this->records)<BR>\n";
+
+	$o.="<li><a href=".$this->page_url(1,"").">";
+	$o.=$this->first."</a></li>";
 
         // wstaw link do poprzednich stron
         if ($this->page>$this->page_links) {
-            $o.="<a href=".$this->page_url(1,"").">";
-            $o.=$this->first."</a>&nbsp;";
+	  $prevpage=$this->page-1;
+	}
+	$o.="<li><a href=".$this->page_url($prevpage,"").">";
+	$o.=$this->prev."</a></li>";
+	
+	//print $this->page;
+	$start = $this->page - 5;
+	$stop = $this->page + 5;
+	$stuff = 0;
+	$result = array();
+	for ($i=$start;$i<$this->page;$i++)
+	  if($i > 0) {
+	    $result[] = $i;
+	  }
+	  else{
+	    $stuff++;
+	  }
 
-            $prevpage=$this->page-1;
-            $o.="<a href=".$this->page_url($prevpage,"").">";
-            $o.=$this->prev."</a>&nbsp;";
-        }
+	$stuff_r = 0;
+	for($i==$this->page;$i<=$stop+$stuff;$i++)
+	  {
+	    if($i <= $this->pages)
+	      $result[] = $i;
+	    else
+	      $stuff_r++;
+	  }
+	
+	$first = $result[0];
+	for($j=$first-1;$j>=$first-$stuff_r;$j--){
+	  if($j > 0)
+	    array_unshift($result, $j);
+	}
 
-        // wyswietl liste linkow do podstron
-        $i=0;$npage=0;
-        while (($i<$this->page_links) && ($i<$this->pages)) {
-            $npage=$i+$this->page_start;    // kolejna strona z uwzglednienim strony startowej
-            if ($this->page==$npage) {
-                if ($this->page>=1) {
-                    $o.="<b>$npage</b>&nbsp;";
-                }
-            } elseif ($npage<=$this->pages) {
-                $o.="<a href=".$this->page_url($npage,"").">";
-                $o.="$npage";
-                $o.="</a> \n";
-            }
-            $i++;
-        }
+	foreach($result as $p)
+	  if ($this->page==$p) 
+	    {
+	      $o.="<li class='disabled'><a href='#'>$p</a></li>";
+	    }
+	  else
+	    {
+	      $o.="<li><a href=".$this->page_url($p,"").">$p</a></li>";
+	    }
 
         // wstaw link do kolejnych podstron
         if ($this->page<$this->pages) {
-            $nextpage=$this->page+1;
-            $o.="&nbsp;<a href=".$this->page_url($nextpage,"").">";
-            $o.=$this->next."</a>&nbsp;";
-        }
+	  $nextpage=$this->page+1;
+	}
+	$o.="<li><a href=".$this->page_url($nextpage,"").">";
+	$o.=$this->next."</a></li>";
+
+	$o.="<li><a href=".$this->page_url($this->pages,"").">";
+	$o.=$this->last."</a></li>";
 
         return $o;
     } // end _page_links()
@@ -362,9 +388,13 @@ unset($my_GET_VARS['__utmx']);
             } // end if (is_array($val))
         }
 
+
+	//another stupid hack
+	$url = preg_replace('/&privacy_ok=[a-z]+/', '', $url);
+
 	//check it this one should be rewritten
-       //
-       if(preg_match("/^\/go\/_category\/index.php\?(idc|cidc)=(id_[0-9]+|[0-9_]+)&page=([0-9]+)$/",$url,$match))
+	//
+	if(preg_match("/^\/go\/_category\/index.php\?(idc|cidc)=(id_[0-9]+|[0-9_]+)&page=([0-9]+)$/",$url,$match))
        {
 	//$url = "/$match[1]/$match[2]/_category/page/$match[3]";
 
@@ -560,6 +590,7 @@ unset($my_GET_VARS['__utmx']);
     function record_list($sql, $order_array = array()) {
         global $_REQUEST;
         global $DOCUMENT_ROOT;
+	global $lang;
 
         $this->_init_db();
         $this->get_table_from_sql($sql);            // odczytaj nazwe tabeli z zapytania SQL
@@ -585,7 +616,7 @@ unset($my_GET_VARS['__utmx']);
         // odczytaj adres obiektu
         $record=$this->record_obj;
 
-        // print "sql=$this->sql <BR>";
+        //print "sql=$this->sql <BR>";
 
         // przygotuj zapytanie $this->sql do wykonania
         $prepared_query=$this->db->PrepareQuery($this->sql);
@@ -615,12 +646,15 @@ unset($my_GET_VARS['__utmx']);
                 // jesli w obiekcie $reocrd sa dodatkowe funkcje zwiazane z wygladem
                 // linkow, to wywolaj je; chodzi o pole przed linkami i po wyswietleniu linkow
                 if (@function_exists(@$record->$open_fun)) $record->$open_fun();
-                else print "<center>";
-                print $page_links;
-                if (@function_exists(@$record->$close_fun)) $record->$close_fun();
-                else print "</center>";
 
+		print "<div class='pagination pagination-centered pagination-mikran'>";
+		print "<ul>";
+		print $page_links;
+		print "</ul>";
+		print "</div>";
+                if (@function_exists(@$record->$close_fun)) $record->$close_fun();
             }
+	    print "<div class='muted'>$this->lang_records : $this->records</div>";
 
             // poczatek listy
             if ($this->num_rows>0) {
@@ -663,17 +697,18 @@ unset($my_GET_VARS['__utmx']);
                 print $this->end_list_element;
             }
 
+	    print "<div class='muted'>$this->lang_records : $this->records</div>";
             if (($this->bottom_links=="true") && ($this->pages>1)){
                 if (! empty($page_links)) {
                     $open_fun=$this->open_page_links_bottom_fun;
                     $close_fun=$this->close_page_links_bottom_fun;
-
                     if (@function_exists(@$record->$open_fun)) $record->$open_fun();
-                    else print "<center>";
-                    print $page_links;
+		    print "<div class='pagination pagination-centered pagination-mikran'>";
+		    print "<ul>";
+		    print $page_links;
+		    print "</ul>";
+		    print "</div>";
                     if (@function_exists(@$record->$close_fun)) $record->$close_fun();
-                    else print "</center>";
-
                 }
             } // wstaw linki do podstron
 

@@ -11,7 +11,7 @@
 
 $global_database=true;
 $global_secure_test=true;
-$DOCUMENT_ROOT=$HTTP_SERVER_VARS['DOCUMENT_ROOT'];
+$DOCUMENT_ROOT=$_SERVER['DOCUMENT_ROOT'];
 require_once ("../../../include/head.inc");
 require_once ("./include/order/currency.inc.php");
 require_once ("include/my_crypt.inc");
@@ -113,7 +113,7 @@ if ($prepared_query) {
 } else die ($db->Error());
 
 
-$theme->head();
+//$theme->head();
 $theme->page_open_head("page_open_1_head");
 if (!empty($_SESSION['global_login'])) {
     include_once("./include/menu.inc.php");

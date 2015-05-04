@@ -1,43 +1,5 @@
 <?php global $category,$__category;
 $category=array (
-  'id_1241980' => 
-  array (
-    'name' => '',
-    'elements' => 
-    array (
-      0 => 
-      array (
-        '1241980_1241980' => 
-        array (
-          'name' => '',
-          'elements' => 
-          array (
-            0 => 
-            array (
-              '1241980_1241980_1241980' => 
-              array (
-                'name' => '',
-                'elements' => 
-                array (
-                  0 => 
-                  array (
-                    '1241980_1241980_1241980_1241980' => 
-                    array (
-                      'name' => '',
-                      'elements' => 
-                      array (
-                        '' => '1241980_1241980_1241980_1241980_1241980',
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    ),
-  ),
   'id_60' => 
   array (
     'name' => 'Dezynfekcja i Higiena',

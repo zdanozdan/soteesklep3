@@ -169,10 +169,12 @@ class Menu {
             // #1452 2005-05-23 m@sote.pl poprawka zamykania siê kategorii dla neiktórych instalacji
             global $sess;
             $param_val=$$param_name;
-            $sess->register($param_name,$param_val);
+	    //TZ
+	    $_SESSION[$param_name]=$param_val;
+            //$sess->register($param_name,$param_val);
             // session_register($param_name);            
             // end #1452
-            session_register($param_name);                        
+            //session_register($param_name);                        
         }
 
         // jesli zostala wybrana kategoria do zamkniecia, to wykasuj informajce
@@ -182,7 +184,9 @@ class Menu {
             if (! ereg("^id_",$_REQUEST[$this->cparam])) {
                 $$param_name="";
                 $GLOBALS[$param_name]=$$param_name;
-                session_unregister($param_name);
+		//TZ
+		unset($_SESSION[$param_name]);
+                //session_unregister($param_name);
                 $param_val="";
             }
         }

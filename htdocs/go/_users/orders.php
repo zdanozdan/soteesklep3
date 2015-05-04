@@ -10,7 +10,7 @@
 $global_database=true;
 $global_secure_test=true;
 
-$DOCUMENT_ROOT=$HTTP_SERVER_VARS['DOCUMENT_ROOT'];
+$DOCUMENT_ROOT=$_SERVER['DOCUMENT_ROOT'];
 require_once ("../../../include/head.inc");
 require_once ("./include/order/order_func.inc.php");
 // funkcja prezentujaca wynik zapytania w glownym oknie strony 
@@ -21,7 +21,7 @@ $status_names=read_status_names();
 $config->order_status=$status_names;
 
 // naglowek
-$theme->head();
+//$theme->head();
 $theme->page_open_head("page_open_1_head");
 
 include_once("./include/menu.inc.php");

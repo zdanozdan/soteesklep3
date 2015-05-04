@@ -140,6 +140,8 @@ class Delivery {
         }
 
         //print "zone".$this->id_zone."<br>";
+	//print $this->id_zone;
+	//exit();
 
         $query="SELECT * FROM delivery ORDER BY order_by";
         $result=$db->Query($query);
@@ -304,19 +306,19 @@ class Delivery {
         return;
     } // end save_delivery()
 
-      function show()
-         {
-            print "<span id=\"delivery_show\">";
-            $this->show_ajax();
-            print "</span>";
-         }
+    function show()
+    {
+      print "<span id=\"delivery_show\">";
+      $this->show_ajax();
+      print "</span>";
+    }
 
     function get_checked() {
-       foreach ($this->data as $data) 
-       {
+      foreach ($this->data as $data) 
+	{
           if (! empty($data['checked'])) 
-             return $data['id'];
-       }
+	    return $data['id'];
+	}
     }
 
     /**
@@ -325,11 +327,11 @@ class Delivery {
       function show_ajax() {
         global $lang;
         print "<p>";
-        print "<b>$lang->basket_delivery_header:</b>";
-        print "<table class=\"payment\" border=\"0\">\n";
+        print "<div class='alert alert-info text-left'>$lang->basket_delivery_header:</div>";
+        print "<table class=\"table table-bordered table-hover table-mikran table-delivery payment_old\">";
         print "  <tr>";
-        print "    <td class=\"payment_head\" valign=\"top\" align=\"center\" colspan=\"2\">\n<b>$lang->basket_delivery_method</b></td>";
-        print "    <td class=\"payment_head\" valign=\"top\" align=\"center\">\n<b>$lang->basket_delivery_cost</b></td>";
+        print "    <th class=\"payment_head_old\" colspan=\"2\">$lang->basket_delivery_method</td>";
+        print "    <th class=\"payment_head_old\">$lang->basket_delivery_cost</td>";
         print "  </tr>";
 
         // sprawd¼ czy jaki¶ dostawca jest zaznaczony, je¶li nie, to zaznacz pierwszego na li¶cie
@@ -374,12 +376,11 @@ class Delivery {
         }
 	else
 	{
-           $this->_row();
+	  $this->_row();
         }
 
         }
-        print "</table>\n";
-        return;
+        print "</table>";
     } // end show()
 
     /**
@@ -403,16 +404,11 @@ class Delivery {
            $price.=" ".$shop->currency->currency."</nobr>";
            
            print "  <tr>";
-           print "    <td class=\"payment_itext\" valign=\"top\" align=\"left\">";
-           //TZ UWAGA
-           //submit - dzia³a inaczej w FF a inaczej w IE.
+           print "    <td class=\"payment_itext_old\">";
            print "      <input type=\"radio\" name=\"delivery[id]\" $this->checked value=\"$this->id\" onclick='clearSelections(); deliverySelection(\"del_$this->id\");document.getElementById(\"order_step_one\").innerHTML=\"Proszê czekaæ, pobieranie danych ...\";xmlhttpGet(\"/go/_basket/sess_delivery.php?delivery_id=$this->id\",\"order_step_one\")'\"'>";
-           //print "      <input type=\"radio\" name=\"delivery[id]\" $this->checked value=\"$this->id\" onclick=\"this.form.submit();\" style='border-width: 0px;'>";
-           // print "      <input type=\"hidden\" name=\"delivery[name]\" value=\"$this->name\"</td>\n";
-           print "    <td id=\"del_$this->id\" class=\"payment_itext\" valign=\"top\" align=\"left\">$this->name,</td>";
-           //        print "    <td class=\"payment_itext\" valign=top>$lang->basket_delivery_cost</td>\n";
-           print "    <td id=\"del_$this->id"."1"."\" class=\"payment_itext\" valign=\"top\" align=\"left\" nowrap>".$price."$dinfo_sep</td>\n";
-           print "    <td id=\"del_$this->id"."2"."\"class=\"payment_itext\" valign=\"top\" align=\"left\">$this->delivery_info</td>\n";
+           print "    <td id=\"del_$this->id\" class=\"payment_itext_old\">$this->name,</td>";
+           print "    <td id=\"del_$this->id"."1"."\" class=\"payment_itext_old\" nowrap>".$price."$dinfo_sep</td>\n";
+           print "    <td id=\"del_$this->id"."2"."\"class=\"payment_itext_old\">$this->delivery_info</td>\n";
            print "  </tr>\n";
            
            if ($this->checked==" checked")
@@ -436,6 +432,7 @@ class Delivery {
         global $sess;
         global $global_country_delivery;
 
+
         
         // Je¶li koszyk jest w formie do wydruku, to nie wyswietlaj wyboru kraju
         global $config;
@@ -458,20 +455,23 @@ class Delivery {
         } else {
         	$country=$lang->country;
         }
-        
+
         $keys=$global_country_delivery;
-        $str="<table align=left border=\"0\">\n";
-        $str.=$lang->delivery_country."&nbsp;<select name=item[country] onChange=\"this.form.submit();\">\n";
+	echo "<div class='alert alert-info text-left'>";
+	echo $lang->delivery_country;
+	echo ": </div>";
+        $str="<div class='text-left'>";
+        $str.="<select name=item[country] onChange=\"this.form.submit();\">";
         $str.="<option value=''>".$lang->select_country."</option>";
         foreach($country as $key=>$value) {
             if($keys == $key) {
-                $str.="<option value=".$key." selected>".$lang->country[$key]."</option>\n";
+                $str.="<option value=".$key." selected>".$lang->country[$key]."</option>";
             } else {
-                $str.="<option value=".$key.">".$lang->country[$key]."</option>\n";
+                $str.="<option value=".$key.">".$lang->country[$key]."</option>";
             }
         }
-        $str.="</select>\n";
-        $str.="</table><br><br>\n";
+        $str.="</select>";
+        $str.="</div><br>";
         print $str;
     } // end show_country()
     }// end koszyk w formie do wydruku

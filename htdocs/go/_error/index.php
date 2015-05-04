@@ -18,7 +18,7 @@ $global_database=true;
 require_once ("../../../include/head.inc");
 
 // naglowek
-$theme->head();
+//$theme->head();
 
 include("./include/error.inc.php");
 
@@ -27,7 +27,7 @@ $error = new ErrorMessage;
 $theme->page_open_object("show",$error,"page_open");
 
 // stopka
-$theme->foot();
-include_once ("include/foot.inc");
+//$theme->foot();
+//include_once ("include/foot.inc");
 
 ?>

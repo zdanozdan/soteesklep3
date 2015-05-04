@@ -1,13 +1,18 @@
-<?php
-/**
-* @version    $Id: page_open_1_head.html.php,v 1.1 2006/09/27 21:53:22 tomasz Exp $
-* @package    themes
-* @subpackage base_theme
-*/
-?>
+<!DOCTYPE html>
+<html lang="<?php print $config->lang ?>">
+  <head>
+    <?php require_once('header.html.php') ?>
+  </head>
 
-CO TO JEST !!!!!!!!!?
-<center>
-<table width="770" cellspacing="0" cellpadding="0" border="0" align="center">
-  <tr> 
-    <td width="770" valign="top" align="center">
+<?php require_once('banner.html.php') ?>
+
+<div class="container">  
+  <div class="row">
+    <div class="span12">
+
+<!--
+   <ul class="breadcrumb">
+	<li><a href="/">Home</a> <span class="divider">/</span></li>
+        <li><a href="/go/_users/index.php"><?php print $lang->head_my_account ?></a></li>
+   </ul>
+-->

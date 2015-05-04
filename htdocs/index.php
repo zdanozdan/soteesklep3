@@ -37,7 +37,7 @@ $DOCUMENT_ROOT = $_SERVER['DOCUMENT_ROOT'];
 include_once ("../include/head.inc");
 
 // naglowek
-$theme->head();
+//$theme->head();
 
 // zapytanie o produkty, ktore maja sie znalzc na 1 stronie
 global $config;

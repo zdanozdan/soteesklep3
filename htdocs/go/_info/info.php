@@ -76,11 +76,11 @@ include_once("./include/query_rec.inc.php");
 include_once ("include/xml_options.inc");
 
 // naglowek
-$theme->head();
+//$theme->head();
 
-$theme->page_open("left","record_info","right","","","","page_open_2");
+$theme->page_open("left","record_info","right","","","","page_open");
 
 // stopka
-$theme->foot();
-include_once ("include/foot.inc");
+//$theme->foot();
+//include_once ("include/foot.inc");
 ?>

@@ -5,14 +5,8 @@
 * @subpackage base_theme
 */
 ?>
-<div class="block_1">
-<center>
-  <table border="0" cellspacing="0" cellpadding="0" align="center">
-    <tr> 
-      <td><br/><div style="color: red;"><b><?php print $lang->users_login_error."&nbsp;".$lang->users_login_error_advice;?></b></div><br/></td>
-    </tr>
-  </table>
-</center>
+<div class="alert alert-error">
+   <?php print $lang->users_login_error."&nbsp;".$lang->users_login_error_advice;?>
 </div>
 <?php
 // wyswietl formularz logowania

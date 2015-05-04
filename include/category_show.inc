@@ -20,39 +20,15 @@ if (in_array("producers_category",$config->plugins)) {
         $producer_filter=$_SESSION['__producer_filter'];
     }
     $__producer_filter=$producer_filter;
-    $this->producers_category();
+    // $this->producers_category();
 } // end plugin test
 
-// jesli mamy typ kategorii "hybrid" to glowne kategorie przedstaw jako standardowe - statyczne
-// a kategorie wg producentow jako dynamiczne
-if ($config->category['type']=="hybrid") {
-    if (@$producer_filter>0) {
-        $config->category['type']="treeview";
-    } else {
-        $config->category['type']="standard"; // wylacz standardowe statyczne menu
-        $config->category['openall']=0;       // domyslnie zamknij kategorie
-    }
-}
+//$config->category['type']="standard"; // wylacz standardowe statyczne menu
+//$config->category['openall']=0;       // domyslnie zamknij kategorie
 
-if (@$config->google_active) {
-    global $_SESSION, $GLOBALS,$__category;
-    require_once ("config/tmp/category.php");
-    $this->categoriesRecursive($__category);
-} else {
+include_once ("include/category.inc");
+$cat = new NavbarCategory;
+$cat->init();
 
-    // wstaw menu kategorii produktow
-    switch (@$config->category['type']) {
-        case "standard":
-        include_once ("include/category.inc");
-        break;
-        case "treeview":
-        $this->theme_file("treeview.html.php");
-        break;
-        default:
-        $this->theme_file("treeview.html.php");
-        break;
-    }
-
-    $sess->register("__producer_filter",$__producer_filter);
-}
+$sess->register("__producer_filter",$__producer_filter);
 ?>

@@ -17,19 +17,8 @@
 
 $global_database=true;
 $global_secure_test=true; 
-$DOCUMENT_ROOT=$HTTP_SERVER_VARS['DOCUMENT_ROOT'];
+$DOCUMENT_ROOT=$_SERVER['DOCUMENT_ROOT'];
 
-
-// print("<table border=2>");
-// for($j=0;$j<count($HTTP_SERVER_VARS);$j++)
-// {
-//    $row = each($HTTP_SERVER_VARS);
-//    print "<tr><td>" . $row["key"] . "<td>" . $row["value"];
-// }
-//  print("</table>");
-
-//echo $HTTP_SERVER_VARS['HTTP_REFERER'];
-//exit;
 
 require_once ("../../../include/head.inc");
 
@@ -86,41 +75,8 @@ if ($type=="login") {
            $sess->register("id_partner", $id_partner);
         }
 
-        ////////////////////////////////////
-        // TZ Start: jesli idziemy od kasy, do logowania to automtycznie nas przenosi do 'Realizuj zamówienie'
-//         $where_from = strstr($HTTP_SERVER_VARS['HTTP_REFERER'], "_basket");
-//         if (strlen($where_from) > 0)
-//         {
-//            include_once("../_register/index.php");
-//            exit;
-//         }
-//         // jestli ktos wpisa³ z³e dane to wtedy pojdzie od _register
-//         $where_from = strstr($HTTP_SERVER_VARS['HTTP_REFERER'], "_register");
-//         if (strlen($where_from) > 0)
-//         {
-//            include_once("../_register/index.php");
-//            exit;
-//         }
-
-//         if (! empty($_SESSION['basket_step']))
-//         {
-//            $step=$_SESSION['basket_step'];
-//            $sess->unregister("basket_step");
-//            if ($step == "step1")
-//               header("Location:/go/_basket/index.php");
-// //            if ($step == "step2")
-// //               include_once("../_register/index.php");
-
-
-//            exit;
-//         }
-
-        // TZ End
-        ////////////////////////////////////
-
-
         // naglowek
-        $theme->head();
+        //$theme->head();
         $theme->page_open_head("page_open_1_head");
         $__no_head=true;
 
@@ -132,17 +88,13 @@ if ($type=="login") {
         else
             $theme->bar($lang->users_bar);
 
-//         print "<P><center>";
-        // print $lang->users_user."<b>$global_login</b>".$lang->users_loginok_desc;
-//         print "</center></P>";
-
         $theme->theme_file("users_login_ok.html.php");
 
         // zarejstruj w sesji zmienne zezwalajace na przejscie do strony podsumowania zamowienia
-        #$global_lock_basket=true;
-        #$global_lock_register=true;
-        #$sess->register("global_lock_bakset",$global_lock_basket);
-        #$sess->register("global_lock_register",$global_lock_register);
+        $global_lock_basket=true;
+        $global_lock_register=true;
+        $sess->register("global_lock_bakset",$global_lock_basket);
+        $sess->register("global_lock_register",$global_lock_register);
         $theme->theme_file("products4u.html.php");
 
     } else {
@@ -150,7 +102,7 @@ if ($type=="login") {
         if (!$__no_head) 
         {
            // naglowek
-           $theme->head();
+           //$theme->head();
            $theme->page_open_head("page_open_1_head");
         }
         $theme->theme_file("users_login_error.html.php");
@@ -183,7 +135,7 @@ if ($type=="login") {
             include_once("./include/insert_user.inc.php");
             if (!$__no_head) {
 	        	// naglowek
-				$theme->head();
+	      //$theme->head();
 				$theme->page_open_head("page_open_1_head");
 	        }
             $new_login=$form['login'];
@@ -202,7 +154,7 @@ if (! empty($_SESSION['global_id_user'])) {
     // dolacz menu dla panelu uzytkownika
     if (!$__no_head) {
         	// naglowek
-			$theme->head();
+      //$theme->head();
 			$theme->page_open_head("page_open_1_head");
 	}
     include_once("./include/menu.inc.php"); 
@@ -219,7 +171,7 @@ if (! empty($_SESSION['global_id_user'])) {
 } else {
    if (!$__no_head) {
       // naglowek
-      $theme->head();
+      //$theme->head();
       $theme->page_open_head("page_open_1_head");
    }
    // wypelniony (lub jesli jest to pierwsze wywolanie)
@@ -228,7 +180,7 @@ if (! empty($_SESSION['global_id_user'])) {
    $theme->users_form($form,$form_check,"users.html.php");     
 }
 
-$theme->page_open_foot("page_open_1_foot");
+//$theme->page_open_foot("page_open_1_foot");
 
 // zapamietaj wywolanie tej strony
 $global_lock_user=true;
