@@ -40,7 +40,7 @@ global $config;
   <li><a href="/go/_files/?file=kursy.html"><?php print $lang->training; ?></a></li>
   <li><a href="/go/_files/?file=payments.html"><?php print $lang->foot_payments;?></a></li>
   <li><a href="/go/_files/?file=delivery.html"><?php print $lang->foot_delivery;?></a></li>
-  <li><a href="http://docs.google.com/leaf?id=0B12554jLABN2ZDExNTg1YjMtYzdlMy00YWJkLWJlZDgtNWFhNzJhMTUwM2Q0&hl=pl"><?php print $lang->download_files ?></a></li>
+  <li><a href="https://drive.google.com/folderview?id=0B12554jLABN2Y1AtQ2FrRUVFdFk&usp=sharing"><?php print $lang->download_files ?></a></li>
 <!--  <li><a href="/go/_files/?file=mikran_o_nas.html"><?php print $lang->gallery;?></a></li> -->
   <li><a href="/go/_files/?file=contact.html"><?php print $lang->head_contact;?></a></li>
 </ul>
