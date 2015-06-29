@@ -16,7 +16,7 @@ Mikran Team
 </div>
 
 <div id="renfert">
-    <a href="id10722/Obcinarka-MT3-Pro-z-tarcza-Marathon"><img src="/photo/_reklama/MT3_300x600px_Polen.png"></a>
+    <a href="/id10722/Obcinarka-MT3-Pro-z-tarcza-Marathon"><img src="/photo/_reklama/MT3_300x600px_Polen.png"></a>
 </div>
 
 
