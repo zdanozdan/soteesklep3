@@ -238,7 +238,7 @@ class DBGoogleSitemap extends DBEdit {
                 $enc = new EncodeUrl;
                 $rewrite_name = $enc->encode_url_category($final);
 
-                $href="/idc/$cat_id/$rewrite_name";
+                $href="/pl/idc/$cat_id/$rewrite_name";
 //		print $href.'<br>';
 
                 //need ... to show menu level
@@ -267,7 +267,7 @@ class DBGoogleSitemap extends DBEdit {
 
              $href = "<a href=\"/id".$regs[1]."/".$encoded."\"" . " title=\"$title\">";
        
-	     $sitemap[] = "/id".$regs[1]."/".$encoded;
+	     $sitemap[] = "/pl/id".$regs[1]."/".$encoded;
 	     //$sitemap[] = "/photo/".$regs[1].".jpg";
           }
        }
@@ -297,7 +297,7 @@ class DBGoogleSitemap extends DBEdit {
         $this->dbtype=$config->dbtype;
 
         $this->items_list($sql);
-         $this->category();
+	$this->category();
         return $this->getMapAsArray();
     } // end show()
 
