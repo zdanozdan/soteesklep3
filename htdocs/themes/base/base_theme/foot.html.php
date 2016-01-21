@@ -1,6 +1,7 @@
 <ul class="nav nav-pills block_1">
   <li><a href="/"><?php print $lang->foot_main_page; ?></a></li>
   <li><a href="/go/_promotion/saleoff.php"><?php print $lang->head_saleoff; ?></a></li>
+  <li><a href="/go/_promotion/promo.php"><?php print $lang->foot_promotions; ?></a></li>
 <!--
   <li><a href="/go/_promotion/?column=promotion"><?php print $lang->foot_promotions;?></a></li>
   <li><a href="/go/_promotion/?column=newcol"><?php print $lang->foot_news;?></a></li>
