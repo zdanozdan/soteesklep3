@@ -15,10 +15,27 @@ Mikran Team
 <?php $this->file("infoline.html"); ?>
 </div>
 
-<div id="renfert">
-    <a href="/id10722/Obcinarka-MT3-Pro-z-tarcza-Marathon"><img src="/photo/_reklama/MT3_300x600px_Polen.png"></a>
+<div id="myCarousel" class="carousel slide">
+    <ol class="carousel-indicators">
+	<li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+	<li data-target="#myCarousel" data-slide-to="1"></li>
+	<li data-target="#myCarousel" data-slide-to="2"></li>
+    </ol>
+    <div class="carousel-inner">
+	<div class="item active" id="renfert">
+	    <a href="/id10722/Obcinarka-MT3-Pro-z-tarcza-Marathon"><img src="/photo/_reklama/MT3_300x600px_Polen.png"></a>
+	</div>
+	<div class="item" id="dreve">
+	    <a href="/id8415/Drufosmart-Scan-z-funkcja-rozpoznawania-folii"><img src="/photo/_reklama/drufosmart_banner.jpg"></a>
+	</div>
+	<div class="item" id="p710">
+	    <a href="/id5717/Programat-P710-200-240V-50-60HZ"><img src="/photo/_reklama/P710_mikran.jpg"></a>
+	</div>
+    </div>
+    <!-- Carousel nav -->
+    <a class="carousel-control left" href="#myCarousel" data-slide="prev">&lsaquo;</a>
+    <a class="carousel-control right" href="#myCarousel" data-slide="next">&rsaquo;</a>
 </div>
-
 
 <?php
 global $config;
@@ -29,3 +46,11 @@ if (((@$config->catalog_mode==0) && ($config->newsletter==1))||((@$config->catal
 
 
 ?>
+
+<script>
+$( document ).ready(function() {
+    $('.carousel').carousel({
+    interval: 5000
+    })
+})
+</script>
