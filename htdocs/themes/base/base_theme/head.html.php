@@ -38,7 +38,7 @@ global $config;
   <li><a href="/"><?php print $lang->foot_main_page;?></a></li>
   <li><a href="/go/_promotion/saleoff.php"><?php print $lang->head_saleoff; ?></a></li>
   <li><a href="/go/_promotion/promo.php"><?php print $lang->foot_promotions; ?></a></li>
-  <li><a href="/go/_files/?file=kursy.html"><?php print $lang->training; ?></a></li>
+  <li><a href="/go/_promotion/promo.php?training=true"><?php print $lang->training; ?></a></li>
   <li><a href="/go/_files/?file=payments.html"><?php print $lang->foot_payments;?></a></li>
   <li><a href="/go/_files/?file=delivery.html"><?php print $lang->foot_delivery;?></a></li>
   <li><a href="https://drive.google.com/folderview?id=0B12554jLABN2Y1AtQ2FrRUVFdFk&usp=sharing"><?php print $lang->download_files ?></a></li>

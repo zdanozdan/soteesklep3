@@ -15,9 +15,13 @@ if(! empty($__check)) {
         print $lang->register_send_confirm_ok_add_info;
     }
 }
+?>
 
-print $lang->register_send_confirm_ok;
+<div class="alert alert-success" style="font-size:20px">
+  <?php print $lang->register_send_confirm_ok; ?>
+</div>
 
+<?
 // main_keys_online sprzedaz online
 if (in_array("main_keys",$config->plugins)) {
     require_once ("go/_register/include/main_keys.inc.php");   
