@@ -42,16 +42,6 @@ if ((empty($order_id)) && (! empty($global_order_id))) $order_id=$global_order_i
 
 global $__check;
 
-// // naglowek
-// $theme->head();
-// $theme->page_open_head("page_open_1_head");
-
-//$theme->bar($lang->register_send_title);
-//print "<p></p>";
-
-// wy¶wietl podsumowanie (tytu³em, kwota, dane do przelewu)
-//$theme->theme_file("send_confirm_summary.html.php");
-
 if ($order_send->send()) 
 {
     // zapamietaj, ze zostalo wywolane wyslanie zamowienia, pozwoli to na zabronienie
@@ -81,7 +71,7 @@ else
     $theme->send_error();
 }
 
-$theme->page_open_foot("page_open_1_foot");
+$theme->page_open_head("foot");
 
 // stopka
 //$theme->foot();
