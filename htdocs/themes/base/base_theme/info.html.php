@@ -617,4 +617,16 @@ if (in_array("reviews",$config->plugins))
 
 <!-- end dodatkowe menu na dole: -->
 
+<!-- Kod tagu remarketingowego Google -->
+<script type="text/javascript">
+var google_tag_params = 
+{
+ecomm_prodid: <?php print $rec->data['id'] ?>,
+ecomm_pagetype: 'product',
+ecomm_totalvalue: <?php print $rec->data['price_netto'] ?>,
+dynx_itemid: '<?php print $rec->data['id'] ?>,<?php print $rec->data['name'] ?>',
+dynx_pagetype: 'offerdetail',
+dynx_totalvalue: <?php print $rec->data['price_brutto'] ?>,
+};
+</script>
 	
