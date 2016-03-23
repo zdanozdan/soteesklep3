@@ -23,13 +23,13 @@ Mikran Team
     </ol>
     <div class="carousel-inner">
 	<div class="item active" id="renfert">
-	    <a href="/id10722/Obcinarka-MT3-Pro-z-tarcza-Marathon"><img src="/photo/_reklama/MT3_300x600px_Polen.png"></a>
+	    <a href="http://www.renfert.com/pol/en/renfert-sandblasters-pl.html?utm_source=mikran&utm_medium=webbanner&utm_campaign=strahlgeraete"><img src="/photo/_reklama/Banner_300x600px.png"></a>
 	</div>
 	<div class="item" id="dreve">
 	    <a href="/id8415/Drufosmart-Scan-z-funkcja-rozpoznawania-folii"><img src="/photo/_reklama/drufosmart_banner.jpg"></a>
 	</div>
-	<div class="item" id="p710">
-	    <a href="/id5717/Programat-P710-200-240V-50-60HZ"><img src="/photo/_reklama/P710_mikran.jpg"></a>
+	<div class="item" id="eveevolution">
+	    <a href="/pl/id10424/Dreve-Lampa-Eye-Volution-MAX-PROMOCJA-kompozyt-SR-Nexco-Promo-Kit-oraz-Dreve-Multispot-GRATIS"><img src="/photo/_reklama/banner_dreve_dentamid_eyevolution.png"></a>
 	</div>
     </div>
     <!-- Carousel nav -->
