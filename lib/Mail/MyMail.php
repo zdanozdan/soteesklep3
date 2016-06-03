@@ -28,9 +28,8 @@ class MyMail {
         global $lang;
         if ($type=="html") {
             $type="text/html";
-        } else $type="text/plain";        
+        } else $type="text/plain";
 
-        
         if (isset($lang->encoding))
         {
         	if (strpos($type, 'charset') === false)
@@ -46,16 +45,16 @@ class MyMail {
         if (empty($reply)) $reply=$from;
         
         $mail =& new Mail;
-        
+
         if (
-        $mail->send(array($to),array("From"=>$from,
-                                    "Subject"=>$subject,
-                                    "Reply-to"=>$reply,
-                                    "Content-type"=>$type
-                                   ),
-                               $body
-                  )
-           ) return true;
+	    $mail->send(array($to),array("From"=>$from,
+					 "Subject"=>$subject,
+					 "Reply-to"=>$reply,
+					 "Content-type"=>$type
+					 ),
+			$body
+			)
+	    ) return true;
         else return false;        
     } // end send()
 } // end class MyMail
