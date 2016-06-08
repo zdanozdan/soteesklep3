@@ -218,6 +218,7 @@ class OrderRegister {
         $checksum = OrderChecksum::checksum($order_id,0,$amount);
         $checksum_online = OrderChecksum::checksum($order_id,0,$amount_all);
         // end
+
         
         // start oblicz date: do kiedy nalezy potwierdzic transakcje
         $date_confirm='0000-00-00';
@@ -249,6 +250,7 @@ class OrderRegister {
         	$points->pay_with_points($this->getOrderID());
         	$is_points="1";
         } else $id_points="0";
+
         $query="INSERT INTO order_register (order_id,session_id,amount,delivery_cost,id_delivery,
                                             id_pay_method,date_add,time_add,remote_ip,
                                             id_users,
@@ -258,7 +260,7 @@ class OrderRegister {
                                             id_promotions,promotions_name,promotions_discount,
                                             total_amount,id_users_data,user_description,record_version,
                                             id_card_pay,recom_id_user,recom_code,lang_id,
-                                            points
+                                            points,info_for_client
                                             )
                        VALUES (?,?,?,?,?,
                                ?,?,?,?,
@@ -267,7 +269,7 @@ class OrderRegister {
                                ?,?,?,
                                ?,?,?,
                                ?,?,?,
-                               ?,?,?,'30',?,?,?,?,?)";
+                               ?,?,?,'30',?,?,?,?,?,'info_for_client')";
         
         $prepared_query=$db->PrepareQuery($query);
         if ($prepared_query) {
@@ -322,6 +324,10 @@ class OrderRegister {
                 $this->_registerProducts($order_id);
             } else die ("I".$db->Error());
         } else die ("J".$db->Error());
+
+		print "xxxx";
+		exit();
+
        
         if (! empty($_SESSION['global_partner_id'])) {
 			// jesli jest to partner "Onet" to wyslij info o transakcji
@@ -387,7 +393,7 @@ class OrderRegister {
                                    crypt_cor_country,crypt_cor_postcode,crypt_cor_city,
                                    crypt_cor_phone,crypt_cor_email,
                                    date_add,last_ip,order_data,
-                                   crypt_login,crypt_password,record_version)
+                                   crypt_login,crypt_password,record_version,remark_admin)
                             VALUES (
                                     ?,?,?,
                                     ?,?,?,
@@ -398,7 +404,7 @@ class OrderRegister {
                                     ?,?,?,
                                     ?,?,
                                     ?,?,1,
-                                    ?,?,30)";
+                                    ?,?,30,'rm')";
         $prepared_query1=$db->PrepareQuery($query1);
         if ($prepared_query1) {            
             $db->QuerySetText($prepared_query1,1,$crypt->endecrypt('',@$form['firm']));
@@ -428,14 +434,18 @@ class OrderRegister {
             $db->QuerySetText($prepared_query1,25,$form['last_ip']);
             $db->QuerySetText($prepared_query1,26,$crypt->endecrypt('',@$form['login']));
             $db->QuerySetText($prepared_query1,27,$form['password']);
-            
+
             $result1=$db->ExecuteQuery($prepared_query1);
-            if ($result1!=0) {
+            if ($result1!=0) 
+	      {
                 // dane klienta zosta³y poprawnie dodane do bazy
                 // odczytaj ID kleinta                                
                 return $this->_maxIDUsers();
-            } else die ("F".$db->Error());
-        } else die ("G".$db->Error());
+	      } 
+	    else 
+	      die ("F".$db->Error());
+        } 
+	else die ("G".$db->Error());           
         
         return 0;
     } // end _addUser()
