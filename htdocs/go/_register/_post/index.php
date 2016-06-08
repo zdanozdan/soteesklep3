@@ -41,8 +41,11 @@ if (! empty($_SESSION['global_order_id'])) $order_id=$_SESSION['global_order_id'
 if ((empty($order_id)) && (! empty($global_order_id))) $order_id=$global_order_id;
 
 global $__check;
+//$html_email = (empty($_REQUEST['html_email'])) ? 'text/plain' : 'text/html';
+//03.06.2016 - default is HTML
+$html_email = 'text/html';
 
-if ($order_send->send()) 
+if ($order_send->send($html_email)) 
 {
     // zapamietaj, ze zostalo wywolane wyslanie zamowienia, pozwoli to na zabronienie
     // ponownego wyslanie tego samego zamowienia
