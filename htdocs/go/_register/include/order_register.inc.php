@@ -56,6 +56,8 @@ if (! $ord_reg->getOrderID()) {
     $ord_reg->update($ord_reg->getOrderID());  
 } 
 
+
+
 // zapisz wybrana forme platnosci
 $sess->register("global_id_pay_method",$global_id_pay_method);
 $global_pay_name=$config->pay_method[$global_id_pay_method];

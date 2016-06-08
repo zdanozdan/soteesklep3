@@ -159,12 +159,12 @@ class Message {
         $this->order_id=$order_id;
         
         $o="";
-        $o.=$lang->order_id.": $order_id\n";
+        $o.=$lang->order_names['order_id'].": $order_id,\n";
         $o.=$lang->pay_method_title.": ".
         $lang->pay_method[$global_id_pay_method]."\n\n";
         $o.=$basket_txt;
-        $o.="\n";
-        $o.=$body;
+	$o.="\n";
+	$o.=$body;
         
         return $o;
     } // end order_body()
