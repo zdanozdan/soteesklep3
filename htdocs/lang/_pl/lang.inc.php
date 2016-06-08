@@ -208,6 +208,8 @@ $lang->basket_elements=array(
                 'name_unavailable'=>"Sprawd¼ dostêpno¶æ produktu",
                 'points_value'=>"punktów",
                 'mik_id'=>"mik_",
+		'options'=>"opcje",
+		'mik_code'=>"kod mikran"
                 );
 $lang->order_points_update="Zakup za punkty";
 $lang->basket_attach_images_order="Za³±cz zdjêcia do zamówienia";

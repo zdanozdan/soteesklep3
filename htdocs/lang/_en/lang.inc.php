@@ -162,6 +162,9 @@ $lang->basket_elements=array(
                 'sum_brutto'=>"gross sum",
                 'name_unavailable'=>"Check product availability",
                 'points_value'=>"points",
+                'mik_id'=>"mik_",
+		'options'=>"options",
+		'mik_code'=>"mikran code"
                 );
 
 $lang->payment_names=array(
