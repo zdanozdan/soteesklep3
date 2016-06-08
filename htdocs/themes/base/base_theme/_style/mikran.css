@@ -62,6 +62,10 @@
     margin-bottom:0px;
 }
 
+.promo_img {
+    max-width:620px;
+}
+
 #.level_2 {
 #    margin-left:30px;
 #}

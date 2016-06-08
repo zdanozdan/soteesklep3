@@ -31,6 +31,9 @@ Mikran Team
 	<div class="item" id="eveevolution">
 	    <a href="/pl/id10424/Dreve-Lampa-Eye-Volution-MAX-PROMOCJA-kompozyt-SR-Nexco-Promo-Kit-oraz-Dreve-Multispot-GRATIS"><img src="/photo/_reklama/banner_dreve_dentamid_eyevolution.png"></a>
 	</div>
+	<div class="item" id="innovadent">
+	    <a href="http://ibfgroup.pl"><img src="/photo/_reklama/innovadent.jpg"></a>
+	</div>
     </div>
     <!-- Carousel nav -->
     <a class="carousel-control left" href="#myCarousel" data-slide="prev">&lsaquo;</a>

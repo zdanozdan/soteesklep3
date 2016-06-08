@@ -10,18 +10,12 @@ $theme->bar(my(@$rec->data['subject']));
 <div align="left"><?php $theme->back();?></div>
 <br />
 <div id="block_1">
-<center>
-  <table align="center" width="95%">
-    <tr> 
-      <td width="60%" valign="top" align="left">
         <b><?php print @$rec->data['subject'];?></b><br />
 		<font style="font-size: 10px;">(<?php print @$rec->data['date_add'];?>)</font>
 		<p><?php 
 		@include_once ("news.html");
 		print @$rec->data['description'];
 		?></p>
-      </td>
-      <td width="40%" valign="top">
       <?php
       global $DOCUMENT_ROOT;
       for ($i=1;$i<=8;$i++) {
@@ -34,8 +28,4 @@ $theme->bar(my(@$rec->data['subject']));
           }
       } // end for
       ?>
-      </td>
-    </tr>
-  </table>
-</center>
 </div>
