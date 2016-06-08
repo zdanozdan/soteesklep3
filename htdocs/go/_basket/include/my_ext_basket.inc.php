@@ -1437,25 +1437,44 @@ class My_Ext_Basket extends My_New_Basket {
     * @access public
     * @return string zwraca zawartosc calego goszyka w formacie TXT
     */
-    function basket_txt() {
+    function basket_txt($html_email='text/plain') {
         global $lang;
         global $_SESSION;
         global $config;
         if ($this->mode=="points") {
-        	return ($this->basket_txt_points());
+	  return ($this->basket_txt_points());
         }
         $this->calc();
-        
+
         $global_delivery=$_SESSION['global_delivery'];
         $global_order_amount=$_SESSION['global_order_amount'];
         
-        $this->basket_data_txt.=$lang->basket_txt_title.":\n";
+	if($html_email == 'text/plain')
+	  $this->basket_data_txt.=$lang->basket_txt_title.":\n";
         reset($this->items);$this->_pos=1;
-        foreach ($this->items as $id=>$item) {
-            $this->basket_data_txt.=$this->_rowTXT($item);
-            $this->_pos++;
-        }
-        
+
+	if($html_email=='text/html')
+	  {
+	    $this->basket_data_txt.="<table style='width:100%;text-align:left' class='order_table table table-striped' border='1px solid'>";
+	    $this->basket_data_txt.="<caption style='text-align:left'><b>".$lang->basket_txt_title."</b></caption>";
+	    $this->basket_data_txt.=$this->_headHTML();
+	  }
+
+        foreach ($this->items as $id=>$item) 
+	  {
+	    if($html_email=='text/html')
+	      {
+		$this->basket_data_txt.=$this->_rowHTML($item);
+	      }
+	    else
+	      {
+		$this->basket_data_txt.=$this->_rowTXT($item);
+	      }
+	    $this->_pos++;
+	  }        
+
+	if($html_email=='text/html')
+	  $this->basket_data_txt.="</table>";
         
         // start waluty:
         global $shop;
@@ -1466,17 +1485,27 @@ class My_Ext_Basket extends My_New_Basket {
         $curr_order_amount=$shop->currency->price($global_order_amount);
         
         // end waluty:
-        
+
         $o=$this->basket_data_txt;
+	if($html_email == 'text/plain')
+	  {
+	    $sep = "\n";
+	  }
+	else
+	  {
+	    $sep = "<br>";
+	    $o.=$sep;
+	  }
+        
         $o.="\n".$lang->basket_delivery_name.": ".$global_delivery['name'].", ";
-        $o.=$lang->basket_delivery_cost.": ".$curr_delivery_cost." ".$shop->currency->currency."\n";
-        $o.=$lang->basket_amount_name.": ".$curr_amount." ".$shop->currency->currency."\n";
-        $o.=$lang->basket_order_amount_name.": ".$curr_order_amount." ".$shop->currency->currency."\n";
+        $o.=$lang->basket_delivery_cost.": ".$curr_delivery_cost." ".$shop->currency->currency.$sep;
+        $o.=$lang->basket_amount_name.": ".$curr_amount." ".$shop->currency->currency.$sep;
+        $o.=$lang->basket_order_amount_name.": ".$curr_order_amount." ".$shop->currency->currency.$sep;
         
         global $shop;
         $shop->promotions();
         $o.=$shop->promotions->txtInfo();
-        
+
         return $o;
     } // end basket_txt()
 

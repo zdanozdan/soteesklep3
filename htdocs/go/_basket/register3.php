@@ -20,9 +20,11 @@ if (empty($DOCUMENT_ROOT)) {
   $DOCUMENT_ROOT=$_SERVER['DOCUMENT_ROOT'];
 }
 
+
 $global_database=true;
 $global_secure_test=true;
 require_once ("../../../include/head.inc");
+
 
 //TEST
 //$theme->head();
@@ -42,6 +44,7 @@ if (my(@$_SESSION['global_lock_register'])!=true) {
   $theme->go2main();
   exit;
 }
+
 
 if (! empty($_SESSION['global_basket_data'])) {
  	require_once ("./include/my_ext_basket.inc.php");
@@ -75,6 +78,7 @@ else
 }
 
 chdir("$DOCUMENT_ROOT/go/_register/");
+
 
 //TEST ONLY
 //foreach ( $_REQUEST as $key=>$val ) 
@@ -178,14 +182,13 @@ chdir("$DOCUMENT_ROOT/go/_register/");
       //exit;
    }
 
-
    // czy wybrano platnosc przelewem?
    //if (! empty($_POST['submit_transfer'])) 
    if ($value == "submit_transfer")
    {
       $global_id_pay_method=11;
       // zapisz transakcje w bazie danych
-      require_once ("./include/order_register.inc.php");
+      //require_once ("./include/order_register.inc.php");
       $g = $my_basket->basket_google();
       require_once("$DOCUMENT_ROOT/go/_register/_post/index.php");
       //exit;
@@ -262,8 +265,6 @@ chdir("$DOCUMENT_ROOT/go/_register/");
       require_once("$DOCUMENT_ROOT/go/_register/_post/index.php");
       //exit;
    }
-
-
 
 print "<form style=\"display:none;\" name=\"utmform\">";
 print "<textarea id=\"utmtrans\">\n";

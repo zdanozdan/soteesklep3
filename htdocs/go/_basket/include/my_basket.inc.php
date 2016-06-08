@@ -513,6 +513,70 @@ class MyBasket extends Basket {
         
         return $o;
     } // end basket_txt()
+
+    function _headHTML()
+    {
+      global $lang;
+      $o="<thead>";
+      $o.="<tr class'basket_head_row'>";
+      $o.="<th>".$lang->basket_elements['name']."</th>";
+      $o.="<th>".$lang->basket_elements['mik_code']."</th>";
+      $o.="<th>".$lang->basket_elements['price_netto']."</th>";
+      $o.="<th>".$lang->basket_elements['vat']."</th>";
+      $o.="<th>".$lang->basket_elements['num']."</th>";
+      $o.="<th>".$lang->basket_elements['price_brutto']."</th>";
+      $o.="<th>".$lang->basket_elements['sum_brutto']."</th>";
+      $o.="</tr>";
+      $o.="</thead>";
+
+      return $o;
+    }
+
+    function _rowHTML($item) {
+      global $lang;
+        
+      // przet³umacz nazwê produktu
+      $name=LangF::name($item['name']);
+      global $config;
+      $href='/'.$config->lang.'/id'.$item['ID'].'/'.$name;
+      $urlcheck = new EncodeUrl;
+      $encoded = $urlcheck->encode_url_category($name);
+
+      $host = "http://www.sklep.mikran.pl";
+      $href = $host."/$config->lang/id".$item['ID']."/".$encoded;
+
+      $o.="<tr class='basket_row'>";
+      $o.="<td><a href='".$href."'>".$name."</a>";
+
+      if (! empty($item['data']['options'])) {
+	$data=$item['data']['options'];
+	$o.="<br>".$this->show_options($data,"txt");
+      }
+
+      $o.="</td>";
+
+      // start waluty:
+      global $shop;
+      $shop->currency();
+      if ($shop->currency->changed()) {
+	$item['price']=$shop->currency->price($item['price']);
+	$item['price_brutto']=$shop->currency->price($item['price_brutto']);
+	$item['price_netto']=$shop->currency->price($item['price_netto']);
+	$item['sum_brutto']=$shop->currency->price($item['sum_brutto']);
+      }
+      // end waluty:
+
+      $o.="<td><a href='".$href."'>".$lang->basket_elements['mik_id'].$item['ID']."</a></td>";
+      $o.="<td style='text-align:center'>". $item['price_netto']." ".$shop->currency->currency."</td>";
+      $o.="<td style='text-align:center'>". $item['data']['vat']." %</td>";
+      $o.="<td style='text-align:center'>". $item['num']."</td>";
+      $o.="<td style='text-align:center'>". $item['price_brutto']." ".$shop->currency->currency."</td>";
+      $o.="<td style='text-align:center'>". $item['sum_brutto']." ".$shop->currency->currency."</td>";
+
+      $o.="</tr>";
+
+      return $o;
+    }
     
     /**
     * Dane rekordu z koszyka w postaci TXT
