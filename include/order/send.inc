@@ -19,14 +19,14 @@ class OrderSend {
     *
     * @return bool true - zamówienie zosta³o poprawnie wys³ane, false w p.w.
     */
-    function send() {
+    function send($html_email='text/plain') {
         global $_SESSION,$sess;
         global $DOCUMENT_ROOT;
         global $lang,$config;
         global $__check,$theme;
         global $auto_transaction;
 //        global $my_basket, $basket;
-        
+
         require_once ("include/order/order.inc");
         $ord_reg =& new OrderRegister;
         if (my(@$_SESSION['global_lock_register'])!=true) {
@@ -48,8 +48,7 @@ class OrderSend {
                 exit;
             } else return;
         }
-                
-        
+                        
         // includujemy plik obliczajacy punkty uzytkownika
         require_once("$DOCUMENT_ROOT/go/_register/include/points.inc.php");
         $points =& new UserPoints;
@@ -66,12 +65,18 @@ class OrderSend {
         }
         
         $body=$message->order2txt($ord_reg->getOrderID());
-        
-        $basket_txt=$my_basket->basket_txt(); 
+        $body_plain=$message->order2txt($ord_reg->getOrderID());
+
+	if($html_email == 'text/html')
+	  $body = "<br><br>".nl2br($body);
+
+	$basket_plain=$my_basket->basket_txt('text/plain');
+	$basket_txt=$my_basket->basket_txt($html_email); 
+
         // dodaj obsluge wysylania wiadomosci e-mail
         require_once ("lib/Mail/MyMail.php");
         $mail =& new MyMail;
-                
+
         // wyslij maila z zamowieniem
         $from=$config->from_email;
         $to=$config->order_email;
@@ -108,10 +113,15 @@ class OrderSend {
                 $MyPoints=$points->show_user_points($global_id_user);
                 $user_id=1;
             }
-            
+
+
             // pelna tresc zamowienia
             $order_body=$message->order_body($basket_txt,$body,$order_id,$pay_name);
-            
+	    $order_body_plain = $message->order_body($basket_plain,$body_plain,$order_id,$pay_name);
+
+	    //send this to slack
+	    $mail->send_slack($order_body_plain);
+
             // sprawdz czy uzytkownik nie wybral wczesniej platnosci karta
             if ($__check==1) {
                 $order_body.=$lang->send_add_info;
@@ -120,8 +130,8 @@ class OrderSend {
             // generuj tytu³
             $subject="$lang->order_id: $order_id, $pay_name, $subject";
 			                  
-            // wyslij maila z zamowieniem do sprzedawcy
-            if ($mail->send($from,$to,$subject,$order_body,$reply)) {                
+            // wyslij maila z zamowieniem do sprzedawcy 02.06.2016 - HTML Mail !
+            if ($mail->send($from,$to,$subject,$order_body_plain,$reply,'text/plain')) {	      
                 // wyslij maila z potwierdzeniem zamowienia do klienta
                 $confirm_subject=$lang->order_confirm_subject." ".$_SERVER['HTTP_HOST'];
                 $host=$_SERVER['HTTP_HOST'];
@@ -129,50 +139,86 @@ class OrderSend {
                 $to=$user_email;
                 $order_body='';
 
-                $user_text_file = $DOCUMENT_ROOT . "/themes/_" . $config->langs_symbols[$config->lang_id] . "/_html_files/order_mail_hello.html";
+		if($html_email=='text/html')
+		  $user_text_file = $DOCUMENT_ROOT . "/themes/_" . $config->langs_symbols[$config->lang_id] . "/_html_files/order_mail_hello_html.html";
+		else
+		  $user_text_file = $DOCUMENT_ROOT . "/themes/_" . $config->langs_symbols[$config->lang_id] . "/_html_files/order_mail_hello.html";
                 $pfile = fopen($user_text_file, "r");
                 $user_text = fread($pfile, filesize($user_text_file));
                 fclose($pfile);
-                $user_text = strip_tags($user_text);
+		if($html_email=='text/plain') {
+		  $user_text = strip_tags($user_text);
+		}
                 $order_body .= $user_text;
                 
-                // definicja linku, ktory bedzie potwierdzeniem zamowienia
-                $order_body.="\n";
-                $order_body.=$lang->send_link;  // w celu potwierdzenia zamówienia kliknij ponizszy link
-                $order_body.="\n";
-                // stworzenie specjalnego kodu, by klient mogl zatwierdzic tylko swoja transakcje
-                $sign=md5($order_id.$config->salt);
-                $order_body.="http://$host".$config->url_prefix."/go/_register/confirm.php?trans=$order_id&code=$sign";
-                
-                // dodanie linku za pomoca , ktorego klient bedzie mogl zobaczc informacje o swojej transakcji
-                $order_body.="\n\n";
-                $order_body.=$lang->trans_link; // by sprawdzic stan swojej transakcji kliknij ponizszy link
-                $order_body.="\n";
-                $order_body.="http://$host".$config->url_prefix."/go/_users/order_info.php?id=$order_id&code=$sign";
-                $order_body.="\n\n";
-                
-                $order_body.=$message->order_body($basket_txt,$body,$order_id,$pay_name);
-                // nazwa hosta
-                
+		if($html_email=='text/plain') 
+		  {
+		    // definicja linku, ktory bedzie potwierdzeniem zamowienia
+		    $order_body.="\n";
+		    $order_body.=$lang->send_link;  // w celu potwierdzenia zamówienia kliknij ponizszy link
+		    $order_body.="\n";
+		    // stworzenie specjalnego kodu, by klient mogl zatwierdzic tylko swoja transakcje
+		    $sign=md5($order_id.$config->salt);
+		    $order_body.="http://$host".$config->url_prefix."/go/_register/confirm.php?trans=$order_id&code=$sign";
+		    
+		    // dodanie linku za pomoca , ktorego klient bedzie mogl zobaczc informacje o swojej transakcji
+		    $order_body.="\n\n";
+		    $order_body.=$lang->trans_link; // by sprawdzic stan swojej transakcji kliknij ponizszy link
+		    $order_body.="\n";
+		    $order_body.="http://$host".$config->url_prefix."/go/_users/order_info.php?id=$order_id&code=$sign";
+		    $order_body.="\n\n";
+		}
+		else
+		  {
+		    $order_body.="<p class='send_link'>";
+		    $order_body.=$lang->send_link;  // w celu potwierdzenia zamówienia kliknij ponizszy link
+		    $order_body.=": ";
+		    // stworzenie specjalnego kodu, by klient mogl zatwierdzic tylko swoja transakcje
+		    $sign=md5($order_id.$config->salt);
+		    $href="http://$host".$config->url_prefix."/go/_register/confirm.php?trans=$order_id&code=$sign";
+		    $order_body.="<a href='$href'>$href</a>";
+		    $order_body.="</p>";
+		    
+		    // dodanie linku za pomoca , ktorego klient bedzie mogl zobaczc informacje o swojej transakcji
+		    $order_body.="<p class='trans_linl'>";
+		    $order_body.=$lang->trans_link; // by sprawdzic stan swojej transakcji kliknij ponizszy link
+		    $order_body.=": ";
+		    $href="http://$host".$config->url_prefix."/go/_users/order_info.php?id=$order_id&code=$sign";
+		    $order_body.="<a href='$href'>$href</a>";
+		    $order_body.="</p>";
+		  }
 
                 $user_text_file = $DOCUMENT_ROOT . "/themes/_" . $config->langs_symbols[$config->lang_id] . "/_html_files/order_mail.html";
                 $pfile = fopen($user_text_file, "r");
                 $user_text = fread($pfile, filesize($user_text_file));
                 fclose($pfile);
-                $user_text = strip_tags($user_text);
+		if($html_email == 'text/plain')
+		  $user_text = strip_tags($user_text);
                 $user_text = str_replace("{bank}", $config->merchant['bank'], $user_text);
+                $user_text = str_replace("{order_id}", $order_id, $user_text);
+
+		global $shop;
+		$total_amount = sprintf("%.2f %s",$my_basket->totalAmount(), $shop->currency->currency);
+                $user_text = str_replace("{amount}", $total_amount, $user_text);
                 $order_body .= $user_text;
+                $order_body.="\n\n";
                 
-                // jezeli uzytkownik byl zalogowany podczas skladania zamowienia to dodaj do maila aktualna liczbe punktow
-                if (($user_id==1) && (my($MyPoints>0))) {
-                    $order_body.="\n\n";
-                    $order_body.="$lang->users_your_points:".$MyPoints;   //aktualna liczba punktow klienta do langow
-                }
-                
+                $order_body.=$message->order_body($basket_txt,$body,$order_id,$pay_name);
+                // nazwa hosta                
+
                 $reply=$config->from_email;
-                $mail->send($from,$to,$confirm_subject,$order_body,$reply);
+	
+		//HTML emails are disabled now !
+		//if ($html_email=='text/html') {
+	      //print $confirm_subject;
+	      //print "<br>";
+	      //print $order_body;
+	      //die();
+		//}
+
+                $mail->send($from,$to,$confirm_subject,$order_body,$reply,'text/html');
                 $confirm=true;
-                
+
                 // jesli jest wlaczona opcja sprzedazy on-line, to zapamietaj stan koszyka przed jeggo skasowaniem
                 if (in_array("main_keys",$config->plugins)) {
                     $prev_session['my_basket']=$my_basket;
